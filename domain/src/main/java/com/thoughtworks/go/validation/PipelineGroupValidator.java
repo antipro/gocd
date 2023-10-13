@@ -21,7 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 public class PipelineGroupValidator extends Validator<String> {
     public static final String ERRORR_MESSAGE = "Invalid character. Please use a-z, A-Z, 0-9, underscore, "
             + "dot and hyphen.";
-    public static final String NAME_PATTERN = "[a-zA-Z0-9_\\-]{1}[a-zA-Z0-9_\\-.]*";
+    public static final String NAME_PATTERN = "[\\u4e00-\\u9fa5a-zA-Z0-9_\\-]{1}[\\u4e00-\\u9fa5a-zA-Z0-9_\\-.]*";
 
     public PipelineGroupValidator() {
         super(ERRORR_MESSAGE);

@@ -80,7 +80,7 @@ public class JobConfig implements Validatable, ParamsAttributeAware, Environment
     public static final String RUN_MULTIPLE_INSTANCE = "runMultipleInstance";
     public static final String RUN_INSTANCE_COUNT = "runInstanceCount";
     public static final String ELASTIC_PROFILE_ID = "elasticProfileId";
-    private static final String JOB_NAME_PATTERN = "[a-zA-Z0-9_\\-.]+";
+    private static final String JOB_NAME_PATTERN = "[\\u4e00-\\u9fa5a-zA-Z0-9_\\-.]+";
     private static final Pattern JOB_NAME_PATTERN_REGEX = Pattern.compile(String.format("^(%s)$", JOB_NAME_PATTERN));
 
     public JobConfig() {

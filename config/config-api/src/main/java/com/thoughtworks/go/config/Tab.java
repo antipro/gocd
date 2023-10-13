@@ -30,7 +30,7 @@ public class Tab implements Validatable {
     private String path;
     private ConfigErrors configErrors = new ConfigErrors();
 
-    private static final Pattern TAB_NAME_PATTERN = Pattern.compile("[a-zA-Z0-9_\\-.]+");
+    private static final Pattern TAB_NAME_PATTERN = Pattern.compile("[\\u4e00-\\u9fa5a-zA-Z0-9_\\-.]+");
     private static final Pattern TAB_PATH_PATTERN = Pattern.compile("[\\S]+");
     public static final String NAME = "name";
     public static final String PATH = "path";
