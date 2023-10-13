@@ -230,7 +230,7 @@ public class EnvironmentVariableContext implements Serializable, SecretParamAwar
         if (value == null) {
             return "";
         }
-        return value.replaceAll("[^A-Za-z0-9_]", "_").toUpperCase();
+        return value.replaceAll("[^\u4e00-\u9fa5A-Za-z0-9_]", "_").toUpperCase();
     }
 
     public void addAll(EnvironmentVariableContext another) {

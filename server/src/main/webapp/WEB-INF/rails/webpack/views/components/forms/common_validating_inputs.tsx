@@ -19,9 +19,9 @@ import m from "mithril";
 import {TextFieldAttrs} from "./input_fields";
 import {LiveValidatingInputField} from "./live_validating_input";
 
-const ID_RE = /^([-a-zA-Z0-9_])([-a-zA-Z0-9_.]{0,254})$/;
-const NEG_ID_BODY_RE = /[^-a-zA-Z0-9_.]/;
-const NEG_ID_HEAD_RE = /[^-a-zA-Z0-9_]/;
+const ID_RE = /^([\u4e00-\u9fa5-a-zA-Z0-9_])([\u4e00-\u9fa5-a-zA-Z0-9_.]{0,254})$/;
+const NEG_ID_BODY_RE = /[^-\u4e00-\u9fa5a-zA-Z0-9_.]/;
+const NEG_ID_HEAD_RE = /[^-\u4e00-\u9fa5a-zA-Z0-9_]/;
 
 interface State {
   valid(s: string): string | undefined;

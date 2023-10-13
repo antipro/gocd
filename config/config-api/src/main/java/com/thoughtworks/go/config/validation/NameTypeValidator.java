@@ -22,7 +22,7 @@ import com.thoughtworks.go.util.XmlUtils;
 
 public class NameTypeValidator {
     public static final int MAX_LENGTH = 255;
-    static final String NAME_TYPE_PATTERN = "[a-zA-Z0-9_\\-]{1}[a-zA-Z0-9_\\-.]*";
+    static final String NAME_TYPE_PATTERN = "[\\u4e00-\\u9fa5a-zA-Z0-9_\\-]{1}[\\u4e00-\\u9fa5a-zA-Z0-9_\\-.]*";
     static final Pattern NAME_TYPE_PATTERN_REGEX = Pattern.compile(String.format("^(%s)$", NAME_TYPE_PATTERN));
     public static final String ERROR_MESSAGE =
             String.format("This must be alphanumeric and can contain underscores, hyphens and periods (however, it cannot start with a period). The maximum allowed length is %d characters.", MAX_LENGTH);

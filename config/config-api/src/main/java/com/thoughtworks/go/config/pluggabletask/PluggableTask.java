@@ -170,7 +170,7 @@ public class PluggableTask extends AbstractTask {
 
     @Override
     public String getTaskType() {
-        return PLUGGABLE_TASK_PREFIX + "_" + getPluginConfiguration().getId().replaceAll("[^a-zA-Z0-9_]", "_");
+        return PLUGGABLE_TASK_PREFIX + "_" + getPluginConfiguration().getId().replaceAll("[^\u4e00-\u9fa5a-zA-Z0-9_]", "_");
     }
 
     @Override

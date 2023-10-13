@@ -90,7 +90,7 @@ export class Scm extends ValidatableMixin {
 
     this.validatePresenceOf("name");
     this.validateFormatOf("name",
-                          new RegExp("^[-a-zA-Z0-9_][-a-zA-Z0-9_.]*$"),
+                          new RegExp("^[-\u4e00-\u9fa5a-zA-Z0-9_][-\u4e00-\u9fa5a-zA-Z0-9_.]*$"),
                           {message: "Invalid Name. This must be alphanumeric and can contain underscores, hyphens and periods (however, it cannot start with a period)."});
     this.validateMaxLength("name", 255, {message: "The maximum allowed length is 255 characters."});
     this.validateAssociated("pluginMetadata");

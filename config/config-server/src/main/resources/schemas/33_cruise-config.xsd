@@ -518,7 +518,7 @@
     <xsd:simpleType name="nameType">
         <xsd:restriction base="xsd:string">
             <xsd:maxLength value="255"/>
-            <xsd:pattern value="[a-zA-Z0-9_\-]{1}[a-zA-Z0-9_\-.]*"/>
+            <xsd:pattern value="[\p{L}\p{P}\p{N}]+"/>
         </xsd:restriction>
     </xsd:simpleType>
     <xsd:simpleType name="environmentName">
@@ -552,7 +552,7 @@
     <xsd:simpleType name="jobnameType">
         <xsd:restriction base="xsd:string">
             <xsd:maxLength value="255"/>
-            <xsd:pattern value="[a-zA-Z0-9_\-.]+"/>
+            <xsd:pattern value="[\p{L}\p{P}\p{N}]+"/>
         </xsd:restriction>
     </xsd:simpleType>
     <xsd:attributeGroup name="serverAttributeGroup">
@@ -600,7 +600,7 @@
                 <xsd:simpleType>
                     <xsd:restriction base="xsd:string">
                         <xsd:maxLength value="15"/>
-                        <xsd:pattern value="[a-zA-Z0-9_\-.]+"/>
+                        <xsd:pattern value="[\p{L}\p{P}\p{N}]+"/>
                     </xsd:restriction>
                 </xsd:simpleType>
             </xsd:attribute>

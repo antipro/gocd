@@ -151,7 +151,7 @@ Validatable.DefaultOptions = {
       attribute = 'id';
     }
     return {
-      format:  /^[-a-zA-Z0-9_][-a-zA-Z0-9_.]*$/,
+      format:  /^[-\u4e00-\u9fa5a-zA-Z0-9_][-a-zA-Z0-9_.]*$/,
       message: `Invalid ${attribute}. This must be alphanumeric and can contain underscores and periods (however, it cannot start with a period). The maximum allowed length is 255 characters.`
     };
   }

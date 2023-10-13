@@ -31,7 +31,7 @@ public class NameTypeValidatorTest {
 
     @Test
     public void shouldValidateNameBasedOnCharacterType() {
-        //[a-zA-Z0-9_\-]{1}[a-zA-Z0-9_\-.]*
+        //[\\u4e00-\\u9fa5a-zA-Z0-9_\-]{1}[a-zA-Z0-9_\-.]*
         assertThat(new NameTypeValidator().isNameValid(""), is(false));
         assertThat(new NameTypeValidator().isNameValid("name"), is(true));
 

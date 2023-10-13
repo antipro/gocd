@@ -23,11 +23,14 @@
       <artifactsDir>artifacts</artifactsDir>
     </artifacts>
   </server>
-  <pipelines group="first">
+  <pipelines group="中文流水线分组">
     <authorization>
       <view>
         <user>operate</user>
       </view>
+      <operate>
+        <user>operate</user>
+      </operate>
       <admins>
         <user>operate</user>
       </admins>
@@ -41,6 +44,22 @@
           <job name="up42_job">
             <tasks>
               <exec command="ls" />
+            </tasks>
+          </job>
+        </jobs>
+      </stage>
+    </pipeline>
+    <pipeline name="中文流水线">
+      <materials>
+        <git url="git@gitee.com:antipro/haoze-health.git" />
+      </materials>
+      <stage name="中文阶段">
+        <jobs>
+          <job name="中文作业">
+            <tasks>
+              <exec command="echo">
+                <arg>Hello World</arg>
+              </exec>
             </tasks>
           </job>
         </jobs>

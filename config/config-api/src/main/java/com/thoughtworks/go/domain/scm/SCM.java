@@ -336,7 +336,7 @@ public class SCM implements Serializable, Validatable, ConfigOriginTraceable, Se
     }
 
     public String getSCMType() {
-        return "pluggable_material_" + getPluginConfiguration().getId().replaceAll("[^a-zA-Z0-9_]", "_");
+        return "pluggable_material_" + getPluginConfiguration().getId().replaceAll("[^\u4e00-\u9fa5a-zA-Z0-9_]", "_");
     }
 
     public boolean isLocal() {
