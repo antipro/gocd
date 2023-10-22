@@ -17,7 +17,7 @@ import _ from "lodash";
 import {Validatable} from "models/mixins/validatable_mixin";
 
 const PADDED_SPACES = /^(?! ).*[\S]$/; // deny leading/trailing spaces
-const ASCII_PR_CHAR = /^[\x20-\x7E]+$/; // ASCII printable characters only (codes 32 - 126)
+const ASCII_PR_CHAR = /^[\p{L}\p{P}\p{N}]+$/; // ASCII printable characters only (codes 32 - 126)
 
 const MSG_PAD_SPACE = "View name must not have leading or trailing whitespace";
 const MSG_BAD_CHARS = "View name is only allowed to contain letters, numbers, spaces, and punctuation marks";
