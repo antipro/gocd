@@ -18,7 +18,6 @@ package com.thoughtworks.go.util;
 import ch.qos.logback.classic.Level;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.TestOnly;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
@@ -35,8 +34,6 @@ import static java.util.concurrent.TimeUnit.*;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 public class SystemEnvironment implements Serializable, ConfigDirProvider {
-
-    private static final Logger LOG = LoggerFactory.getLogger(SystemEnvironment.class);
 
     public static final String CRUISE_LISTEN_HOST = "cruise.listen.host";
     public static final String CRUISE_SERVER_PORT = "cruise.server.port";
@@ -143,7 +140,6 @@ public class SystemEnvironment implements Serializable, ConfigDirProvider {
     public static final GoSystemProperty<String> APP_SERVER = new CachedProperty<>(new GoStringSystemProperty("app.server", JETTY));
     public static final GoSystemProperty<String> GO_LANDING_PAGE = new GoStringSystemProperty("go.landing.page", "/pipelines");
 
-    public static final GoSystemProperty<Boolean> ARTIFACT_VIEW_INCLUDE_ALL_FILES = new GoBooleanSystemProperty("go.view-artifacts.include-all", true);
     public static final GoSystemProperty<Boolean> FETCH_ARTIFACT_AUTO_SUGGEST = new GoBooleanSystemProperty("go.fetch-artifact.auto-suggest", true);
     public static final GoSystemProperty<Boolean> GO_FETCH_ARTIFACT_TEMPLATE_AUTO_SUGGEST = new GoBooleanSystemProperty("go.fetch-artifact.template.auto-suggest", true);
 
@@ -406,7 +402,9 @@ public class SystemEnvironment implements Serializable, ConfigDirProvider {
             try (InputStream is = getClass().getResourceAsStream(CRUISE_PROPERTIES)) {
                 properties.load(is);
             } catch (Exception e) {
-                LOG.error("Unable to load newProperties file {}", CRUISE_PROPERTIES);
+                // Deliberately avoiding initializing the logger during class load to allow for manual
+                // logger configuration during startup
+                LoggerFactory.getLogger(SystemEnvironment.class).error("Unable to load newProperties file {}", CRUISE_PROPERTIES);
             }
         }
         return properties;
