@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -91,7 +91,7 @@ public class GoDiskSpaceMonitor {
             }
             return outOfDisk;
         } catch (Exception e) {
-            LOG.error("Error occured during checking filesystems low disk space", e);
+            LOG.error("Error occurred during checking filesystems low disk space", e);
         }
         return currentlyLowOnDisk;
     }

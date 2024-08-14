@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -89,8 +89,7 @@ public class AccessTokenBasedPluginAuthenticationProvider extends AbstractPlugin
             User user = new User(fetched.getUsername().getUsername().toString(), fetched.getDisplayName(), fetched.getEmail());
             return new AuthenticationResponse(user, roles);
         } else {
-            String msg = String.format("Access Token belonging to the user has either been disabled, removed or expired. ", username, pluginId, authConfig.getId());
-            throw new InvalidAccessTokenException(msg);
+            throw new InvalidAccessTokenException("Access Token belonging to the user has either been disabled, removed or expired.");
         }
     }
 

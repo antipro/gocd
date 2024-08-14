@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -512,7 +512,7 @@ public class MaterialUpdateServiceTest {
         } catch (RuntimeException e) {
             // should re-throw exception
         }
-        Map<Material, Date> inProgress = (Map<Material, Date>) ReflectionUtil.getField(service, "inProgress");
+        Map<Material, Date> inProgress = ReflectionUtil.getField(service, "inProgress");
         assertThat(inProgress.containsKey(svnMaterial)).isFalse();
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,7 +63,7 @@ public class MailSession {
 
     private Session createSession(Properties props, String username, String password) {
         Session session;
-        if (username == null || password == null || username.equals("") || password.equals("")) {
+        if (username == null || password == null || username.isBlank() || password.isBlank()) {
             session = Session.getInstance(props);
         } else {
             props.put("mail.smtp.auth", "true");

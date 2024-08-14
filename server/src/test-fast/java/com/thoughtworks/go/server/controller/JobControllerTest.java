@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -100,7 +100,7 @@ public class JobControllerTest {
         when(jobInstanceService.buildByIdWithTransitions(job.getId())).thenReturn(job);
         when(jobInstanceDao.mostRecentJobWithTransitions(job.getIdentifier())).thenReturn(newJob);
         when(agentService.findAgentByUUID(newJob.getAgentUuid())).thenReturn(Agent.blankAgent(newJob.getAgentUuid()));
-        when(stageService.getBuildDuration(pipelineName, stageName, newJob)).thenReturn(new DurationBean(newJob.getId(), 5l));
+        when(stageService.getBuildDuration(pipelineName, stageName, newJob)).thenReturn(new DurationBean(newJob.getId(), 5L));
 
         ModelAndView modelAndView = jobController.handleRequest(pipelineName, stageName, job.getId(), response);
 

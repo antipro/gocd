@@ -4,7 +4,7 @@ import com.thoughtworks.go.build.VerifyJarTask
 import org.apache.commons.codec.digest.DigestUtils
 
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,37 +27,37 @@ def dependencies = [
   new GithubArtifact(
     user: 'gocd',
     repo: 'gocd-ldap-authentication-plugin',
-    tagName: 'v2.2.2-252',
-    asset: 'gocd-ldap-authentication-plugin-2.2.2-252.jar',
-    checksum: '9d55fa20d0917a69015b44b24c1dc1276ac2217c1d601c76f5a2b10692f0740a'
+    tagName: 'v2.3.0-325',
+    asset: 'gocd-ldap-authentication-plugin-2.3.0-325.jar',
+    checksum: 'edb358288129f09d59f4c5d0a44f4bfdea4059e64d1a09daca7ed19e5d94951d'
   ),
   new GithubArtifact(
     user: 'gocd',
     repo: 'gocd-filebased-authentication-plugin',
-    tagName: 'v2.1.2-210',
-    asset: 'gocd-filebased-authentication-plugin-2.1.2-210.jar',
-    checksum: 'd25cde68fe700b80bd134fe0582ad6dea71075424e87f64ab797b194ee2ee6d3'
+    tagName: 'v2.2.0-246',
+    asset: 'gocd-filebased-authentication-plugin-2.2.0-246.jar',
+    checksum: 'ea6cb1913e5347db25322a4b2aa1d4c7ad320dd358a8141b3384aa3bef608fb0'
   ),
   new GithubArtifact(
     user: 'tomzo',
     repo: 'gocd-yaml-config-plugin',
-    tagName: 'v0.14.3-321',
-    asset: 'yaml-config-plugin-0.14.3-321.jar',
-    checksum: 'f2c92ef8f5255ff0f6528944302e2a3b4980b6b963afbd391d15c66618a1bc5b'
+    tagName: 'v1.0.0-364',
+    asset: 'yaml-config-plugin-1.0.0-364.jar',
+    checksum: 'c10fe3024d446cdf2379a56ccaf0c5d436d39e8fa6561a9f5e56280b5c428057'
   ),
   new GithubArtifact(
     user: 'tomzo',
     repo: 'gocd-json-config-plugin',
-    tagName: 'v0.6.1-173',
-    asset: 'json-config-plugin-0.6.1-173.jar',
-    checksum: '2f5b62a89eda05dbd4f913b30562cb2792cc3c8e386428d0bf41ccdfbd901275'
+    tagName: 'v1.0.0-217',
+    asset: 'json-config-plugin-1.0.0-217.jar',
+    checksum: 'e2c4b8b270080b7e4eee0eaeec1ea548a5052481104d0636bf7b1d2705b06fb6'
   ),
   new GithubArtifact(
     user: 'gocd',
     repo: 'gocd-file-based-secrets-plugin',
-    tagName: 'v1.1.2-170',
-    asset: 'gocd-file-based-secrets-plugin-1.1.2-170.jar',
-    checksum: '7aa5af90c565c1cd5076611851f28182f640404b5b6a8fe1d11d4bd3e2b91b5d'
+    tagName: 'v1.2.0-252',
+    asset: 'gocd-file-based-secrets-plugin-1.2.0-252.jar',
+    checksum: '99611b6f8ee812e9e3ffd829b284ecb2d7906f22022c5e92f210a089db25d336'
   )
 ]
 

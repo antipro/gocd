@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,7 +64,7 @@ class EnvironmentAgentRepresenterTest {
     def origin = new RepoConfigOrigin(ConfigRepoConfig.createConfigRepoConfig(MaterialConfigsMother.git("foo.git"), "json-plugon", "repo1"), "revision1");
     def agent = new EnvironmentAgentConfig("agent-1")
     when(environmentConfig.isLocal()).thenReturn(false)
-    when(environmentConfig.getOriginForAgent(agent.uuid)).thenReturn(origin)
+    when(environmentConfig.originForAgent(agent.uuid)).thenReturn(Optional.of(origin))
     def actualJSON = toObjectString({ EnvironmentAgentRepresenter.toJSON(it, agent, environmentConfig) })
 
     def expectedJSON = [

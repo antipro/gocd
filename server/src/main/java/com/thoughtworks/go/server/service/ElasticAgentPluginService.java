@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -202,7 +202,7 @@ public class ElasticAgentPluginService {
         jobsThatRequireAgent.addAll(Sets.difference(new HashSet<>(newPlan), new HashSet<>(old)));
         jobsThatRequireAgent.addAll(starvingJobs);
 
-        List<JobPlan> plansThatRequireElasticAgent = jobsThatRequireAgent.stream().filter(isElasticAgent()).collect(toList());
+        List<JobPlan> plansThatRequireElasticAgent = jobsThatRequireAgent.stream().filter(isElasticAgent()).toList();
 //      messageTimeToLive is lesser than the starvation threshold to ensure there are no duplicate create agent message
         long messageTimeToLive = goConfigService.elasticJobStarvationThreshold() - 10000;
 
@@ -212,10 +212,13 @@ public class ElasticAgentPluginService {
             ClusterProfile clusterProfile = plan.getClusterProfile();
             JobIdentifier jobIdentifier = plan.getIdentifier();
             if (clusterProfile == null) {
-                String cancellationMessage = "\nThis job was cancelled by GoCD. The version of your GoCD server requires elastic profiles to be associated with a cluster(required from Version 19.3.0). " +
-                        "This job is configured to run on an Elastic Agent, but the associated elastic profile does not have information about the cluster.  \n\n" +
-                        "The possible reason for the missing cluster information on the elastic profile could be, an upgrade of the GoCD server to a version >= 19.3.0 before the completion of the job.\n\n" +
-                        "A re-run of this job should fix this issue.";
+                String cancellationMessage = """
+
+                        This job was cancelled by GoCD. The version of your GoCD server requires elastic profiles to be associated with a cluster(required from Version 19.3.0). This job is configured to run on an Elastic Agent, but the associated elastic profile does not have information about the cluster. \s
+
+                        The possible reason for the missing cluster information on the elastic profile could be, an upgrade of the GoCD server to a version >= 19.3.0 before the completion of the job.
+
+                        A re-run of this job should fix this issue.""";
                 logToJobConsole(jobIdentifier, cancellationMessage);
                 scheduleService.cancelJob(jobIdentifier);
             } else if (elasticAgentPluginRegistry.has(clusterProfile.getPluginId())) {

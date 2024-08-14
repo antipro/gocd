@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,29 @@
  * limitations under the License.
  */
 
-import com.thoughtworks.go.build.*
+import com.thoughtworks.go.build.Architecture
+import com.thoughtworks.go.build.InstallerMetadataTask
+import com.thoughtworks.go.build.InstallerType
 import groovy.json.JsonOutput
 import org.apache.commons.codec.digest.DigestUtils
 import org.apache.tools.ant.filters.ConcatFilter
 
 enum PackageType {
 
-  deb{
+  deb {
+    // Debian packages allow either most recent or minimum Java version in dependencies because
+    // Java 21 was not available on Debian releases despite it being preferred, although was available for Ubuntu.
+    String jreDependency(Project project) {
+      "openjdk-${project.packagedJavaVersion.feature}-jre-headless | openjdk-${project.targetJavaVersion}-jre-headless"
+    }
+
+    String jreBinaryLocator(Project project) {
+      // Find the most recent version that was installed
+      """ls /usr/lib/jvm/java-${project.packagedJavaVersion.feature}-openjdk-\$(dpkg --print-architecture)/bin/java \
+            /usr/lib/jvm/java-${project.targetJavaVersion}-openjdk-\$(dpkg --print-architecture)/bin/java \
+         2>/dev/null | tail -1"""
+    }
+
     List<String> configureFpm(Project project, File buildRoot, InstallerType installerType) {
       List<String> fpmArgs = []
       fpmArgs += ['-t', 'deb']
@@ -32,6 +47,8 @@ enum PackageType {
 
       // for `ps`
       fpmArgs += ['--depends', 'procps']
+
+      fpmArgs += ['--deb-recommends', jreDependency(project)]
 
       // HACK: for debian packages :(, since manifests cannot contain fine grained ownership
       def tmpDir = project.file("${project.buildDir}/tmp")
@@ -48,7 +65,18 @@ enum PackageType {
       return fpmArgs
     }
   },
-  rpm{
+  rpm {
+    String jreDependency(Project project) {
+      "(java-${project.packagedJavaVersion.feature}-openjdk-headless or java-${project.targetJavaVersion}-openjdk-headless)"
+    }
+
+    String jreBinaryLocator(Project project) {
+      // Find the most recent version that was installed
+      """ls /etc/alternatives/jre_${project.packagedJavaVersion.feature}/bin/java \
+            /etc/alternatives/jre_${project.targetJavaVersion}/bin/java \
+         2>/dev/null | tail -1"""
+    }
+
     List<String> configureFpm(Project project, File buildRoot, InstallerType installerType) {
       List<String> fpmArgs = []
 
@@ -60,6 +88,8 @@ enum PackageType {
 
       // for `ps`
       fpmArgs += ['--depends', 'procps']
+
+      fpmArgs += ['--rpm-tag', "Recommends: ${jreDependency(project)}"]
 
       fpmArgs += ['--rpm-defattrfile', '0444']
       fpmArgs += ['--rpm-defattrdir', '0755']
@@ -89,29 +119,20 @@ enum PackageType {
     }
   }
 
-  abstract List<String> configureFpm(Project project, File buildRoot, InstallerType installerType);
+  /**
+   * @return POSIX shell script that will find a path to the optimal JRE java binary for the relevant package
+   */
+  abstract jreBinaryLocator(Project project)
+  abstract List<String> configureFpm(Project project, File buildRoot, InstallerType installerType)
 }
 
 private File destFile(String url) {
   new File(gradle.gradleUserHomeDir, "download-cache/${DigestUtils.md5Hex(url)}/${new File(new URL(url).path).name}")
 }
 
-task downloadLinuxJreChecksum(type: DownloadFile) {
-  src project.packaging.adoptiumJavaVersion.toSha256SumURLFor(OperatingSystem.linux, Architecture.x64)
-  dest destFile(src.toString())
-}
-
-task downloadLinuxJre(type: DownloadFile) {
-  dependsOn downloadLinuxJreChecksum
-  src project.packaging.adoptiumJavaVersion.toDownloadURLFor(OperatingSystem.linux, Architecture.x64)
-  dest destFile(src.toString())
-  checksum = { downloadLinuxJreChecksum.outputs.files.singleFile.getText("utf-8").trim().split(" ").first() }
-}
-
 def configureLinuxPackage(DefaultTask packageTask, InstallerType installerType, PackageType packageType, File buildRoot, Configuration configuration, File destDir) {
   packageTask.with {
     dependsOn configuration
-    dependsOn downloadLinuxJre
     dependsOn extractDeltaPack
     outputs.dir(destDir)
 
@@ -224,15 +245,12 @@ def configureLinuxPackage(DefaultTask packageTask, InstallerType installerType, 
               eachLine = newLines.join('\n')
             }
 
-            if (eachLine == 'wrapper.java.command=java') {
-              eachLine = "wrapper.java.command=/usr/share/${installerType.baseName}/jre/bin/java"
+            if (eachLine == 'wrapper.jarfile=../lib/wrapper.jar') {
+              eachLine = "wrapper.jarfile=/usr/share/${installerType.baseName}/wrapper/wrapper.jar"
             }
 
-            if (eachLine == 'wrapper.java.classpath.1=../lib/wrapper.jar') {
-              eachLine = [
-                "wrapper.java.classpath.1=/usr/share/${installerType.baseName}/wrapper/wrapper.jar",
-                "wrapper.java.classpath.2=/usr/share/${installerType.baseName}/lib/${installerType.jarFileName}",
-              ].join("\n")
+            if (eachLine == '#wrapper.java.classpath.1=') {
+              eachLine = "wrapper.java.classpath.1=/usr/share/${installerType.baseName}/lib/${installerType.jarFileName}"
             }
 
             if (eachLine == 'wrapper.java.library.path.1=../lib') {
@@ -276,24 +294,6 @@ def configureLinuxPackage(DefaultTask packageTask, InstallerType installerType, 
           include 'libwrapper-linux-arm-64*'
         }
       }
-
-      project.copy {
-        into "${buildRoot}/usr/share/${installerType.baseName}/jre"
-        from(tarTree(downloadLinuxJre.outputs.files.singleFile)) {
-          eachFile { FileCopyDetails fcd ->
-            List<String> segments = fcd.relativePath.segments
-            segments.remove(0)
-            fcd.relativePath = new RelativePath(!fcd.isDirectory(), (segments as String[]))
-            // Remove write access of JRE files for user group `others`.
-            // Perform `&` operation on existing mode with `0775`.
-            // eg. if existing mode is `0777`, the mode will be changed to `0775` after following operation
-            // eg. if existing mode is `0477`, the mode will be changed to `0475` after following operation
-            fcd.setMode(fcd.getMode() & 0775)
-          }
-          includeEmptyDirs = false
-        }
-      }
-
     }
 
     doLast {
@@ -343,6 +343,8 @@ def configureLinuxPackage(DefaultTask packageTask, InstallerType installerType, 
         cmd += packageType.configureFpm(project, buildRoot, installerType)
 
         commandLine = cmd
+
+        environment += ['JRE_BINARY_LOCATOR': packageType.jreBinaryLocator(project)]
 
         workingDir "${project.buildDir}/distributions/${packageType}"
 

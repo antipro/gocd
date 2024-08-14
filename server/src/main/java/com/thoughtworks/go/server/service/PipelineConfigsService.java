@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,14 +46,14 @@ import static com.thoughtworks.go.serverhealth.HealthStateType.forbiddenForGroup
 
 @Service
 public class PipelineConfigsService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(PipelineConfigsService.class);
 
-    private GoConfigService goConfigService;
+    private final GoConfigService goConfigService;
     private final ConfigCache configCache;
     private final ConfigElementImplementationRegistry registry;
     private final SecurityService securityService;
-    private EntityHashingService entityHashingService;
-    private MagicalGoConfigXmlLoader magicalGoConfigXmlLoader;
-    private static final Logger LOGGER = LoggerFactory.getLogger(PipelineConfigsService.class);
+    private final EntityHashingService entityHashingService;
+    private final MagicalGoConfigXmlLoader magicalGoConfigXmlLoader;
 
     @Autowired
     public PipelineConfigsService(ConfigCache configCache, ConfigElementImplementationRegistry registry, GoConfigService goConfigService, SecurityService securityService, EntityHashingService entityHashingService) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -254,7 +254,7 @@ export class ShowUsagesModal extends Modal {
                        .map((pipeline: string, index) => {
                          return [
                            <span>{pipeline}</span>,
-                           <Link href={SparkRoutes.pipelineEditPath('pipelines', pipeline, 'materials')} target={"_blank"}
+                           <Link href={SparkRoutes.pipelineEditPath('pipelines', pipeline, 'materials')}
                                  dataTestId={`material-link-${index}`}>View/Edit Material</Link>
                          ];
                        }));

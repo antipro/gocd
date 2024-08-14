@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package com.thoughtworks.go.domain.materials.svn;
 
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 
 public class MaterialUrl {
     private final String url;
@@ -23,7 +24,7 @@ public class MaterialUrl {
     public MaterialUrl(String url) {
         url = url.trim();
         url = url.endsWith("/") ? (url.substring(0, url.length() - "/".length())) : url;
-        url = URLDecoder.decode(url);
+        url = URLDecoder.decode(url, StandardCharsets.UTF_8);
         url = url.toLowerCase().startsWith("file://") ? (url.substring("file://".length())) : url;
         this.url = url;
     }

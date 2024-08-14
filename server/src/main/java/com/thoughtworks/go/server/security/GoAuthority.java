@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ public enum GoAuthority {
     ROLE_TEMPLATE_VIEW_USER,
     ROLE_AGENT;
 
-    public static Set<GrantedAuthority> ALL_AUTHORITIES = Arrays.stream(values()).map(GoAuthority::asAuthority).collect(Collectors.toSet());
+    public static final Set<GrantedAuthority> ALL_AUTHORITIES = Arrays.stream(values()).map(GoAuthority::asAuthority).collect(Collectors.toSet());
 
     private final GrantedAuthority authority;
 

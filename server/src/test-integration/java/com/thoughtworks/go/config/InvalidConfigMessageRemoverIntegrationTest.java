@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,10 @@
 package com.thoughtworks.go.config;
 
 import com.thoughtworks.go.server.service.GoConfigService;
-import com.thoughtworks.go.serverhealth.*;
+import com.thoughtworks.go.serverhealth.HealthStateScope;
+import com.thoughtworks.go.serverhealth.HealthStateType;
+import com.thoughtworks.go.serverhealth.ServerHealthService;
+import com.thoughtworks.go.serverhealth.ServerHealthState;
 import com.thoughtworks.go.service.ConfigRepository;
 import com.thoughtworks.go.util.GoConfigFileHelper;
 import com.thoughtworks.go.util.SystemEnvironment;
@@ -31,8 +34,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.File;
 
-import static org.hamcrest.Matchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(locations = {
@@ -78,9 +81,9 @@ public class InvalidConfigMessageRemoverIntegrationTest {
         serverHealthService.update(ServerHealthState.warning("Invalid Configuration", "something",HealthStateType.general(HealthStateScope.forInvalidConfig())));
         InvalidConfigMessageRemover remover = new InvalidConfigMessageRemover(goConfigService, serverHealthService);
         remover.initialize();
-        assertThat(serverHealthService.logs().isEmpty(), is(false));
+        assertThat(serverHealthService.logsSorted().isEmpty(), is(false));
         configHelper.addEnvironments("uat"); //Any change to the config file
         cachedGoConfig.forceReload();
-        assertThat(serverHealthService.filterByScope(HealthStateScope.forInvalidConfig()).isEmpty(), is(true));
+        assertThat(serverHealthService.logsSortedForScope(HealthStateScope.forInvalidConfig()).isEmpty(), is(true));
     }
 }

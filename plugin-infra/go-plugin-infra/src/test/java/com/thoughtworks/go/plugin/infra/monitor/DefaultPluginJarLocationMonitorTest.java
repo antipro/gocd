@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -76,7 +76,7 @@ class DefaultPluginJarLocationMonitorTest extends AbstractDefaultPluginJarLocati
     void shouldCreatePluginDirectoryIfItDoesNotExist() {
         bundledPluginDir.delete();
         new DefaultPluginJarLocationMonitor(systemEnvironment).initialize();
-        assertThat(bundledPluginDir.exists()).isTrue();
+        assertThat(bundledPluginDir).exists();
     }
 
     @Test

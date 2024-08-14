@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -163,7 +163,7 @@ public class PluggableSCMMaterialUpdaterIntegrationTest {
     }
 
     private void mockSCMExtensionInPoller() {
-        Map<Class, MaterialPoller> materialPollerMap = (Map<Class, MaterialPoller>) ReflectionUtil.getField(materialService, "materialPollerMap");
+        Map<Class, MaterialPoller> materialPollerMap = ReflectionUtil.getField(materialService, "materialPollerMap");
         materialPollerMap.put(PluggableSCMMaterial.class, new PluggableSCMMaterialPoller(materialRepository, scmExtension, transactionTemplate));
         ReflectionUtil.setField(materialService, "materialPollerMap", materialPollerMap);
     }

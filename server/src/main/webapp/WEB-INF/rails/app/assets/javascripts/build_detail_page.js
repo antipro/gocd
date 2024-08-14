@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -150,7 +150,7 @@
       $(".content_wrapper_outer").toggleClass("full-screen");
       $(window).trigger($.Event("resetPinOnScroll"), [{
         calcRequiredScroll: function () {
-          return $(".console-area").offset().top - $("#header").outerHeight(true) - $(".page_header").outerHeight(true);
+          return $(".console-area").offset().top - $(".page_header").outerHeight(true);
         }
       }]);
     });

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,9 +23,9 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class TestingEmailSender implements EmailSender {
-    private String sentMessage = NO_MESSAGE;
     public static final String NO_MESSAGE = "No Message Sent";
-    private List<SendEmailMessage> messages = new ArrayList<>();
+    private final List<SendEmailMessage> messages = new ArrayList<>();
+    private String sentMessage = NO_MESSAGE;
 
     @Override
     public void sendEmail(SendEmailMessage message) {
@@ -44,19 +44,6 @@ public class TestingEmailSender implements EmailSender {
     public void clear() {
         messages.clear();
         sentMessage = NO_MESSAGE;
-    }
-
-    public SendEmailMessage firstMessage() {
-        return messages.get(0);
-    }
-
-    public SendEmailMessage messageContainsSubject(String subject) {
-        for (SendEmailMessage message : messages) {
-            if (message.getSubject().contains(subject)) {
-                return message;
-            }
-        }
-        return null;
     }
 
     public void assertHasMessageContaining(String body) {

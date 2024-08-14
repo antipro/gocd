@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,11 +40,7 @@ public class ValidationBean implements JsonAware {
         return message.replaceFirst("(.)*Exception:(\\s)+", "");
     }
 
-
-    /**
-     * This method is obsolete
-     */
-    @Deprecated
+    @Deprecated(since = "this method is supposedly obsolete")
     @Override
     public Map<String, Object> toJson() {
         Map<String, Object> jsonMap = new LinkedHashMap<>();

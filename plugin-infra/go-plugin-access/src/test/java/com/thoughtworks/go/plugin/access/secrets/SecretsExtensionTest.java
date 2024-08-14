@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@ package com.thoughtworks.go.plugin.access.secrets;
 
 import com.thoughtworks.go.config.SecretConfig;
 import com.thoughtworks.go.plugin.access.ExtensionsRegistry;
-import com.thoughtworks.go.plugin.access.common.AbstractExtension;
 import com.thoughtworks.go.plugin.access.exceptions.SecretResolutionFailureException;
 import com.thoughtworks.go.plugin.access.secrets.v1.SecretsExtensionV1;
 import com.thoughtworks.go.plugin.domain.secrets.Secret;
@@ -68,7 +67,7 @@ public class SecretsExtensionTest {
             final VersionedSecretsExtension extension = this.extension.getVersionedSecretsExtension(PLUGIN_ID);
 
             assertThat(extension).as(message).isNotNull();
-            assertThat(ReflectionUtil.getField(extension, "VERSION")).isEqualTo(supportedVersion);
+            assertThat((String) ReflectionUtil.getField(extension, "VERSION")).isEqualTo(supportedVersion);
         }
     }
 
@@ -182,10 +181,5 @@ public class SecretsExtensionTest {
                     .isInstanceOf(SecretResolutionFailureException.class)
                     .hasMessage("Expected plugin to resolve secret param(s) `key1, key2, key3` using secret config `file` but plugin failed to resolve secret param(s) `key1, key2, key3`. Please make sure that secret(s) with the same name exists in your secret management tool.");
         }
-    }
-
-    @Test
-    void shouldExtendAbstractExtension() {
-        assertThat(new SecretsExtension(pluginManager, extensionsRegistry) instanceof AbstractExtension).isTrue();
     }
 }

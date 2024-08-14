@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -467,7 +467,7 @@ public class AgentInstanceTest {
     }
 
     @Test
-    void shouldKeepOriginalStatusWhenAgentIsNotDenied() {
+    void shouldKeepOriginalStatusWhenAgentIsNotDisabled() {
         AgentInstance original = AgentInstance.createFromAgent(agent, systemEnvironment, mock(AgentStatusChangeListener.class));
         original.update(buildingRuntimeInfo(agent));
 
@@ -476,7 +476,7 @@ public class AgentInstanceTest {
     }
 
     @Test
-    void shouldDenyAgentWhenAgentIsDeniedInConfigFile() {
+    void shouldDenyAgentWhenAgentIsDisabledInConfigFile() {
         AgentInstance original = AgentInstance.createFromAgent(agent, systemEnvironment, mock(AgentStatusChangeListener.class));
         original.update(buildingRuntimeInfo());
 

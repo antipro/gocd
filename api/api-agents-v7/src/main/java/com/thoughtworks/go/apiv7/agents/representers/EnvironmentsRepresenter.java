@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,7 +45,7 @@ public class EnvironmentsRepresenter {
                 .collect(Collectors.toSet())
                 .stream()
                 .sorted()
-                .collect(Collectors.toList());
+                .toList();
 
         for (String envName : sortedEnvNames) {
             EnvironmentConfig envConfig = envConfigs.find(new CaseInsensitiveString(envName));

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,22 +19,20 @@ import com.thoughtworks.go.domain.AgentRuntimeStatus;
 import com.thoughtworks.go.remote.AgentIdentifier;
 import com.thoughtworks.go.server.service.AgentBuildingInfo;
 import com.thoughtworks.go.server.service.AgentRuntimeInfo;
-import com.thoughtworks.go.util.SystemEnvironment;
 import com.thoughtworks.go.util.command.EnvironmentVariableContext;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static com.thoughtworks.go.util.SystemUtil.currentWorkingDirectory;
-import static org.hamcrest.Matchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
 public class AgentStatusReportingTest {
 
     private AgentIdentifier agentIdentifier;
     private EnvironmentVariableContext environmentVariableContext;
     private GoArtifactsManipulatorStub artifactManipulator;
-    private com.thoughtworks.go.remote.work.BuildRepositoryRemoteStub buildRepository;
+    private BuildRepositoryRemoteStub buildRepository;
     private AgentRuntimeInfo agentRuntimeInfo;
 
     @BeforeEach
@@ -44,11 +42,6 @@ public class AgentStatusReportingTest {
         artifactManipulator = new GoArtifactsManipulatorStub();
         buildRepository = new com.thoughtworks.go.remote.work.BuildRepositoryRemoteStub();
         this.agentRuntimeInfo = new AgentRuntimeInfo(agentIdentifier, AgentRuntimeStatus.Idle, currentWorkingDirectory(), "cookie");
-    }
-
-    @AfterEach
-    public void tearDown() {
-        new SystemEnvironment().clearProperty("serviceUrl");
     }
 
     @Test
@@ -76,9 +69,10 @@ public class AgentStatusReportingTest {
         return info;
     }
 
-    private static final String WILL_PASS = "<job name=\"run-ant\">\n"
-            + "  <tasks>\n"
-            + "    <ant target=\"--help\" />\n"
-            + "  </tasks>\n"
-            + "</job>";
+    private static final String WILL_PASS = """
+            <job name="run-ant">
+              <tasks>
+                <ant target="--help" />
+              </tasks>
+            </job>""";
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -107,7 +107,9 @@ export class StageHeaderWidget extends MithrilComponent<StageHeaderAttrs, StageH
     let stageSettings: m.Child;
     if (vnode.attrs.canAdminister) {
       stageSettings = (<div className={styles.stageSettings}>
-        <Icons.Settings iconOnly={true} data-test-url={stageSettingsUrl} onclick={() => window.open(stageSettingsUrl)}/>
+        <Link href={stageSettingsUrl}>
+          <Icons.Settings iconOnly={true} data-test-url={stageSettingsUrl}/>
+        </Link>
       </div>);
     } else {
       const disabledEditMessage = `You dont have permissions to edit the stage.`;
@@ -204,7 +206,7 @@ export class StageHeaderWidget extends MithrilComponent<StageHeaderAttrs, StageH
         </div>
         <div data-test-id="stage-details-page-link" class={styles.stageDetailsPageLink}>
           {dummyContainer}
-          <Link href={stageDetailsPageLink} externalLinkIcon={true} target={"_blank"}>Go to Stage Details Page</Link>
+          <Link href={stageDetailsPageLink}>Go to Stage Details Page</Link>
         </div>
       </div>
     </div>;

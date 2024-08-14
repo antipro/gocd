@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,8 +34,7 @@ class ExecuteUnderRailsTask extends JavaExec {
 
   ExecuteUnderRailsTask() {
     super()
-    dependsOn(project.railsTasksDefaultDependsOn)
-    dependsOn(':server:pathingJar')
+    dependsOn(':server:initializeRailsGems', ':server:cleanDb', ':server:createJRubyBinstubs', ':server:pathingJar')
 
     originalEnv = new LinkedHashMap<String, Object>(environment)
     workingDir = project.railsRoot

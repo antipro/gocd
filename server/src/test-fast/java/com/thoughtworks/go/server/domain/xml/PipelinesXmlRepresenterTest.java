@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package com.thoughtworks.go.server.domain.xml;
 import com.thoughtworks.go.junit5.FileSource;
 import com.thoughtworks.go.presentation.pipelinehistory.PipelineInstanceModel;
 import com.thoughtworks.go.presentation.pipelinehistory.PipelineInstanceModels;
-import com.thoughtworks.go.util.SystemEnvironment;
 import org.dom4j.Document;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -32,7 +31,7 @@ public class PipelinesXmlRepresenterTest {
     @ParameterizedTest
     @FileSource(files = "/feeds/pipelines.xml")
     void shouldConvertPipelineInstanceModelsToDocument(String expectedXML) {
-        XmlWriterContext context = new XmlWriterContext("https://go-server/go", null, null, null, new SystemEnvironment());
+        XmlWriterContext context = new XmlWriterContext("https://go-server/go", null, null);
         PipelineInstanceModel up42Model = pipelineInstanceModel("up42");
         PipelineInstanceModel up43Model = pipelineInstanceModel("up43");
         PipelineInstanceModels models = createPipelineInstanceModels(up42Model, up43Model);
@@ -47,16 +46,17 @@ public class PipelinesXmlRepresenterTest {
 
     @Test
     void shouldGenerateXmlWithRootElementAndSelfLinkWhenPipelineInstanceModelsIsEmpty() {
-        XmlWriterContext context = new XmlWriterContext("https://go-server/go", null, null, null, new SystemEnvironment());
+        XmlWriterContext context = new XmlWriterContext("https://go-server/go", null, null);
         PipelineInstanceModels models = createPipelineInstanceModels();
         PipelinesXmlRepresenter representer = new PipelinesXmlRepresenter(models);
 
         Document document = representer.toXml(context);
 
-        String expectedXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
-            "<pipelines>\n" +
-            "  <link rel=\"self\" href=\"https://go-server/go/api/feed/pipelines.xml\"/>\n" +
-            "</pipelines>";
+        String expectedXML = """
+                <?xml version="1.0" encoding="UTF-8"?>
+                <pipelines>
+                  <link rel="self" href="https://go-server/go/api/feed/pipelines.xml"/>
+                </pipelines>""";
 
         XmlAssert.assertThat(document.asXML()).and(expectedXML)
             .ignoreWhitespace()

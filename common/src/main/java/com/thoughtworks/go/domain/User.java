@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,6 @@ import com.thoughtworks.go.validation.Validator;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 
@@ -237,7 +236,7 @@ public class User extends PersistentObject {
 
     public void validateEmail() throws ValidationException {
         validate(Validator.lengthValidator(255), getEmail());
-        validate(Validator.EMAIL, getEmail());
+        validate(Validator.emailValidator(), getEmail());
     }
 
     public void validateLoginName() throws ValidationException {
@@ -292,7 +291,7 @@ public class User extends PersistentObject {
     }
 
     public void removeNotificationFilter(final long filterId) {
-        List<NotificationFilter> toBeDeleted = notificationFilters.stream().filter(filter1 -> filter1.getId() == filterId).collect(Collectors.toList());
+        List<NotificationFilter> toBeDeleted = notificationFilters.stream().filter(filter1 -> filter1.getId() == filterId).toList();
         notificationFilters.removeAll(toBeDeleted);
     }
 

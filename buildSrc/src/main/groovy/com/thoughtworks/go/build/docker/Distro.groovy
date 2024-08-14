@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,15 +22,17 @@ import org.gradle.api.Project
 
 enum Distro implements DistroBehavior {
 
-  alpine{
+  alpine {
     @Override
     List<DistroVersion> getSupportedVersions() {
       return [ // See https://endoflife.date/alpine
-        new DistroVersion(version: '3.15', releaseName: '3.15', eolDate: parseDate('2023-11-01')),
-        new DistroVersion(version: '3.16', releaseName: '3.16', eolDate: parseDate('2024-05-23')),
-        new DistroVersion(version: '3.17', releaseName: '3.17', eolDate: parseDate('2024-11-22')),
-        new DistroVersion(version: '3.18', releaseName: '3.18', eolDate: parseDate('2025-05-09')),
+        new DistroVersion(version: '3', releaseName: '3', eolDate: parseDate('2099-01-01')),
       ]
+    }
+
+    @Override
+    boolean isContinuousRelease() {
+      return true
     }
 
     @Override
@@ -60,15 +62,11 @@ enum Distro implements DistroBehavior {
       // More detail at https://github.com/adoptium/temurin-build/issues/2688 and https://github.com/adoptium/containers/issues/1
       // Unfortunately, these do not work for GoCD due to the Tanuki Wrapper which does not currently work with musl libc,
       // nor alternate compatibility layers such as libc6-compat or gcompat.
-      //
-      // zlib/libz.so.1 is required by the JRE, and we need a glibc-linked version. Can probably be latest available version.
       return [
-        '# install glibc/zlib for the Tanuki Wrapper, and use by glibc-linked Adoptium JREs',
-        '  apk add --no-cache tzdata --virtual .build-deps curl binutils zstd',
+        '# install glibc for the Tanuki Wrapper, and use by glibc-linked Adoptium JREs',
+        '  apk add --no-cache tzdata --virtual .build-deps curl',
         '  GLIBC_VER="2.34-r0"',
         '  ALPINE_GLIBC_REPO="https://github.com/sgerrand/alpine-pkg-glibc/releases/download"',
-        '  ZLIB_URL="https://archive.archlinux.org/packages/z/zlib/zlib-1%3A1.3-1-x86_64.pkg.tar.zst"',
-        '  ZLIB_SHA256=8a9b1e5e354197828e74860b846a951cd981833d1b07ae182a539b0524b6ef3a',
         '  curl -LfsS https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub -o /etc/apk/keys/sgerrand.rsa.pub',
         '  SGERRAND_RSA_SHA256="823b54589c93b02497f1ba4dc622eaef9c813e6b0f0ebbb2f771e32adf9f4ef2"',
         '  echo "${SGERRAND_RSA_SHA256} */etc/apk/keys/sgerrand.rsa.pub" | sha256sum -c -',
@@ -80,28 +78,61 @@ enum Distro implements DistroBehavior {
         '  apk add --no-cache /tmp/glibc-i18n-${GLIBC_VER}.apk',
         '  /usr/glibc-compat/bin/localedef --force --inputfile POSIX --charmap UTF-8 "$LANG" || true',
         '  echo "export LANG=$LANG" > /etc/profile.d/locale.sh',
-        '  curl -LfsS ${ZLIB_URL} -o /tmp/libz.tar.zst',
-        '  echo "${ZLIB_SHA256} */tmp/libz.tar.zst" | sha256sum -c -',
-        '  mkdir /tmp/libz',
-        '  zstd -d /tmp/libz.tar.zst --output-dir-flat /tmp',
-        '  tar -xf /tmp/libz.tar -C /tmp/libz',
-        '  mv /tmp/libz/usr/lib/libz.so* /usr/glibc-compat/lib',
         '  apk del --purge .build-deps glibc-i18n',
-        '  rm -rf /tmp/*.apk /tmp/libz /tmp/libz.tar* /var/cache/apk/*',
-        '# end installing glibc/zlib',
+        '  rm -rf /tmp/*.apk /var/cache/apk/*',
+        '# end installing glibc',
       ] + super.getInstallJavaCommands(project)
     }
   },
 
-  centos{
+  wolfi {
     @Override
     Set<Architecture> getSupportedArchitectures() {
       [Architecture.x64, Architecture.aarch64]
     }
 
     @Override
-    String getBaseImageRegistry(DistroVersion v) {
-      "quay.io/centos"
+    List<DistroVersion> getSupportedVersions() {
+      return [
+         new DistroVersion(version: 'latest', releaseName: 'latest', eolDate: parseDate('2099-01-01'))
+      ]
+    }
+
+    @Override
+    boolean isContinuousRelease() {
+      return true
+    }
+
+    @Override
+    String getBaseImageLocation(DistroVersion distroVersion) {
+      "cgr.dev/chainguard/wolfi-base"
+    }
+
+    @Override
+    List<String> getBaseImageUpdateCommands(DistroVersion v) {
+      return []
+    }
+
+    @Override
+    List<String> getCreateUserAndGroupCommands() {
+      return [
+        'adduser -D -u ${UID} -s /bin/bash -G root go'
+      ]
+    }
+
+    @Override
+    List<String> getInstallPrerequisitesCommands(DistroVersion v) {
+      return [
+        // procps is needed for tanuki wrapper shell script
+        'apk add --no-cache git openssh-client bash curl procps glibc-locale-en'
+      ]
+    }
+  },
+
+  almalinux {
+    @Override
+    Set<Architecture> getSupportedArchitectures() {
+      [Architecture.x64, Architecture.aarch64]
     }
 
     @Override
@@ -109,34 +140,27 @@ enum Distro implements DistroBehavior {
       return [
         "echo 'fastestmirror=1' >> /etc/dnf/dnf.conf",
         "echo 'install_weak_deps=False' >> /etc/dnf/dnf.conf",
-        "${pkgFor(v)} upgrade -y",
-        "${pkgFor(v)} install -y shadow-utils",
+        "microdnf upgrade -y",
       ]
     }
 
     @Override
     List<String> getInstallPrerequisitesCommands(DistroVersion v) {
       return [
-        "${pkgFor(v)} install -y git-core openssh-clients bash unzip procps-ng coreutils-single glibc-langpack-en ${v.lessThan(9) ? ' curl' : ' curl-minimal'}",
-        "${pkgFor(v)} clean all",
-        "rm -rf /var/cache/yum /var/cache/dnf",
+        "microdnf install -y git-core openssh-clients bash unzip curl-minimal procps-ng coreutils-single glibc-langpack-en tar",
+        "microdnf clean all",
+        "rm -rf var/cache/dnf",
       ]
     }
-
-    private String pkgFor(DistroVersion v) {
-      v.lessThan(9) ? 'dnf' : 'microdnf'
-    }
-
     @Override
     List<DistroVersion> getSupportedVersions() {
-      return [ // See https://endoflife.date/centos
-        new DistroVersion(version: '8', releaseName: 'stream8', eolDate: parseDate('2024-05-31')),
-        new DistroVersion(version: '9', releaseName: 'stream9-minimal', eolDate: parseDate('2027-05-31'), installPrerequisitesCommands: ['microdnf install -y tar tzdata epel-release epel-next-release']),
+      return [ // See https://endoflife.date/almalinux
+        new DistroVersion(version: '9', releaseName: '9-minimal', eolDate: parseDate('2032-05-31')),
       ]
     }
   },
 
-  debian{
+  debian {
     @Override
     Set<Architecture> getSupportedArchitectures() {
       [Architecture.x64, Architecture.aarch64]
@@ -163,14 +187,13 @@ enum Distro implements DistroBehavior {
     @Override
     List<DistroVersion> getSupportedVersions() {
       return [ // See https://endoflife.date/debian
-        new DistroVersion(version: '10', releaseName: 'buster-slim', eolDate: parseDate('2024-06-01')),
         new DistroVersion(version: '11', releaseName: 'bullseye-slim', eolDate: parseDate('2026-06-30')),
         new DistroVersion(version: '12', releaseName: 'bookworm-slim', eolDate: parseDate('2028-06-10')),
       ]
     }
   },
 
-  ubuntu{
+  ubuntu {
     @Override
     Set<Architecture> getSupportedArchitectures() {
       debian.supportedArchitectures
@@ -186,16 +209,23 @@ enum Distro implements DistroBehavior {
       return debian.getInstallPrerequisitesCommands(v)
     }
 
+    List<String> getCreateUserAndGroupCommands() {
+      return [
+        '(userdel --remove --force ubuntu || true)',
+      ] + super.getCreateUserAndGroupCommands()
+    }
+
     @Override
     List<DistroVersion> getSupportedVersions() {
       return [ // See https://endoflife.date/ubuntu "Maintenance & Security Support"
         new DistroVersion(version: '20.04', releaseName: 'focal', eolDate: parseDate('2025-04-02')),
         new DistroVersion(version: '22.04', releaseName: 'jammy', eolDate: parseDate('2027-04-01')),
+        new DistroVersion(version: '24.04', releaseName: 'noble', eolDate: parseDate('2029-04-01')),
       ]
     }
   },
 
-  docker{
+  docker {
     @Override
     OperatingSystem getOperatingSystem() {
       return alpine.getOperatingSystem()
@@ -207,13 +237,23 @@ enum Distro implements DistroBehavior {
     }
 
     @Override
+    List<DistroVersion> getSupportedVersions() {
+      return [
+        new DistroVersion(version: 'dind', releaseName: 'dind', eolDate: parseDate('2099-01-01'))
+      ]
+    }
+
+    @Override
     List<String> getBaseImageUpdateCommands(DistroVersion v) {
       return alpine.getBaseImageUpdateCommands(v)
     }
 
     @Override
     List<String> getCreateUserAndGroupCommands() {
-      return alpine.getCreateUserAndGroupCommands()
+      return alpine.getCreateUserAndGroupCommands() +
+        [
+          'adduser go docker' // Add user to the docker group used to control access to the Docker daemon unix socket
+        ]
     }
 
     @Override
@@ -221,7 +261,6 @@ enum Distro implements DistroBehavior {
       return alpine.getInstallPrerequisitesCommands(v) +
         [
           'apk add --no-cache sudo',
-          'rm -rf /lib/libudev.so*', // btrfs is installed by Docker, but requires eudev-libs, which causes issues with OSHI JNA libary on Alpine with glibc and JVM crashes. Dont think we need udev as it's only needed by btrfs for multipath support.
         ]
     }
 
@@ -236,9 +275,9 @@ enum Distro implements DistroBehavior {
     }
 
     @Override
-    List<DistroVersion> getSupportedVersions() {
+    List<List<String>> getAdditionalVerifyCommands() {
       return [
-        new DistroVersion(version: 'dind', releaseName: 'dind', eolDate: parseDate('2099-01-01'))
+        ['docker', 'run', 'hello-world']
       ]
     }
   }

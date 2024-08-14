@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -80,16 +80,12 @@ public class CaseInsensitiveString implements Comparable<CaseInsensitiveString>,
         return string == null || string.isBlank();
     }
 
-    public static boolean areEqual(CaseInsensitiveString one, CaseInsensitiveString other) {
-        return one == null ? other == null : one.equals(other);
-    }
-
     public String toUpper() {
         return name.toUpperCase();
     }
 
     public static String str(CaseInsensitiveString str) {
-        return str == null ? null : str.name;
+        return str == null ? null : str.toString();
     }
 
     public static List<CaseInsensitiveString> list(List<String> strings) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,8 +25,7 @@ public class CREnvironmentVariableTest extends AbstractCRTest<CREnvironmentVaria
     private CREnvironmentVariable invalidValueNotSet;
     private CREnvironmentVariable invalid2ValuesSet;
 
-    public CREnvironmentVariableTest()
-    {
+    public CREnvironmentVariableTest() {
         key1 = new CREnvironmentVariable("key1");
         key1.setValue("value1");
 
@@ -47,9 +46,9 @@ public class CREnvironmentVariableTest extends AbstractCRTest<CREnvironmentVaria
 
     @Override
     public void addBadExamples(Map<String, CREnvironmentVariable> examples) {
-        examples.put("invalidNameNotSet",invalidNameNotSet);
-        examples.put("invalidValueNotSet",invalidValueNotSet);
-        examples.put("invalid2ValuesSet",invalid2ValuesSet);
+        examples.put("invalidNameNotSet", invalidNameNotSet);
+        examples.put("invalidValueNotSet", invalidValueNotSet);
+        examples.put("invalid2ValuesSet", invalid2ValuesSet);
     }
 
 }

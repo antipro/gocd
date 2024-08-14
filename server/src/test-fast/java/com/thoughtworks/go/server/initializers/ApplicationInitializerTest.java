@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,14 +45,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextException;
 import org.springframework.context.event.ContextRefreshedEvent;
 
-import static org.hamcrest.Matchers.is;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-@SuppressWarnings({"unused", "PMD.UnusedPrivateField"})
 public class ApplicationInitializerTest {
     @Mock
     private ConfigElementImplementationRegistrar configElementImplementationRegistrar;
@@ -148,13 +149,13 @@ public class ApplicationInitializerTest {
     }
 
     @Test
-    public void shouldCallInitializeOfPluginZipInitializerOnlyAfterInitializeOfPluginInitializer() throws Exception {
+    public void shouldCallInitializeOfPluginZipInitializerOnlyAfterInitializeOfPluginInitializer() {
         assertThat(ReflectionUtil.getField(new Toggles(), "service"), is(featureToggleService));
         verifyOrder(pluginsInitializer, pluginsZip);
     }
 
     @Test
-    public void shouldInitializeCcTrayAndDashboardActivityListenersAfterGoConfigServiceAndPipelineSqlMapDaoAreInitialized() throws Exception {
+    public void shouldInitializeCcTrayAndDashboardActivityListenersAfterGoConfigServiceAndPipelineSqlMapDaoAreInitialized() {
         verifyOrder(goConfigService, pipelineSqlMapDao, ccTrayActivityListener, dashboardActivityListener);
     }
     @Test
@@ -163,7 +164,7 @@ public class ApplicationInitializerTest {
     }
 
     @Test
-    public void shouldRunConfigCipherUpdaterBeforeInitializationOfOtherConfigRelatedServicesAndDatastores() throws Exception {
+    public void shouldRunConfigCipherUpdaterBeforeInitializationOfOtherConfigRelatedServicesAndDataStores() throws Exception {
         InOrder inOrder = inOrder(configCipherUpdater, configElementImplementationRegistrar, configRepository, goFileConfigDataSource, cachedGoConfig, goConfigService);
         inOrder.verify(configCipherUpdater).migrate();
         inOrder.verify(configElementImplementationRegistrar).initialize();
@@ -184,5 +185,16 @@ public class ApplicationInitializerTest {
         InOrder inOrder = inOrder(pluginsInitializer, pluginsZip);
         inOrder.verify(pluginsInitializer).initialize();
         inOrder.verify(pluginsZip).create();
+    }
+
+    @Test
+    public void shouldRaiseAppropriateExceptionToCauseCleanShutdownOnInitializationFailure() {
+        Throwable failureCause = new Error("Boom");
+        doThrow(failureCause).when(pluginsInitializer).initialize();
+
+        assertThatThrownBy(() -> initializer.onApplicationEvent(contextRefreshedEvent))
+            .isInstanceOf(ApplicationContextException.class)
+            .hasMessageContaining("Unable to initialize Go Server after initial load")
+            .hasCause(failureCause);
     }
 }

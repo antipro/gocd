@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -68,7 +68,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.StringReader;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.thoughtworks.go.config.validation.GoConfigValidity.*;
 import static com.thoughtworks.go.i18n.LocalizedMessage.forbiddenToEditPipeline;
@@ -936,7 +935,7 @@ public class GoConfigService implements Initializer, CruiseConfigProvider {
         List<PipelineConfig> pipelineConfigs = getAllPipelineConfigs()
                 .stream()
                 .filter((pipelineConfig) -> pipelineConfig.getName().equals(pipelineName))
-                .collect(Collectors.toList());
+                .toList();
         if (!pipelineConfigs.isEmpty()) {
             return pipelineConfigs.get(0);
         }

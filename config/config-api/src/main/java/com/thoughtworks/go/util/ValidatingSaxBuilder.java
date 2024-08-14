@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package com.thoughtworks.go.util;
 
 import org.jdom2.input.SAXBuilder;
+import org.jdom2.input.sax.XMLReaders;
 
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -23,7 +24,7 @@ import java.net.URL;
 class ValidatingSaxBuilder extends SAXBuilder {
     public ValidatingSaxBuilder() {
         this.setFeature("http://apache.org/xml/features/validation/schema", true);
-        this.setValidation(true);
+        this.setXMLReaderFactory(XMLReaders.DTDVALIDATING);
         this.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
     }
 
@@ -31,10 +32,4 @@ class ValidatingSaxBuilder extends SAXBuilder {
         this();
         this.setProperty("http://apache.org/xml/properties/schema/external-noNamespaceSchemaLocation", resource.toURI().toString());
     }
-
-    public ValidatingSaxBuilder(URL resource, String xsds) throws URISyntaxException {
-        this(resource);
-        this.setProperty("http://apache.org/xml/properties/schema/external-schemaLocation", xsds);
-    }
-
 }

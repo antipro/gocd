@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import com.thoughtworks.go.domain.StageIdentifier;
 public class JobIdentifierMother {
 
     public static JobIdentifier anyBuildIdentifier() {
-        return new JobIdentifier("pipelineName", "lastgood", "stageName", "LATEST", "buildName", 1L);
+        return new JobIdentifier("pipelineName", 1, "lastgood", "stageName", "LATEST", "buildName", 1L);
     }
 
     public static JobIdentifier jobIdentifier(String pipelineName, Integer pipelineCounter, String stageName, String stageCounter, String jobName) {
@@ -29,6 +29,6 @@ public class JobIdentifierMother {
     }
 
     public static JobIdentifier jobIdentifier(String pipelineName) {
-        return new JobIdentifier(pipelineName, "lastgood", "stageName", "LATEST", "buildName", 1L);
+        return new JobIdentifier(pipelineName, 1, "lastgood", "stageName", "LATEST", "buildName", 1L);
     }
 }

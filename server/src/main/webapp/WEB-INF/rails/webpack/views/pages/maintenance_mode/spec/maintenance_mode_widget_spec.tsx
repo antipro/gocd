@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ describe("Maintenance Mode Widget", () => {
 
   it("should add a link to the maintenance mode documentation", () => {
     const expectedLink = docsUrl("/advanced_usage/maintenance_mode.html");
-    const expectedText = "Learn more..";
+    const expectedText = "Learn More";
 
     expect((helper.q("a") as HTMLAnchorElement).href).toBe(expectedLink);
     expect(helper.q("a").innerText).toBe(expectedText);

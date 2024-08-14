@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ export class AuthConfigsWidget extends MithrilViewComponent<Attrs> {
       </li>
       <li>GoCD can be setup to use multiple authorization configurations at the same time.</li>
       <li>An auth configuration can be used to setup user authorization. You can read more about authorization in
-        GoCD from <Link target="_blank" href={docsUrl("configuration/dev_authentication.html")}>here</Link>.
+        GoCD from <Link href={docsUrl("configuration/dev_authentication.html")} target="_blank" externalLinkIcon={true}>here</Link>.
       </li>
     </ul>;
   }

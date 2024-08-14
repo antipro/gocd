@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,7 +49,7 @@ public class CcTrayBreakersCalculatorTest {
 
         MaterialRevision revision = new MaterialRevision(MaterialsMother.gitMaterial("foo.com"), user1Commit, user2Commit, otherCommitOfUser1);
         revision.markAsChanged();
-        when(materialRepo.findMaterialRevisionsForPipeline(12l)).thenReturn(new MaterialRevisions(revision));
+        when(materialRepo.findMaterialRevisionsForPipeline(12L)).thenReturn(new MaterialRevisions(revision));
 
 
         CcTrayBreakersCalculator status = new CcTrayBreakersCalculator(materialRepo);
@@ -70,7 +70,7 @@ public class CcTrayBreakersCalculatorTest {
         MaterialRevision unchangedRevision = new MaterialRevision(MaterialsMother.gitMaterial("bar.com"), user3CommitForUnchangedRevision);
 
         MaterialRevisions revisions = new MaterialRevisions(changedRevision, unchangedRevision);
-        when(materialRepo.findMaterialRevisionsForPipeline(12l)).thenReturn(revisions);
+        when(materialRepo.findMaterialRevisionsForPipeline(12L)).thenReturn(revisions);
 
 
         CcTrayBreakersCalculator status = new CcTrayBreakersCalculator(materialRepo);
@@ -90,7 +90,7 @@ public class CcTrayBreakersCalculatorTest {
         MaterialRevision secondUnchangedRevision = new MaterialRevision(MaterialsMother.gitMaterial("bar.com"), user3Commit);
 
         MaterialRevisions revisions = new MaterialRevisions(firstUnchangedRevision, secondUnchangedRevision);
-        when(materialRepo.findMaterialRevisionsForPipeline(12l)).thenReturn(revisions);
+        when(materialRepo.findMaterialRevisionsForPipeline(12L)).thenReturn(revisions);
 
 
         CcTrayBreakersCalculator status = new CcTrayBreakersCalculator(materialRepo);
@@ -111,7 +111,7 @@ public class CcTrayBreakersCalculatorTest {
         depMaterialRevision.markAsChanged();
 
         MaterialRevisions revisions = new MaterialRevisions(changedRevision, depMaterialRevision);
-        when(materialRepo.findMaterialRevisionsForPipeline(12l)).thenReturn(revisions);
+        when(materialRepo.findMaterialRevisionsForPipeline(12L)).thenReturn(revisions);
 
 
         CcTrayBreakersCalculator status = new CcTrayBreakersCalculator(materialRepo);
@@ -136,7 +136,7 @@ public class CcTrayBreakersCalculatorTest {
 
     private Stage failedStage() {
         Stage stage = StageMother.completedFailedStageInstance("pipeline1", "stage1", "job1");
-        stage.setPipelineId(12l);
+        stage.setPipelineId(12L);
         return stage;
     }
 }

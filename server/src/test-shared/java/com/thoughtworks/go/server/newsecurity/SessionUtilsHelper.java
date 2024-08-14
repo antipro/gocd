@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,8 +25,9 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 import java.util.UUID;
 
+@SuppressWarnings("UnusedReturnValue")
 public class SessionUtilsHelper {
-    private static GoUserPrincipal ANONYMOUS_WITH_SECURITY_ENABLED = new GoUserPrincipal("anonymous", "anonymous", GoAuthority.ROLE_ANONYMOUS.asAuthority());
+    private static final GoUserPrincipal ANONYMOUS_WITH_SECURITY_ENABLED = new GoUserPrincipal("anonymous", "anonymous", GoAuthority.ROLE_ANONYMOUS.asAuthority());
 
     public static void setCurrentUser(HttpServletRequest request, String username,
                                       GrantedAuthority... grantedAuthorities) {
@@ -107,7 +108,7 @@ public class SessionUtilsHelper {
     }
 
     public static GoUserPrincipal loginAsRandomUser(GrantedAuthority... grantedAuthorities) {
-        final String username = "bob-" + UUID.randomUUID().toString();
+        final String username = "bob-" + UUID.randomUUID();
         return loginAs(username, grantedAuthorities);
     }
 

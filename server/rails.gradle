@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import org.gradle.internal.jvm.Jvm
 
 task pathingJar(type: Jar) {
   archiveClassifier = 'pathing'
-  dependsOn(project.railsTasksDefaultDependsOn)
+  dependsOn(project.railsClasspath, project.configurations.compileClasspath)
 
   doFirst {
     manifest {
@@ -84,7 +84,7 @@ task createJRubyBinstubs {
     project.delete(outputDir)
     project.mkdir(outputDir)
 
-    ['jgem', 'rspec', 'ruby', 'gem'].each { file ->
+    ['rspec'].each { file ->
       copy {
         from "script-templates/${file}"
         into outputDir
@@ -211,9 +211,8 @@ task compileAssetsRailsTest(type: ExecuteUnderRailsTask) {
   def publicAssetsDir = file("${project.railsRoot}/public/assets")
 
   inputs.dir(file("${project.railsRoot}/config"))
-  inputs.dir(file("${project.railsRoot}/app/assets/config"))
-  inputs.dir(file("${project.railsRoot}/app/assets/javascripts"))
-  inputs.dir(file("${project.railsRoot}/vendor/assets/javascripts"))
+  inputs.dir(file("${project.railsRoot}/app/assets"))
+  inputs.dir(file("${project.railsRoot}/vendor/assets"))
 
   outputs.dir(publicAssetsDir)
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,13 +26,13 @@ import java.util.Collection;
 import java.util.Map;
 
 public class AgentsRepresenter {
-    public static void toJSON(OutputWriter writer, Map<AgentInstance, Collection<EnvironmentConfig>> agentInstanceCollectionMap, SecurityService securityService, Username username) {
+    public static void toJSON(OutputWriter writer, Map<AgentInstance, Collection<EnvironmentConfig>> agentToEnvironments, SecurityService securityService, Username username) {
         writer.addLinks(
                 outputLinkWriter -> outputLinkWriter
                         .addLink("self", Routes.AgentsAPI.BASE)
                         .addAbsoluteLink("doc", Routes.AgentsAPI.DOC))
                 .addChild("_embedded", embeddedWriter -> embeddedWriter.addChildList("agents",
-                        agentsWriter -> agentInstanceCollectionMap.forEach((key, value) -> agentsWriter.addChild(agentWriter -> AgentRepresenter.toJSON(agentWriter, key, value, securityService, username))))
+                        agentsWriter -> agentToEnvironments.forEach((agent, env) -> agentsWriter.addChild(agentWriter -> AgentRepresenter.toJSON(agentWriter, agent, env, securityService, username))))
                 );
     }
 }

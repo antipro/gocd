@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,9 @@
 package com.thoughtworks.go.api.representers
 
 import com.fasterxml.jackson.core.JsonParseException
+import com.fasterxml.jackson.core.StreamReadFeature
 import com.fasterxml.jackson.databind.JsonMappingException
-import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.json.JsonMapper
 import com.thoughtworks.go.api.base.JsonOutputWriter
 import com.thoughtworks.go.spark.mocks.TestRequestContext
 import org.junit.jupiter.api.Test
@@ -26,7 +27,7 @@ import java.time.ZoneOffset
 import java.time.ZonedDateTime
 
 import static org.assertj.core.api.Assertions.assertThat
-import static org.assertj.core.api.Assertions.fail
+import static org.assertj.core.api.Assertions.assertThatThrownBy
 
 class JsonOutputWriterTest {
   @Test
@@ -275,22 +276,16 @@ class JsonOutputWriterTest {
   def assertInvalidJSONOutput(Closure closure) {
     def result = new StringWriter()
 
-    try {
-      closure.call(result)
-      fail("This should have failed!")
-    } catch (RuntimeException ignored) {
+    assertThatThrownBy { closure.call(result) }
+      .isInstanceOf(RuntimeException.class)
+      .hasMessageContaining("THROWS!")
 
-      try {
-        OBJECT_MAPPER.readValue(result.toString(), Object.class)
-        fail("This should have been an invalid JSON: " + result.toString())
-      } catch (JsonParseException | JsonMappingException e) {
-        assertThat(e.getMessage()).contains("Failed due to an exception.")
-      }
-
-    }
+    assertThatThrownBy { OBJECT_MAPPER.readValue(result.toString(), Object.class) }
+      .isInstanceOfAny(JsonParseException.class, JsonMappingException.class)
+      .hasMessageContaining("Failed due to an exception.")
   }
 
-  def OBJECT_MAPPER = new ObjectMapper()
+  def OBJECT_MAPPER = JsonMapper.builder().enable(StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION).build()
 
   Object fromJSON(String jsonString) {
     OBJECT_MAPPER.readValue(jsonString, Map.class)

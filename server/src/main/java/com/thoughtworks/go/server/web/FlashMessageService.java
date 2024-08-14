@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import java.util.UUID;
  */
 @Service
 public class FlashMessageService {
-    private static ThreadLocal<Flash> requestFlash = new ThreadLocal<>();
+    private static final ThreadLocal<Flash> requestFlash = new ThreadLocal<>();
 
     public String add(FlashMessageModel message) {
         String key = UUID.randomUUID().toString();

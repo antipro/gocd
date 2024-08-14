@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ export class NotificationsWidget extends MithrilViewComponent<Attrs> {
         <ul>
           <li>Click on "Add Notification Filter" to add a new email notification filter.</li>
           <li>Notifications will only work if security is enabled and mailhost information is correct. You can read more
-            from <Link target="_blank" href={docsUrl("configuration/dev_notifications.html")}>here</Link>.
+            from <Link href={docsUrl("configuration/dev_notifications.html")} target="_blank" externalLinkIcon={true}>here</Link>.
           </li>
         </ul>
       </div>;

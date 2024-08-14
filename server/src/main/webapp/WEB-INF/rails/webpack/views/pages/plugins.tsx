@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ export class PluginsPage extends Page {
   helpText(): m.Children {
     return <div>
       Plugins allow users to extend the functionality of GoCD. You can read more about them from
-      <Link href={docsUrl("extension_points/plugin_user_guide.html")} externalLinkIcon={true}> here.</Link>
+      <Link href={docsUrl("extension_points/plugin_user_guide.html")} target="_blank" externalLinkIcon={true}>here.</Link>
     </div>;
   }
 

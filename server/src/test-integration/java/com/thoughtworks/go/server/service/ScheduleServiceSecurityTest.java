@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -96,7 +96,7 @@ public class ScheduleServiceSecurityTest {
         configHelper.setOperatePermissionForGroup("defaultGroup", "jez");
         Username jez = new Username(new CaseInsensitiveString("jez"));
         HttpLocalizedOperationResult operationResult = new HttpLocalizedOperationResult();
-        Stage resultStage = scheduleService.cancelAndTriggerRelevantStages(-23l, jez, operationResult);
+        Stage resultStage = scheduleService.cancelAndTriggerRelevantStages(-23L, jez, operationResult);
 
         assertThat(resultStage, is(nullValue()));
         assertThat(operationResult.isSuccessful(), is(false));

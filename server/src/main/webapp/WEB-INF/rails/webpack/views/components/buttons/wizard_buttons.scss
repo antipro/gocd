@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,12 @@
 .btn-secondary {
   @include button($background-color: $white);
 
-  color: $btn-primary;
-  border: 1px solid $btn-primary;
+  // stylelint-disable no-duplicate-selectors
+  & {
+    color: $btn-primary;
+    border: 1px solid $btn-primary;
+  }
+  // stylelint-enable
 
   &:hover {
     color: $white;

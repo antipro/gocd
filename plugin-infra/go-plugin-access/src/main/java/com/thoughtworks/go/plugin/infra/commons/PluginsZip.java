@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -64,10 +64,7 @@ public class PluginsZip implements PluginChangeListener {
         externalPlugins = new File(systemEnvironment.get(SystemEnvironment.PLUGIN_EXTERNAL_PROVIDED_PATH));
         this.pluginManager = pluginManager;
         this.pluginManager.addPluginChangeListener(this);
-        predicate = goPluginDescriptor -> PluginsZip.this.pluginManager.isPluginOfType("task", goPluginDescriptor.id()) ||
-                PluginsZip.this.pluginManager.isPluginOfType("scm", goPluginDescriptor.id()) ||
-                PluginsZip.this.pluginManager.isPluginOfType("package-repository", goPluginDescriptor.id()) ||
-                PluginsZip.this.pluginManager.isPluginOfType("artifact", goPluginDescriptor.id());
+        predicate = goPluginDescriptor -> Stream.of("task", "scm", "package-repository", "artifact").anyMatch(s -> PluginsZip.this.pluginManager.isPluginOfType(s, goPluginDescriptor.id()));
     }
 
     public void create() {
@@ -110,7 +107,7 @@ public class PluginsZip implements PluginChangeListener {
                     sorted(PLUGIN_COMPARATOR).
                     map(GoPluginDescriptor::bundleDescriptor).
                     distinct().
-                    collect(Collectors.toList());
+                toList();
             this.agentPlugins.addAll(agentPlugins);
         }
 

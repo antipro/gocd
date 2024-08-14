@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,6 +34,7 @@ import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 
+@SuppressWarnings("TestOnlyProblems") // Workaround for IntelliJ thinking this place is production rather than test code
 public class ClearSingleton implements BeforeEachCallback, AfterEachCallback {
 
     @Override
@@ -57,10 +58,8 @@ public class ClearSingleton implements BeforeEachCallback, AfterEachCallback {
         PackageMaterialMetadataStore.instance().clear();
         PluggableTaskMetadataStore.instance().clear();
 
-        //
         SessionUtils.unsetCurrentUser();
 
-        //
         PackageMetadataStore.getInstance().clear();
         PluggableTaskConfigStore.store().clear();
         PluginSettingsMetadataStore.getInstance().clear();

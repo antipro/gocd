@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,7 +51,7 @@ class ProcessWrapperTest {
 
     @Test
     void shouldTypeInputToConsole() {
-        OutputStream processInputStream = new ByteArrayOutputStream();// mock(OutputStream.class);
+        OutputStream processInputStream = new ByteArrayOutputStream();
         Process process = getMockedProcess(processInputStream);
         ProcessWrapper processWrapper = new ProcessWrapper(process, null, "", inMemoryConsumer(), UTF_8, null);
         ArrayList<String> inputs = new ArrayList<>();
@@ -68,7 +68,7 @@ class ProcessWrapperTest {
     @Test
     void shouldThrowExceptionWhenExecutableDoesNotExist() {
         CommandLine line = CommandLine.createCommandLine("doesnotexist").withEncoding(UTF_8);
-        ProcessOutputStreamConsumer outputStreamConsumer = inMemoryConsumer();
+        InMemoryStreamConsumer outputStreamConsumer = inMemoryConsumer();
         final CommandLineException exception = assertThrows(CommandLineException.class, () -> line.execute(outputStreamConsumer, new EnvironmentVariableContext(), null));
         assertThat(exception)
                 .isInstanceOf(CommandLineException.class)

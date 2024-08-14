@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -110,7 +110,7 @@ export class UnavailablePipelinesBecauseOfOtherEnvironmentWidget extends Mithril
             const environmentWithOrigin = vnode.attrs.pipelinesVM.environments.findEnvironmentForPipeline(pipeline.name());
             const environmentLink       = <span data-test-id={`pipeline-list-item-for-${pipeline.name()}`} class={styles.configRepoLink}>
               (ENVIRONMENT:
-              <Link target="_blank" href={SparkRoutes.getEnvironmentPathOnSPA(environmentWithOrigin!.name())}>
+              <Link href={SparkRoutes.getEnvironmentPathOnSPA(environmentWithOrigin!.name())}>
                 {environmentWithOrigin!.name()}
               </Link>
               )

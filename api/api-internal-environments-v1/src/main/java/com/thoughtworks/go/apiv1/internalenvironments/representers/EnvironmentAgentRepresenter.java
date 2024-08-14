@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,18 +18,17 @@ package com.thoughtworks.go.apiv1.internalenvironments.representers;
 import com.thoughtworks.go.api.base.OutputWriter;
 import com.thoughtworks.go.config.EnvironmentAgentConfig;
 import com.thoughtworks.go.config.EnvironmentConfig;
-import com.thoughtworks.go.config.merge.MergeEnvironmentConfig;
 import com.thoughtworks.go.config.remote.ConfigOrigin;
 import com.thoughtworks.go.config.remote.FileConfigOrigin;
 
 class EnvironmentAgentRepresenter {
-    private static FileConfigOrigin FILE_CONFIG_ORIGIN = new FileConfigOrigin();
+    private static final FileConfigOrigin FILE_CONFIG_ORIGIN = new FileConfigOrigin();
 
     static void toJSON(OutputWriter writer, EnvironmentAgentConfig agent, EnvironmentConfig environmentConfig) {
         writer.add("uuid", agent.getUuid());
         ConfigOrigin origin = environmentConfig.isLocal()
                 ? FILE_CONFIG_ORIGIN
-                : ((MergeEnvironmentConfig) environmentConfig).getOriginForAgent(agent.getUuid());
+                : environmentConfig.originForAgent(agent.getUuid()).orElse(null);
         writer.addChild("origin", originWriter -> EntityConfigOriginRepresenter.toJSON(originWriter, origin));
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,14 +54,12 @@ public class ParseDirectoryResponseMessage {
 
     public void validateResponse(ErrorCollection errors) {
         String location = "Plugin response message";
-        errors.checkMissing(location,"target_version", targetVersion);
-        for(CRPipeline pipeline : pipelines)
-        {
-            pipeline.getErrors(errors,location);
+        errors.checkMissing(location, "target_version", targetVersion);
+        for (CRPipeline pipeline : pipelines) {
+            pipeline.getErrors(errors, location);
         }
-        for(CREnvironment environment : environments)
-        {
-            environment.getErrors(errors,location);
+        for (CREnvironment environment : environments) {
+            environment.getErrors(errors, location);
         }
     }
 

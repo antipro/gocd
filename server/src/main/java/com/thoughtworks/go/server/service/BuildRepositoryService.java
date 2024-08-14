@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,9 +54,9 @@ public class BuildRepositoryService {
     private void checkAgentUUID(JobIdentifier jobIdentifier, String agentUuid, String state) {
         JobInstance job = jobInstanceService.buildByIdWithTransitions(jobIdentifier.getBuildId());
         if (!StringUtils.equals(job.getAgentUuid(), agentUuid)) {
-            LOGGER.error("Build Instance [{}] is using agent [{}] but is being updated to [{}] from agent [{}]", jobIdentifier.toString(), job.getAgentUuid(), state, agentUuid);
+            LOGGER.error("Build Instance [{}] is using agent [{}] but is being updated to [{}] from agent [{}]", jobIdentifier, job.getAgentUuid(), state, agentUuid);
             throw new InvalidAgentException("AgentUUID has changed in the middle of a job. AgentUUID:"
-                    + agentUuid + ", Build: " + job.toString());
+                    + agentUuid + ", Build: " + job);
         }
     }
 

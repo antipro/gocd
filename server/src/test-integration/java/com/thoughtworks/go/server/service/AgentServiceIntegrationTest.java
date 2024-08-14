@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,6 @@ import com.thoughtworks.go.domain.AgentRuntimeStatus;
 import com.thoughtworks.go.domain.AgentStatus;
 import com.thoughtworks.go.domain.ConfigErrors;
 import com.thoughtworks.go.domain.exception.UnregisteredAgentException;
-import com.thoughtworks.go.helper.AgentInstanceMother;
 import com.thoughtworks.go.helper.AgentMother;
 import com.thoughtworks.go.helper.PartialConfigMother;
 import com.thoughtworks.go.listener.AgentStatusChangeListener;
@@ -38,8 +37,6 @@ import com.thoughtworks.go.server.domain.AgentInstances;
 import com.thoughtworks.go.server.messaging.SendEmailMessage;
 import com.thoughtworks.go.server.messaging.notifications.AgentStatusChangeNotifier;
 import com.thoughtworks.go.server.persistence.AgentDao;
-import com.thoughtworks.go.server.ui.AgentViewModel;
-import com.thoughtworks.go.server.ui.AgentsViewModel;
 import com.thoughtworks.go.server.util.UuidGenerator;
 import com.thoughtworks.go.serverhealth.ServerHealthService;
 import com.thoughtworks.go.util.GoConfigFileHelper;
@@ -69,7 +66,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.stream.Stream;
 
-import static com.thoughtworks.go.domain.AgentConfigStatus.Pending;
 import static com.thoughtworks.go.helper.AgentInstanceMother.*;
 import static com.thoughtworks.go.server.service.AgentRuntimeInfo.fromServer;
 import static com.thoughtworks.go.util.SystemUtil.currentWorkingDirectory;
@@ -192,20 +188,6 @@ public class AgentServiceIntegrationTest {
         }
 
         @Test
-        void shouldFindAgentViewModelForAnExistingAgent() {
-            Agent agent = createEnabledAgent(UUID);
-            String env = "prod";
-            agent.setEnvironments(env);
-            agentDao.saveOrUpdate(agent);
-
-            AgentViewModel actual = agentService.findAgentViewModel(UUID);
-            assertThat(actual.getUuid(), is(UUID));
-            HashSet<String> envSet = new HashSet<>();
-            envSet.add(env);
-            assertThat(actual.getEnvironments(), is(envSet));
-        }
-
-        @Test
         void shouldBeAbleToDeleteDisabledAgentInIdleState() {
             createAnIdleAgentAndDisableIt(UUID);
             createEnabledAgent(UUID2);
@@ -223,30 +205,6 @@ public class AgentServiceIntegrationTest {
             RecordNotFoundException e = assertThrows(RecordNotFoundException.class, () -> agentService.deleteAgents(List.of(unknownUUID)));
             assertThat(e.getMessage(), is("Agent with uuid 'unknown-agent-id' was not found!"));
         }
-    }
-
-    @Test
-    void getRegisteredAgentsViewModelShouldNotReturnNotRegisteredAgentsViewModel() {
-        AgentInstance idle = AgentInstanceMother.updateUuid(idle(new Date(), "CCeDev01"), UUID);
-        AgentInstance pending = pending();
-        AgentInstance building = building();
-        AgentInstance denied = disabled();
-
-        AgentInstances instances = new AgentInstances(new SystemEnvironment(), agentStatusChangeListener(), idle, pending, building, denied);
-        AgentService agentService = newAgentService(instances);
-
-        AgentsViewModel agentViewModels = agentService.getRegisteredAgentsViewModel();
-        assertThat(agentViewModels.size(), is(3));
-        agentViewModels.forEach(agentViewModel -> assertThat(agentViewModel.getStatus().getConfigStatus(), not(is(Pending))));
-    }
-
-    @Test
-    void getRegisteredAgentsViewModelShouldReturnEmptyRegisteredAgentsViewModelWhenThereAreNoRegisteredAgents() {
-        AgentInstances agentInstances = new AgentInstances(new SystemEnvironment(), agentStatusChangeListener());
-        AgentService agentService = newAgentService(agentInstances);
-
-        AgentsViewModel agentViewModels = agentService.getRegisteredAgentsViewModel();
-        assertThat(agentViewModels.size(), is(0));
     }
 
     @Test
@@ -698,7 +656,7 @@ public class AgentServiceIntegrationTest {
 
             AgentService agentService = new AgentService(new SystemEnvironment(), agentDao, new UuidGenerator(),
                     serverHealthService, agentStatusChangeNotifier());
-            AgentInstances agentInstances = (AgentInstances) ReflectionUtil.getField(agentService, "agentInstances");
+            AgentInstances agentInstances = ReflectionUtil.getField(agentService, "agentInstances");
             agentInstances.add(instance);
 
             AgentInstances agents = agentService.findRegisteredAgents();
@@ -718,7 +676,7 @@ public class AgentServiceIntegrationTest {
 
             EmailSender mailSender = mock(EmailSender.class);
             AgentService agentService = new AgentService(new SystemEnvironment(), agentDao, new UuidGenerator(), serverHealthService, agentStatusChangeNotifier());
-            AgentInstances agentInstances = (AgentInstances) ReflectionUtil.getField(agentService, "agentInstances");
+            AgentInstances agentInstances = ReflectionUtil.getField(agentService, "agentInstances");
             agentInstances.add(idleAgentInstance);
 
             AgentInstances agents = agentService.findRegisteredAgents();
@@ -726,19 +684,20 @@ public class AgentServiceIntegrationTest {
 
             AgentInstance agentInstance = agents.findAgentAndRefreshStatus(idleAgentInstance.getAgent().getUuid());
             assertThat(agentInstance.getStatus(), is(AgentStatus.LostContact));
-            String body = format("The email has been sent out automatically by the Go server at (%s) to Go administrators.\n"
-                    + "\n"
-                    + "The Go server has lost contact with agent:\n"
-                    + "\n"
-                    + "Agent name: CCeDev01\n"
-                    + "Free Space: 10.0 KB\n"
-                    + "Sandbox: /var/lib/foo\n"
-                    + "IP Address: 10.18.5.1\n"
-                    + "OS: Minix\n"
-                    + "Resources: \n"
-                    + "Environments: \n"
-                    + "\n"
-                    + "Lost contact at: %s", SystemUtil.getFirstLocalNonLoopbackIpAddress(), date);
+            String body = format("""
+                    The email has been sent out automatically by the Go server at (%s) to Go administrators.
+
+                    The Go server has lost contact with agent:
+
+                    Agent name: CCeDev01
+                    Free Space: 10.0 KB
+                    Sandbox: /var/lib/foo
+                    IP Address: 10.18.5.1
+                    OS: Minix
+                    Resources:\s
+                    Environments:\s
+
+                    Lost contact at: %s""", SystemUtil.getFirstLocalNonLoopbackIpAddress(), date);
             verify(mailSender, never()).sendEmail(new SendEmailMessage("[Lost Contact] Go agent host: " + idleAgentInstance.getHostname(), body, "admin@foo.mail.com"));
         }
     }
@@ -1256,7 +1215,7 @@ public class AgentServiceIntegrationTest {
     }
 
     private void updateAgentHostnames(Agent... agents) {
-        List<String> uuids = Stream.of(agents).map(Agent::getUuid).collect(toList());
+        List<String> uuids = Stream.of(agents).map(Agent::getUuid).toList();
         uuids.forEach(uuid -> agentService.updateAgentAttributes(uuid, randomName("hostname"), null, null, TRUE));
     }
 
@@ -1268,30 +1227,35 @@ public class AgentServiceIntegrationTest {
     void whenMultipleThreadsUpdateAgentDetailsInDBTheAgentsCacheShouldAlwaysBeInSyncWithAgentsInDB() {
         final int numOfThreads = 30;
 
+        @SuppressWarnings("resource")
         ExecutorService execService = Executors.newFixedThreadPool(numOfThreads);
-        Collection<Future<?>> futures = new ArrayList<>(numOfThreads);
+        try {
+            Collection<Future<?>> futures = new ArrayList<>(numOfThreads);
 
-        final Agent agent1 = AgentMother.localAgent();
-        final Agent agent2 = AgentMother.localAgent();
-        final Agent agent3 = AgentMother.localAgent();
+            final Agent agent1 = AgentMother.localAgent();
+            final Agent agent2 = AgentMother.localAgent();
+            final Agent agent3 = AgentMother.localAgent();
 
-        agentDao.saveOrUpdate(agent1);
-        agentDao.saveOrUpdate(agent2);
-        agentDao.saveOrUpdate(agent3);
+            agentDao.saveOrUpdate(agent1);
+            agentDao.saveOrUpdate(agent2);
+            agentDao.saveOrUpdate(agent3);
 
-        for (int i = 0; i < (numOfThreads / 2); i++) {
-            futures.add(execService.submit(() -> bulkUpdateEnvironments(agent1)));
-            futures.add(execService.submit(() -> bulkUpdateResources(agent1, agent2, agent3)));
-            futures.add(execService.submit(() -> updateAgentHostnames(agent1)));
-            futures.add(execService.submit(() -> agentService.getAgentByUUID(agent1.getUuid())));
-            futures.add(execService.submit(() -> agentService.register(AgentMother.localAgent())));
+            for (int i = 0; i < (numOfThreads / 2); i++) {
+                futures.add(execService.submit(() -> bulkUpdateEnvironments(agent1)));
+                futures.add(execService.submit(() -> bulkUpdateResources(agent1, agent2, agent3)));
+                futures.add(execService.submit(() -> updateAgentHostnames(agent1)));
+                futures.add(execService.submit(() -> agentService.getAgentByUUID(agent1.getUuid())));
+                futures.add(execService.submit(() -> agentService.register(AgentMother.localAgent())));
+            }
+
+            joinFutures(futures, numOfThreads);
+
+            assertThat(agentDao.fetchAgentFromDBByUUID(agent1.getUuid()), is(agentService.findAgent(agent1.getUuid()).getAgent()));
+            assertThat(agentDao.fetchAgentFromDBByUUID(agent2.getUuid()), is(agentService.findAgent(agent2.getUuid()).getAgent()));
+            assertThat(agentDao.fetchAgentFromDBByUUID(agent3.getUuid()), is(agentService.findAgent(agent3.getUuid()).getAgent()));
+        } finally {
+            execService.shutdownNow();
         }
-
-        joinFutures(futures, numOfThreads);
-
-        assertThat(agentDao.fetchAgentFromDBByUUID(agent1.getUuid()), is(agentService.findAgent(agent1.getUuid()).getAgent()));
-        assertThat(agentDao.fetchAgentFromDBByUUID(agent2.getUuid()), is(agentService.findAgent(agent2.getUuid()).getAgent()));
-        assertThat(agentDao.fetchAgentFromDBByUUID(agent3.getUuid()), is(agentService.findAgent(agent3.getUuid()).getAgent()));
     }
 
     private void joinFutures(Collection<Future<?>> futures, int numOfThreads) {
@@ -1309,8 +1273,7 @@ public class AgentServiceIntegrationTest {
     }
 
     private AgentStatusChangeListener agentStatusChangeListener() {
-        return agentInstance -> {
-        };
+        return agentInstance -> {};
     }
 
     private void createEnvironment(String... environmentNames) {

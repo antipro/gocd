@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import com.github.jk1.license.render.JsonReportRenderer
 import com.github.jk1.license.task.ReportTask
 import com.thoughtworks.go.build.AdoptiumVersion
 import com.thoughtworks.go.build.InstallerType
+import de.undercouch.gradle.tasks.download.Download
 import nl.javadude.gradle.plugins.license.License
 import org.apache.tools.ant.filters.FixCrLfFilter
 import org.gradle.plugins.ide.idea.model.IdeaLanguageLevel
@@ -29,9 +30,9 @@ import java.util.stream.Collectors
 
 plugins {
   id 'base'
-  id 'org.owasp.dependencycheck' version '8.4.0'
+  id 'org.owasp.dependencycheck' version '10.0.3'
   id 'com.github.hierynomus.license-base' version '0.16.1'
-  id 'com.github.jk1.dependency-license-report' version '2.5'
+  id 'com.github.jk1.dependency-license-report' version '2.8'
 }
 
 apply from: 'dependencies.gradle'
@@ -42,13 +43,13 @@ if (file('build-ext.gradle').exists()) {
 
 def script = this
 
-def gitRevision = { ->
+def determineGitRevision = { ->
   def process = "git rev-list HEAD --max-count=1".execute(null, project.file(script.buildscript.sourceFile.canonicalFile.parent))
   process.waitFor()
   return process.text.stripIndent().trim()
 }
 
-def releaseRevision = { ->
+def determineReleaseRevision = { ->
   def process = "git rev-list HEAD --count".execute(null, project.file(script.buildscript.sourceFile.canonicalFile.parent))
   process.waitFor()
   return process.text.stripIndent().trim()
@@ -91,13 +92,13 @@ List<String> partitionFiles(Collection originalFiles) {
   return (currentPartition ?: []) as List<String>
 }
 
-def GO_VERSION_PREVIOUS = '23.3.0'
-def GO_VERSION_SEGMENTS = [year: 23, releaseInYear: 4, patch: 0]
-def GO_VERSION_NEXT = '23.5.0'
+def GO_VERSION_PREVIOUS = '24.3.0'
+def GO_VERSION_SEGMENTS = [year: 24, releaseInYear: 4, patch: 0]
+def GO_VERSION_NEXT = '24.5.0'
 
 def GO_VERSION = [GO_VERSION_SEGMENTS.year, GO_VERSION_SEGMENTS.releaseInYear, GO_VERSION_SEGMENTS.patch].join('.')
-def DIST_VERSION = releaseRevision()
-def GIT_REVISION = gitRevision()
+def DIST_VERSION = determineReleaseRevision()
+def GIT_REVISION = determineGitRevision()
 
 if (System.getenv().containsKey("GO_SERVER_URL")) {
   def separator = "=".multiply(72)
@@ -109,77 +110,42 @@ if (System.getenv().containsKey("GO_SERVER_URL")) {
   println separator
   println("")
 
-  def isWindows = org.gradle.internal.os.OperatingSystem.current().isWindows()
-
   println("Tool Versions")
   println(separator)
   println("node: ${getVersion("node", "--version")}")
-  println(" npm: ${getVersion((isWindows ? "npm.cmd" : 'npm'), "--version")}")
   println(" git: ${getVersion("git", "--version")}")
   println("  hg: ${getVersion("hg", "--quiet", "--version")}")
   println(" svn: ${getVersion("svn", "--quiet", "--version")}")
   println("  p4: ${getVersion("p4", "-V").readLines().grep(~/Rev.*/).join("")}")
   println(" p4d: ${getVersion("p4d", "-V").readLines().grep(~/Rev.*/).join("")}")
-  println(" gcc: ${getVersion("gcc", "-dumpversion")}")
-  println(" g++: ${getVersion("g++", "-dumpversion")}")
   println(separator)
   println("")
 }
 
-rootProject.ext.previousVersion = GO_VERSION_PREVIOUS
-rootProject.ext.nextVersion = GO_VERSION_NEXT
-rootProject.ext.goVersionSegments = GO_VERSION_SEGMENTS
-rootProject.ext.goVersion = GO_VERSION
-rootProject.ext.distVersion = DIST_VERSION
-rootProject.ext.fullVersion = DIST_VERSION ? "${GO_VERSION}-${DIST_VERSION}" : GO_VERSION
-rootProject.ext.gitRevision = GIT_REVISION
-rootProject.ext.copyrightYear = Calendar.getInstance().get(Calendar.YEAR)
+ext {
+  previousVersion = GO_VERSION_PREVIOUS
+  nextVersion = GO_VERSION_NEXT
+  goVersionSegments = GO_VERSION_SEGMENTS
+  goVersion = GO_VERSION
+  distVersion = DIST_VERSION
+  fullVersion = DIST_VERSION ? "${GO_VERSION}-${DIST_VERSION}" : GO_VERSION
+  gitRevision = GIT_REVISION
+  copyrightYear = Calendar.getInstance().get(Calendar.YEAR)
 
-project.ext.compilerOptions = [
-  // source and target compatibility
-  release: 11,
-]
+  // Default target version. Can be overridden by sub-projects.
+  targetJavaVersion = 17
 
-project.ext.toolchains = [
-  compilerVersion    : 17,
-  testLauncherVersion: 17,
-]
+  // Version of JVM to compile and test using.
+  buildJavaVersion = 21
 
-project.ext.packaging = [
-  adoptiumJavaVersion: new AdoptiumVersion(
-    feature: 17,
+  // Version to package with installers and container images by default
+  packagedJavaVersion = new AdoptiumVersion(
+    feature: 21,
     interim: 0,    // set to `null` for the first release of a new featureVersion
-    update : 8,    // set to `null` for the first release of a new featureVersion
-    patch  : 1,    // set to `null` for most releases. Patch releases are "exceptional".
-    build  : 1
+    update : 4,    // set to `null` for the first release of a new featureVersion
+    patch  : null, // set to `null` for most releases. Patch releases are "exceptional".
+    build  : 7
   )
-]
-
-dependencyCheck {
-  failBuildOnCVSS = 1
-  cve {
-    def baseUrl
-
-    if (System.getenv().containsKey("GO_SERVER_URL")) {
-      baseUrl = "https://nexus.gocd.io/repository/nvd-nist"
-    } else {
-      baseUrl = "https://nvd.nist.gov/feeds"
-    }
-
-    urlModified = "${baseUrl}/json/cve/1.1/nvdcve-1.1-modified.json.gz"
-    urlBase = "${baseUrl}/json/cve/1.1/nvdcve-1.1-%d.json.gz"
-  }
-
-  analyzers {
-    bundleAuditEnabled = false // Currently there is a separate bundle audit security check job independent of Gradle
-    nodeAudit.yarnEnabled = false // Doesn't work correctly with Yarn 3+ https://github.com/jeremylong/DependencyCheck/issues/4894
-    assemblyEnabled = false
-    retirejs {
-      filterNonVulnerable = true
-    }
-  }
-  skipConfigurations = ['pmd']
-  suppressionFile = rootProject.file('buildSrc/dependency-check-suppress.xml').toPath().toString()
 }
 
 allprojects {
@@ -210,9 +176,9 @@ allprojects {
 
 idea {
   project {
-    jdkName = project.toolchains.compilerVersion
-    targetBytecodeVersion = JavaVersion.toVersion(project.compilerOptions.release)
-    languageLevel = new IdeaLanguageLevel(project.compilerOptions.release)
+    jdkName = project.buildJavaVersion
+    targetBytecodeVersion = JavaVersion.toVersion(project.targetJavaVersion)
+    languageLevel = new IdeaLanguageLevel(project.targetJavaVersion)
   }
 }
 
@@ -255,7 +221,6 @@ subprojects {
     exclude '**/tmp/**'
     exclude '**/logs/**'
     exclude '**/log/**'
-    exclude '**/reset-fonts-grids.scss'
     exclude '**/robots.txt'
     exclude '**/rails/bin/**'
 
@@ -268,7 +233,7 @@ subprojects {
 
     // used by intellij for type hints when editing ftl files, intellij gets confused if it sees a license header in this file
     exclude '**/freemarker_implicit.ftl'
-    header rootProject.file('buildSrc/Apache-2.0.txt')
+    header rootProject.file('build-platform/Apache-2.0.txt')
     headerDefinitions {
       intellijStyleXML {
         firstLine = "<!--"
@@ -341,7 +306,6 @@ subprojects {
 
   if (hasJavaSources) {
     apply plugin: 'java-library'
-    apply plugin: 'pmd'
 
     buildDir = "${projectDir}/target"
 
@@ -359,13 +323,6 @@ subprojects {
     task testJar(type: Jar, description: "Assembles a jar archive containing the test classes.") {
       archiveClassifier = 'tests'
       from sourceSets.test.output
-    }
-
-    pmd {
-      ignoreFailures = true
-      ruleSetFiles = files(rootProject.file('buildSrc/pmd.xml'))
-      ruleSets = []
-      incrementalAnalysis = true
     }
 
     dependencies {
@@ -394,6 +351,15 @@ subprojects {
             withDependencies {
               removeAll {
                 it.name in [ "jsr305", "checker-qual", "error_prone_annotations", "listenablefuture" ]
+              }
+            }
+          }
+        })
+        withModule('com.google.code.gson:gson', { details ->
+          details.allVariants {
+            withDependencies {
+              removeAll {
+                it.name in [ "error_prone_annotations" ]
               }
             }
           }
@@ -439,12 +405,9 @@ subprojects {
     manifest {
       attributes(
         'Go-Version': project.version,
-        'ImplementationVersion': project.version,
         'Go-Revision': project.gitRevision,
         'Implementation-Title': project.name,
-        'Implementation-Version': project.version,
-        'Source-Compatibility': project.compilerOptions.release,
-        'Target-Compatibility': project.compilerOptions.release
+        'Implementation-Version': project.version
       )
     }
 
@@ -480,14 +443,14 @@ subprojects {
     options.incremental = true
   }
 
-  tasks.withType(JavaCompile) { compileTask ->
+  tasks.withType(JavaCompile) {
     options.warnings = false
     options.encoding = "UTF-8"
     options.compilerArgs += '-Xlint:-deprecation'
-    options.release.set(project.compilerOptions.release as Integer)
+    options.release.set(project.targetJavaVersion as Integer)
 
     javaCompiler = javaToolchains.compilerFor {
-      languageVersion = JavaLanguageVersion.of(project.toolchains.compilerVersion)
+      languageVersion = JavaLanguageVersion.of(project.buildJavaVersion)
     }
   }
 
@@ -516,7 +479,7 @@ subprojects {
 
     testTask.useJUnitPlatform()
     javaLauncher = javaToolchains.launcherFor {
-      languageVersion = JavaLanguageVersion.of(project.toolchains.testLauncherVersion)
+      languageVersion = JavaLanguageVersion.of(project.buildJavaVersion)
     }
 
     def allTestClasses
@@ -528,6 +491,7 @@ subprojects {
     systemProperty 'java.io.tmpdir', tmpDir
     systemProperty 'jdk.attach.allowAttachSelf', 'true'
     jvmArgs += testTask.project.name.startsWith("agent") ? InstallerType.agent.jvmModuleOpensArgs : InstallerType.server.jvmModuleOpensArgs
+    jvmArgs += '-XX:+EnableDynamicAgentLoading' // Needed for byte-buddy-agent (and maybe others?) to avoid warnings/errors on Java 21+
 
     doFirst {
       // workaround for https://github.com/unbroken-dome/gradle-testsets-plugin/issues/40
@@ -632,15 +596,25 @@ task allDependencies {
   description = "Print dependency tree of all projects"
 }
 
-task compileAll { compileAllTask ->
-  group LifecycleBasePlugin.BUILD_GROUP
+private allCompileTasks(Closure<Boolean> include = { t -> true }) {
   allprojects.collect { Project prj ->
-    compileAll.dependsOn(prj.getTasks().withType(JavaCompile))
-    compileAll.dependsOn(prj.getTasks().withType(GroovyCompile))
+    prj.afterEvaluate {
+      compileAll.dependsOn(prj.getTasks().withType(JavaCompile).findAll(include))
+      compileAll.dependsOn(prj.getTasks().withType(GroovyCompile).findAll(include))
+    }
   }
 }
 
-task prepare(dependsOn: compileAll)
+
+task compileAll { compileAllTask ->
+  group LifecycleBasePlugin.BUILD_GROUP
+  allCompileTasks()
+}
+
+task prepare {
+  group LifecycleBasePlugin.BUILD_GROUP
+  allCompileTasks { Task task -> !task.name.toLowerCase().contains('test') && !task.project.path.toLowerCase().contains('test') }
+}
 
 task sparkTest { thisTask ->
   group LifecycleBasePlugin.VERIFICATION_GROUP
@@ -705,6 +679,91 @@ static List<String> getTestClassesForTask(List<String> testsToRun) {
     .filter { testToRun -> testToRun.endsWith("Test.*") }
     .map { testToRun -> testToRun.replaceAll(".\\*", "").replaceAll("[^\\w.*]", ".") }
     .collect(Collectors.toList())
+}
+
+dependencyCheck {
+  failBuildOnCVSS = 1
+  suppressionFile = rootProject.file('build-platform/dependency-check-suppress.xml').toPath().toString()
+
+  nvd {
+    apiKey = System.getenv("NVD_API_KEY") ?: ""
+  }
+
+  analyzers {
+    nodeAudit.yarnEnabled = false // Doesn't work correctly with Yarn 3+ https://github.com/jeremylong/DependencyCheck/issues/4894
+    assemblyEnabled = false // Avoid dotnet false positives
+    retirejs.filterNonVulnerable = true // Reduces effort/memory processing retirejs results
+  }
+}
+
+dependencyCheckAggregate {
+  doFirst {
+    project.exec {
+      commandLine = [ "gem", "install", "bundler-audit", "--no-document" ]
+      standardOutput = System.out
+      errorOutput = System.err
+    }
+    project.exec {
+      commandLine = [ "bundle", "audit", "update" ]
+      standardOutput = System.out
+      errorOutput = System.err
+    }
+  }
+}
+
+if (System.getenv().containsKey("GO_SERVER_URL")) {
+  dependencyCheck {
+    data {
+      directory = "${layout.buildDirectory.get()}/dependency-check-data"
+    }
+  }
+
+  tasks.register('downloadDependencyCheckCache', Download) {
+    src 'https://nexus.gocd.io/repository/cache/dependency-check-data.zip'
+    dest layout.buildDirectory.file('dependency-check-data.zip')
+    onlyIfModified true
+  }
+
+  tasks.register('unzipDependencyCheckCache', Copy) {
+    dependsOn downloadDependencyCheckCache
+    from zipTree(downloadDependencyCheckCache.dest)
+    into layout.buildDirectory.dir("dependency-check-data")
+    def copyDetails = []
+    eachFile { copyDetails << it }
+    doLast {
+      copyDetails.each { FileCopyDetails details ->
+        def target = new File(destinationDir, details.path)
+        if (target.exists()) { target.setLastModified(details.lastModified) }
+      }
+    }
+  }
+
+  dependencyCheckUpdate.dependsOn unzipDependencyCheckCache
+  dependencyCheckAnalyze.dependsOn unzipDependencyCheckCache
+  dependencyCheckAggregate.dependsOn unzipDependencyCheckCache
+
+  tasks.register('uploadDependencyCheckCache', Zip) {
+    mustRunAfter dependencyCheckUpdate, dependencyCheckAnalyze, dependencyCheckAggregate
+
+    from layout.buildDirectory.file("dependency-check-data")
+    archiveFileName = "dependency-check-data-updated.zip"
+    destinationDirectory = layout.buildDirectory
+
+    doLast {
+      project.exec {
+        workingDir = projectDir
+        commandLine = [
+          "curl",
+          "-u", "${System.getenv("NEXUS_CACHE_USERNAME")}:${System.getenv("NEXUS_CACHE_PASSWORD")}",
+          "--include",
+          "--upload-file", uploadDependencyCheckCache.archiveFile.get(), 'https://nexus.gocd.io/repository/cache/dependency-check-data.zip'
+        ]
+        standardOutput = System.out
+        errorOutput = System.err
+        ignoreExitValue = true
+      }
+    }
+  }
 }
 
 task newSPA {
@@ -1233,7 +1292,7 @@ task upgradeApi {
           .replace(oldControllerClassSuffix, newControllerClassSuffix)
           .replaceAll("ApiVersion\\.v${currentMaxApiVersion}", "ApiVersion.v${apiVersion}")
       }
-      filter(FixCrLfFilter, eol: FixCrLfFilter.CrLf.UNIX)
+      filter(FixCrLfFilter, eol: FixCrLfFilter.CrLf.newInstance("unix"))
 
       eachFile { FileCopyDetails fcd ->
         List<String> segments = fcd.relativePath.segments

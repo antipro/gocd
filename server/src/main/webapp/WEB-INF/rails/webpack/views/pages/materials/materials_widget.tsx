@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,9 +36,9 @@ export class MaterialsWidget extends MithrilViewComponent<MaterialsAttrs> {
     if (vnode.attrs.materials().length === 0) {
       return <div>
         <FlashMessage type={MessageType.info}>
-          Either no pipelines have been set up or you are not authorized to view the same.&nbsp;
+          Either no pipelines have been set up or you are not authorized to view the same.
           <Link href={docsUrl("configuration/dev_authorization.html#specifying-permissions-for-pipeline-groups")} target="_blank"
-                externalLinkIcon={true}>Learn More</Link>
+                externalLinkIcon={true}> Learn More</Link>
         </FlashMessage>
         <div data-test-id="materials-help" class={styles.help}>
           {MaterialsWidget.helpText()}

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package com.thoughtworks.go.publishers;
 
+import com.thoughtworks.go.agent.HttpService;
 import com.thoughtworks.go.domain.AgentRuntimeStatus;
 import com.thoughtworks.go.domain.JobIdentifier;
 import com.thoughtworks.go.remote.AgentIdentifier;
@@ -22,7 +23,6 @@ import com.thoughtworks.go.remote.work.BuildRepositoryRemoteStub;
 import com.thoughtworks.go.remote.work.GoArtifactsManipulatorStub;
 import com.thoughtworks.go.server.service.AgentRuntimeInfo;
 import com.thoughtworks.go.util.CachedDigestUtils;
-import com.thoughtworks.go.agent.HttpService;
 import com.thoughtworks.go.util.ReflectionUtil;
 import com.thoughtworks.go.util.TempDirUtils;
 import com.thoughtworks.go.work.DefaultGoPublisher;
@@ -71,7 +71,7 @@ public class GoArtifactsManipulatorTest {
     public void shouldBombWithErrorWhenStatusCodeReturnedIsRequestEntityTooLarge() throws IOException {
         when(httpService.upload(any(String.class), eq(tempFile.length()), any(File.class), any(Properties.class))).thenReturn(HttpServletResponse.SC_REQUEST_ENTITY_TOO_LARGE);
 
-        CircularFifoQueue buffer = (CircularFifoQueue) ReflectionUtil.getField(ReflectionUtil.getField(goPublisher, "consoleOutputTransmitter"), "buffer");
+        CircularFifoQueue buffer = ReflectionUtil.getField(ReflectionUtil.getField(goPublisher, "consoleOutputTransmitter"), "buffer");
         synchronized (buffer) {
             try {
                 goArtifactsManipulatorStub.publish(goPublisher, "some_dest", tempFile, jobIdentifier);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import java.util.Map;
 
 public class StubMultipartHttpServletRequest extends DefaultMultipartHttpServletRequest {
 
-    private MockHttpServletRequest mockHttpReq;
+    private final MockHttpServletRequest mockHttpReq;
     private final Map<String, MultipartFile> map = new HashMap<>();
 
     public StubMultipartHttpServletRequest(MockHttpServletRequest mockHttpReq, MultipartFile... file) {
@@ -36,7 +36,7 @@ public class StubMultipartHttpServletRequest extends DefaultMultipartHttpServlet
     }
 
     @Override
-    public Map getFileMap() {
+    public Map<String, MultipartFile> getFileMap() {
         return map;
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ public class EmailValidator extends Validator<String> {
 
     @Override
     public ValidationBean validate(String address) {
-        if(StringUtils.isBlank(address)){
+        if (StringUtils.isBlank(address)) {
             return ValidationBean.valid();
         }
         if (address.matches(".*@" + HostnameValidator.HOSTNAME_PATTERN)) {

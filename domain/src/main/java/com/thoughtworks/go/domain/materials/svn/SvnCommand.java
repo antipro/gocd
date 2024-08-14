@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,7 +55,7 @@ public class SvnCommand extends SCMCommand implements Subversion {
 
 
     private final SvnLogXmlParser svnLogXmlParser;
-    private transient final static ThreadLocal<SAXBuilder> saxBuilderThreadLocal = new ThreadLocal<>();
+    private final static ThreadLocal<SAXBuilder> saxBuilderThreadLocal = new ThreadLocal<>();
 
     public SvnCommand(String materialFingerprint, String repositoryUrl) {
         this(materialFingerprint, repositoryUrl, null, null, false);

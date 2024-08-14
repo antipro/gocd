@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,9 +34,9 @@ public class ParseDirectoryMessage {
         this.directory = destinationFolder;
         this.configurations = new ArrayList<>();
     }
-    public void addConfiguration(String name,String value,String encryptedValue)
-    {
-        configurations.add(new CRConfigurationProperty(name,value,encryptedValue));
+
+    public void addConfiguration(String name, String value, String encryptedValue) {
+        configurations.add(new CRConfigurationProperty(name, value, encryptedValue));
     }
 
     public String getDirectory() {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -152,9 +152,10 @@ describe('Stage Overview Header', () => {
 
   it('should render link to stage details page', () => {
     const expectedLink = `/go/pipelines/up42/20/up42_stage/1`;
-    const link = helper.q('a');
+    const linkContainer = helper.byTestId('stage-details-page-link');
+    expect(linkContainer).toBeInDOM();
 
-    expect(helper.byTestId('stage-details-page-link')).toBeInDOM();
+    const link = helper.q('a', linkContainer);
     expect(link).toContainText('Go to Stage Details Page');
     expect((link as any).href.indexOf(expectedLink)).not.toBe(-1);
   });

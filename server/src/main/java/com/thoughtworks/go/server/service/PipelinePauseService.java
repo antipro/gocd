@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -70,7 +70,7 @@ public class PipelinePauseService {
             pauseCause = "";
         }
         if (isPipelinePaused(pipelineName)) {
-            result.conflict("Failed to pause pipeline '" +pipelineName + "'. Pipeline '" +pipelineName + "' is already paused.");
+            result.conflict(String.join(pipelineName, "Failed to pause pipeline '", "'. Pipeline '", "' is already paused."));
             return;
         }
         try {
@@ -78,7 +78,7 @@ public class PipelinePauseService {
             result.setMessage("Pipeline '" + pipelineName + "' paused successfully.");
         } catch (Exception e) {
             LOGGER.error("[Pipeline Pause] Failed to pause pipeline", e);
-            result.internalServerError("Server error occured. Check log for details.");
+            result.internalServerError("Server error occurred. Check log for details.");
         }
     }
 
@@ -96,7 +96,7 @@ public class PipelinePauseService {
             return;
         }
         if (!isPipelinePaused(pipelineName)) {
-            result.conflict("Failed to unpause pipeline '" + pipelineName + "'. Pipeline '" + pipelineName + "' is already unpaused.");
+            result.conflict(String.join(pipelineName, "Failed to unpause pipeline '", "'. Pipeline '", "' is already unpaused."));
             return;
         }
         try {
@@ -104,7 +104,7 @@ public class PipelinePauseService {
             result.setMessage("Pipeline '" + pipelineName + "' unpaused successfully.");
         } catch (Exception e) {
             LOGGER.error("[Pipeline Unpause] Failed to unpause pipeline", e);
-            result.internalServerError("Server error occured. Check log for details.");
+            result.internalServerError("Server error occurred. Check log for details.");
         }
     }
 

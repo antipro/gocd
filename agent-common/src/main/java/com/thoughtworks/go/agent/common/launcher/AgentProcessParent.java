@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import java.util.Map;
 
 public interface AgentProcessParent {
     int run(
-            @Deprecated //launcherVersion is unused, but keeping it around because the bootstrapper has this contract with the agent launcher
+            @Deprecated(since = "launcherVersion is unused, but keeping it around because the bootstrapper has this contract with the agent launcher")
                     String launcherVersion,
             String launcherMd5, ServerUrlGenerator urlGenerator, Map<String, String> env, Map<String, String> context);
 }

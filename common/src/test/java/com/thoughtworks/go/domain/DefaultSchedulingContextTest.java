@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -122,7 +122,7 @@ public class DefaultSchedulingContextTest {
 		ReflectionUtil.setField(context, "rerun", true);
 		SchedulingContext permittedAgentContext = context.permittedAgent("uuid1");
 
-		Agents agents = (Agents) ReflectionUtil.getField(permittedAgentContext, "agents");
+		Agents agents = ReflectionUtil.getField(permittedAgentContext, "agents");
 		assertThat(agents.size(), is(1));
 		assertThat(agents.get(0).getAgentIdentifier().getUuid(), is("uuid1"));
 		assertThat(permittedAgentContext.isRerun(), is(true));
@@ -160,7 +160,7 @@ public class DefaultSchedulingContextTest {
 
 		assertThat(rerunContext.isRerun(), is(true));
 		assertThat(rerunContext.getApprovedBy(), is("approver"));
-		Agents agents = (Agents) ReflectionUtil.getField(rerunContext, "agents");
+		Agents agents = ReflectionUtil.getField(rerunContext, "agents");
 		assertThat(agents, is(matchingAgents));
 		EnvironmentVariablesConfig environmentVariablesUsed = rerunContext.getEnvironmentVariablesConfig();
 		assertThat(environmentVariablesUsed.size(), is(3));

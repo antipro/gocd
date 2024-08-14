@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import java.util.stream.StreamSupport;
 
 import static com.thoughtworks.go.api.util.HaltApiResponses.*;
 
+@SuppressWarnings("UnusedReturnValue")
 public class JsonReader {
 
     private final JsonObject jsonObject;
@@ -64,7 +65,7 @@ public class JsonReader {
     public Optional<Long> optLong(String property) {
         if (hasJsonObject(property)) {
             try {
-                return Optional.ofNullable(jsonObject.get(property).getAsLong());
+                return Optional.of(jsonObject.get(property).getAsLong());
             } catch (Exception e) {
                 throw haltBecausePropertyIsNotAJsonString(property, jsonObject);
             }
@@ -75,7 +76,7 @@ public class JsonReader {
     public Optional<Double> optDouble(String property) {
         if (hasJsonObject(property)) {
             try {
-                return Optional.ofNullable(jsonObject.get(property).getAsDouble());
+                return Optional.of(jsonObject.get(property).getAsDouble());
             } catch (Exception e) {
                 throw haltBecausePropertyIsNotAJsonString(property, jsonObject);
             }

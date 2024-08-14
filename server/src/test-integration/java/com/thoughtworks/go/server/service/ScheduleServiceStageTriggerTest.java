@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -267,7 +267,7 @@ public class ScheduleServiceStageTriggerTest {
 
     private JobInstanceService jobInstanceService(JobResultTopic jobResultTopic) {
         ServerHealthService serverHealthService = mock(ServerHealthService.class);
-        when(serverHealthService.logs()).thenReturn(new ServerHealthStates());
+        when(serverHealthService.logsSorted()).thenReturn(new ServerHealthStates());
         return new JobInstanceService(jobInstanceDao, jobResultTopic, jobStatusCache, transactionTemplate,
                 transactionSynchronizationManager, null, null, goConfigService, null, serverHealthService);
     }

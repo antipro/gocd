@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,8 +30,8 @@ public class FakeGoServerExtension implements BeforeEachCallback {
     private static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(FakeGoServerExtension.class);
 
     @Override
-    public void beforeEach(ExtensionContext context) throws Exception {
-        context.getRequiredTestInstances().getAllInstances() //
+    public void beforeEach(ExtensionContext context) {
+        context.getRequiredTestInstances().getAllInstances()
                 .forEach(instance -> injectInstanceFields(context, instance));
     }
 

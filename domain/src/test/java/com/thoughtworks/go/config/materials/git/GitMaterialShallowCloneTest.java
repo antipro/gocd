@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -148,7 +148,7 @@ class GitMaterialShallowCloneTest {
         List<Modification> modifications = repo.addFileAndPush("newfile", "add new file");
         StringRevision newRevision = new StringRevision(modifications.get(0).getRevision());
         material.updateTo(inMemoryConsumer(), workingDir, new RevisionContext(newRevision, newRevision, 1), context());
-        assertThat(new File(workingDir, "newfile").exists()).isTrue();
+        assertThat(new File(workingDir, "newfile")).exists();
         assertThat(localRepoFor(material).isShallow()).isTrue();
     }
 

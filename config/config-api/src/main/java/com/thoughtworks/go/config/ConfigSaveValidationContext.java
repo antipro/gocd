@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,8 +35,8 @@ import java.util.Map;
 public class ConfigSaveValidationContext implements ValidationContext {
     private final Validatable immediateParent;
     private final ConfigSaveValidationContext parentContext;
-    private HashMap<Class, Object> objectOfType;
-    private HashMap<String, MaterialConfigs> fingerprintToMaterials = null;
+    private final Map<Class<?>, Object> objectOfType;
+    private Map<String, MaterialConfigs> fingerprintToMaterials = null;
 
     public ConfigSaveValidationContext(Validatable immediateParent) {
         this(immediateParent, null);
@@ -53,11 +53,9 @@ public class ConfigSaveValidationContext implements ValidationContext {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof ConfigSaveValidationContext)) {
+        if (!(o instanceof ConfigSaveValidationContext that)) {
             return false;
         }
-
-        ConfigSaveValidationContext that = (ConfigSaveValidationContext) o;
 
         if (immediateParent != null ? !immediateParent.equals(that.immediateParent) : that.immediateParent != null) {
             return false;
@@ -119,12 +117,8 @@ public class ConfigSaveValidationContext implements ValidationContext {
     }
 
     private <T> T getFirstOfType(Class<T> klass) {
-        Object o = objectOfType.get(klass);
-        if (o == null) {
-            o = _getFirstOfType(klass);
-            objectOfType.put(klass, o);
-        }
-        return (T) o;
+        //noinspection unchecked
+        return (T) objectOfType.computeIfAbsent(klass, this::_getFirstOfType);
     }
 
     private <T> T _getFirstOfType(Class<T> klass) {
@@ -138,12 +132,14 @@ public class ConfigSaveValidationContext implements ValidationContext {
         if (immediateParent == null) {
             return null;
         } else if (immediateParent.getClass().equals(klass)) {
+            //noinspection unchecked
             return (T) immediateParent;
         } else {
             // added because of higher hierarchy of configuration types.
             // now there are interfaces with more than one implementation
             // so when asking for CruiseConfig there are 2 matching classes - BasicCruiseConfig and MergeCruiseConfig
             if (klass.isAssignableFrom(immediateParent.getClass())) {
+                //noinspection unchecked
                 return (T) immediateParent;
             }
         }

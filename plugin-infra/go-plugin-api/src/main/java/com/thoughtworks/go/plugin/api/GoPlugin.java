@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ public interface GoPlugin {
      *
      * @param goApplicationAccessor An instance of GoApplicationAccessor
      */
-    public void initializeGoApplicationAccessor(GoApplicationAccessor goApplicationAccessor);
+    void initializeGoApplicationAccessor(GoApplicationAccessor goApplicationAccessor);
 
     /**
      * Handles GoPluginApiRequest request submitted from Go to plugin implementation and returns result as GoPluginApiResponse
@@ -39,14 +39,14 @@ public interface GoPlugin {
      * @param requestMessage An instance of GoPluginApiRequest
      * @return an instance of GoPluginApiResponse
      */
-    public GoPluginApiResponse handle(GoPluginApiRequest requestMessage) throws UnhandledRequestTypeException;
+    GoPluginApiResponse handle(GoPluginApiRequest requestMessage) throws UnhandledRequestTypeException;
 
     /**
      * Provides an instance of GoPluginIdentifier, providing details about supported extension point and its versions
      *
      * @return an instance of GoPluginIdentifier
      */
-    public GoPluginIdentifier pluginIdentifier();
+    GoPluginIdentifier pluginIdentifier();
 
 }
 

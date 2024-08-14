@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -74,7 +74,7 @@ export class SiteFooter extends MithrilViewComponent<Attrs> {
       return (<div data-test-id="maintenance-mode-banner" class={styles.footerWarningBanner}>
         {updatedByMessage}
         &nbsp;
-        <Link target="_blank" href={docsUrl("/advanced_usage/maintenance_mode.html")}>Learn more..</Link>
+        <Link href={docsUrl("/advanced_usage/maintenance_mode.html")} target="_blank" externalLinkIcon={true}>Learn More</Link>
       </div>);
     }
 

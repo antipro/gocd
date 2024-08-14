@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -162,7 +162,7 @@ public class JobInstanceServiceTest {
             }
         });
 
-        verify(jobInstanceDao).save(1l, job);
+        verify(jobInstanceDao).save(1L, job);
         verify(listener1).jobStatusChanged(job);
         verify(listener2).jobStatusChanged(job);
     }
@@ -186,7 +186,7 @@ public class JobInstanceServiceTest {
             }
         });
 
-        verify(jobInstanceDao).save(1l, job);
+        verify(jobInstanceDao).save(1L, job);
         verify(passingListener).jobStatusChanged(job);
     }
 
@@ -354,11 +354,11 @@ public class JobInstanceServiceTest {
             resolver,
             null, goConfigService, null, serverHealthService);
         DefaultJobPlan expectedPlan = new DefaultJobPlan(new Resources(), new ArrayList<>(), 7, new JobIdentifier(), null, new EnvironmentVariables(), new EnvironmentVariables(), null, null);
-        when(jobInstanceDao.loadPlan(7l)).thenReturn(expectedPlan);
-        JobIdentifier givenId = new JobIdentifier("pipeline-name", 9, "label-9", "stage-name", "2", "job-name", 10l);
-        when(resolver.actualJobIdentifier(givenId)).thenReturn(new JobIdentifier("pipeline-name", 8, "label-8", "stage-name", "1", "job-name", 7l));
+        when(jobInstanceDao.loadPlan(7L)).thenReturn(expectedPlan);
+        JobIdentifier givenId = new JobIdentifier("pipeline-name", 9, "label-9", "stage-name", "2", "job-name", 10L);
+        when(resolver.actualJobIdentifier(givenId)).thenReturn(new JobIdentifier("pipeline-name", 8, "label-8", "stage-name", "1", "job-name", 7L));
         assertThat(jobService.loadOriginalJobPlan(givenId), sameInstance(expectedPlan));
-        verify(jobInstanceDao).loadPlan(7l);
+        verify(jobInstanceDao).loadPlan(7L);
     }
 
     @Test
@@ -393,11 +393,11 @@ public class JobInstanceServiceTest {
         ServerHealthService serverHealthService = new ServerHealthService();
         serverHealthService.update(ServerHealthState.error("message", "description", HealthStateType.general(HealthStateScope.forJob("p1", "s1", "j1"))));
         serverHealthService.update(ServerHealthState.error("message", "description", HealthStateType.general(HealthStateScope.forJob("p2", "s2", "j2"))));
-        assertThat(serverHealthService.logs().errorCount(), is(2));
+        assertThat(serverHealthService.logsSorted().errorCount(), is(2));
         JobInstanceService jobService = new JobInstanceService(jobInstanceDao, null, jobStatusCache, transactionTemplate, transactionSynchronizationManager, null, null, goConfigService,
             null, serverHealthService);
         jobService.onConfigChange(new BasicCruiseConfig());
-        assertThat(serverHealthService.logs().errorCount(), is(0));
+        assertThat(serverHealthService.logsSorted().errorCount(), is(0));
     }
 
     @Test
@@ -405,13 +405,13 @@ public class JobInstanceServiceTest {
         ServerHealthService serverHealthService = new ServerHealthService();
         serverHealthService.update(ServerHealthState.error("message", "description", HealthStateType.general(HealthStateScope.forJob("p1", "s1", "j1"))));
         serverHealthService.update(ServerHealthState.error("message", "description", HealthStateType.general(HealthStateScope.forJob("p2", "s2", "j2"))));
-        assertThat(serverHealthService.logs().errorCount(), is(2));
+        assertThat(serverHealthService.logsSorted().errorCount(), is(2));
         JobInstanceService jobService = new JobInstanceService(jobInstanceDao, null, jobStatusCache, transactionTemplate, transactionSynchronizationManager, null, null, goConfigService,
             null, serverHealthService);
         JobInstanceService.PipelineConfigChangedListener pipelineConfigChangedListener = jobService.new PipelineConfigChangedListener();
         pipelineConfigChangedListener.onEntityConfigChange(PipelineConfigMother.pipelineConfig("p1", "s_new", new MaterialConfigs(), "j1"));
-        assertThat(serverHealthService.logs().errorCount(), is(1));
-        assertThat(serverHealthService.logs().get(0).getType().getScope().getScope(), is("p2/s2/j2"));
+        assertThat(serverHealthService.logsSorted().errorCount(), is(1));
+        assertThat(serverHealthService.logsSorted().get(0).getType().getScope().getScope(), is("p2/s2/j2"));
     }
 
     @Test

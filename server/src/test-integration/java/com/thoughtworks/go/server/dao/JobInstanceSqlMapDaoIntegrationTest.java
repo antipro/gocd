@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -641,7 +641,7 @@ public class JobInstanceSqlMapDaoIntegrationTest {
         // in setup, we created 2 scheduled builds
         assertThat(jobInstanceDao.orderedScheduledBuilds().size(), is(2));
 
-        JobIdentifier jobIdentifier = new JobIdentifier(PIPELINE_NAME, "LABEL-1", STAGE_NAME, "1", JOB_NAME);
+        JobIdentifier jobIdentifier = new JobIdentifier(PIPELINE_NAME, 1, "LABEL-1", STAGE_NAME, "1", JOB_NAME);
 
         long newestId = schedule(JOB_NAME, stageId, new Date(10001), jobIdentifier);
         long olderId = schedule(JOB_NAME, stageId, new Date(10000), jobIdentifier);

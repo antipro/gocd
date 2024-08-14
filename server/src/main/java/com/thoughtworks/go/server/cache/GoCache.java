@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -92,12 +92,8 @@ public class GoCache {
     }
 
     public void put(String key, Object value) {
-        put(key, value, new TransactionActivityPredicate());
-    }
-
-    private void put(String key, Object value, Predicate predicate) {
         logUnsavedPersistentObjectInteraction(value, "PersistentObject {} added to cache without an id.");
-        if (predicate.isTrue()) {
+        if (transactionSynchronizationManager.isActualTransactionActive()) {
             LOGGER.debug("transaction active during cache put for {} = {}", key, value, new IllegalStateException());
             return;
         }
@@ -110,13 +106,12 @@ public class GoCache {
     }
 
     private void logUnsavedPersistentObjectInteraction(Object value, String message) {
-        if (value instanceof PersistentObject) {
+        if (value instanceof PersistentObject persistentObject) {
             for (Class<? extends PersistentObject> nullObjectClass : nullObjectClasses) {
                 if (value.getClass().equals(nullObjectClass)) {
                     return;
                 }
             }
-            PersistentObject persistentObject = (PersistentObject) value;
             if (!persistentObject.hasId()) {
                 String msg = String.format(message, persistentObject);
                 IllegalStateException exception = new IllegalStateException();
@@ -237,16 +232,5 @@ public class GoCache {
 
     public CacheConfiguration configuration() {
         return ehCache.getCacheConfiguration();
-    }
-
-    private interface Predicate {
-        boolean isTrue();
-    }
-
-    private class TransactionActivityPredicate implements Predicate {
-        @Override
-        public boolean isTrue() {
-            return transactionSynchronizationManager.isActualTransactionActive();
-        }
     }
 }

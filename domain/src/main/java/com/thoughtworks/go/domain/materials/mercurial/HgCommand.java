@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,8 +37,8 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class HgCommand extends SCMCommand {
     private static final Logger LOGGER = LoggerFactory.getLogger(HgCommand.class);
-    private final File workingDir;
     private static String templatePath;
+    private final File workingDir;
     private final String branch;
     private final String url;
     private final List<SecretString> secrets;

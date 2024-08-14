@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,6 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -120,32 +119,33 @@ public class RailsAssetsServiceTest {
                 return false;
             }
             return false;
-        }).collect(Collectors.toList());
+        }).toList();
         assertThat("Expected a field annotated with SerializedName 'assets'", fieldsAnnotatedWithSerializedNameAsAssets.isEmpty(), is(false));
         assertThat(fieldsAnnotatedWithSerializedNameAsAssets.size(), is(1));
         assertThat(fieldsAnnotatedWithSerializedNameAsAssets.get(0).getType().getCanonicalName(), is(HashMap.class.getCanonicalName()));
     }
 
-    private String json = "{\n" +
-            "    \"files\": {\n" +
-            "        \"application-bfdbd4fff63b0cd45c50ce7a79fe0f53.js\": {\n" +
-            "            \"logical_path\": \"application.js\",\n" +
-            "            \"mtime\": \"2014-08-26T12:39:43+05:30\",\n" +
-            "            \"size\": 1091366,\n" +
-            "            \"digest\": \"bfdbd4fff63b0cd45c50ce7a79fe0f53\"\n" +
-            "        },\n" +
-            "        \"application-4b25c82f986c0bef78151a4ab277c3e4.css\": {\n" +
-            "            \"logical_path\": \"application.css\",\n" +
-            "            \"mtime\": \"2014-08-26T13:45:30+05:30\",\n" +
-            "            \"size\": 513,\n" +
-            "            \"digest\": \"4b25c82f986c0bef78151a4ab277c3e4\"\n" +
-            "        }\n" +
-            "    },\n" +
-            "    \"assets\": {\n" +
-            "        \"application.js\": \"application-bfdbd4fff63b0cd45c50ce7a79fe0f53.js\",\n" +
-            "        \"application.css\": \"application-4b25c82f986c0bef78151a4ab277c3e4.css\"\n" +
-            "    }\n" +
-            "}";
+    private String json = """
+            {
+                "files": {
+                    "application-bfdbd4fff63b0cd45c50ce7a79fe0f53.js": {
+                        "logical_path": "application.js",
+                        "mtime": "2014-08-26T12:39:43+05:30",
+                        "size": 1091366,
+                        "digest": "bfdbd4fff63b0cd45c50ce7a79fe0f53"
+                    },
+                    "application-4b25c82f986c0bef78151a4ab277c3e4.css": {
+                        "logical_path": "application.css",
+                        "mtime": "2014-08-26T13:45:30+05:30",
+                        "size": 513,
+                        "digest": "4b25c82f986c0bef78151a4ab277c3e4"
+                    }
+                },
+                "assets": {
+                    "application.js": "application-bfdbd4fff63b0cd45c50ce7a79fe0f53.js",
+                    "application.css": "application-4b25c82f986c0bef78151a4ab277c3e4.css"
+                }
+            }""";
 
 
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -77,7 +77,7 @@ class DefaultExternalPluginJarLocationMonitorTest extends AbstractDefaultPluginJ
     void shouldCreateExternalPluginDirectoryIfItDoesNotExist() {
         pluginExternalDir.delete();
         new DefaultPluginJarLocationMonitor(systemEnvironment).initialize();
-        assertThat(pluginExternalDir.exists()).isTrue();
+        assertThat(pluginExternalDir).exists();
     }
 
     @Test

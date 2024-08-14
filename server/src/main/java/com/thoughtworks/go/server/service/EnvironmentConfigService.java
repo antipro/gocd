@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,16 +38,11 @@ import com.thoughtworks.go.listener.EntityConfigChangedListener;
 import com.thoughtworks.go.presentation.environment.EnvironmentPipelineModel;
 import com.thoughtworks.go.server.domain.Username;
 import com.thoughtworks.go.server.service.result.HttpLocalizedOperationResult;
-import com.thoughtworks.go.server.ui.EnvironmentViewModel;
 import com.thoughtworks.go.util.ClonerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.*;
 
 import static com.thoughtworks.go.config.CaseInsensitiveString.str;
 import static com.thoughtworks.go.i18n.LocalizedMessage.entityConfigValidationFailed;
@@ -59,14 +54,14 @@ import static java.util.stream.Collectors.toList;
  */
 @Service
 public class EnvironmentConfigService implements ConfigChangedListener, AgentChangeListener {
-    public GoConfigService goConfigService;
+    private static final Cloner cloner = ClonerFactory.instance();
+    private GoConfigService goConfigService;
     private SecurityService securityService;
     private EntityHashingService entityHashingService;
     private AgentService agentService;
 
     private EnvironmentsConfig environments;
     private EnvironmentPipelineMatchers matchers;
-    private static final Cloner cloner = ClonerFactory.instance();
 
     public EnvironmentConfigService() {
     }
@@ -149,8 +144,12 @@ public class EnvironmentConfigService implements ConfigChangedListener, AgentCha
         return environments.getAgentEnvironmentNames(uuid);
     }
 
-    public Set<EnvironmentConfig> getAgentEnvironments(String uuid) {
+    public List<EnvironmentConfig> getAgentEnvironments(String uuid) {
         return environments.getAgentEnvironments(uuid);
+    }
+
+    public Map<String, List<EnvironmentConfig>> getAgentEnvironmentsByUuid() {
+        return environments.getAgentEnvironmentsByUuid();
     }
 
     public EnvironmentConfig getEnvironmentConfig(String envName) {
@@ -175,13 +174,6 @@ public class EnvironmentConfigService implements ConfigChangedListener, AgentCha
         return getEnvironmentNames().stream()
                 .map(env -> getMergedEnvironmentforDisplay(env, new HttpLocalizedOperationResult()).getConfigElement())
                 .collect(toList());
-    }
-
-    // don't remove - used in rails
-    public List<EnvironmentViewModel> listAllMergedEnvironments() {
-        return getAllMergedEnvironments().stream()
-                .map(EnvironmentViewModel::new)
-                .collect(Collectors.toList());
     }
 
     public ConfigElementForEdit<EnvironmentConfig> getMergedEnvironmentforDisplay(String envName, HttpLocalizedOperationResult result) {
@@ -336,7 +328,7 @@ public class EnvironmentConfigService implements ConfigChangedListener, AgentCha
         return pipelines;
     }
 
-    private void update(EntityConfigUpdateCommand updateEnvCmd, EnvironmentConfig config, Username currentUser,
+    private void update(EntityConfigUpdateCommand<?> updateEnvCmd, EnvironmentConfig config, Username currentUser,
                         HttpLocalizedOperationResult result, String actionFailed) {
         try {
             goConfigService.updateConfig(updateEnvCmd, currentUser);

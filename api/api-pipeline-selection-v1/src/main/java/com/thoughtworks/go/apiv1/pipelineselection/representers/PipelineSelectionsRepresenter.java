@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import static com.thoughtworks.go.server.domain.user.Marshaling.CaseInsensitiveS
 import static com.thoughtworks.go.server.domain.user.Marshaling.DashboardFilterSerializer;
 
 public class PipelineSelectionsRepresenter {
-    private static Gson GSON = new GsonBuilder().
+    private static final Gson GSON = new GsonBuilder().
             registerTypeAdapter(PipelineSelectionResponse.class, new PersonalizationResponseSerializer()).
             registerTypeAdapter(DashboardFilter.class, new DashboardFilterSerializer()).
             registerTypeAdapter(CaseInsensitiveString.class, new CaseInsensitiveStringSerializer()).

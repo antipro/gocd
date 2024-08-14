@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,7 +40,7 @@ describe("Link", () => {
   });
 
   it("should show external link icon when specified", () => {
-    helper.mount(() => <Link target="_blank" href="docs.gocd.org" externalLinkIcon={true}/>);
+    helper.mount(() => <Link href="docs.gocd.org" target="_blank" externalLinkIcon={true}/>);
     const anchor = helper.q("a");
     expect(anchor).toHaveClass(styles.externalIcon);
   });

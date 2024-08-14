@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -109,7 +109,7 @@ public class HgMaterialTest {
 
             String workingUrl = new HgCommand(null, workingFolder, "default", hgTestRepo.url().originalArgument(), null).workingRepositoryUrl().outputAsString();
             assertThat(workingUrl).isEqualTo(hgTestRepo2.projectRepositoryUrl());
-            assertThat(testFile.exists()).isFalse();
+            assertThat(testFile).doesNotExist();
         }
 
         @Test
@@ -124,7 +124,7 @@ public class HgMaterialTest {
 
             String workingUrl = new HgCommand(null, workingFolder, "default", repoUrl.originalArgument(), null).workingRepositoryUrl().outputAsString();
             assertThat(workingUrl).isEqualTo(hgTestRepo.projectRepositoryUrl());
-            assertThat(testFile.exists()).isTrue();
+            assertThat(testFile).exists();
         }
 
         @Test
@@ -140,7 +140,7 @@ public class HgMaterialTest {
         void shouldNotAppendDestinationDirectoryWhileFetchingModifications() {
             hgMaterial.setFolder("dest");
             hgMaterial.modificationsSince(workingFolder, new StringRevision(REVISION_0), new TestSubprocessExecutionContext());
-            assertThat(new File(workingFolder, "dest").exists()).isFalse();
+            assertThat(new File(workingFolder, "dest")).doesNotExist();
         }
 
         @Test
@@ -175,7 +175,7 @@ public class HgMaterialTest {
             hgMaterial.setFolder("dest");
             updateMaterial(hgMaterial, new StringRevision("0"));
             File end2endFolder = new File(workingFolder, "dest/end2end");
-            assertThat(end2endFolder.exists()).isTrue();
+            assertThat(end2endFolder).exists();
         }
 
         @Test
@@ -190,7 +190,7 @@ public class HgMaterialTest {
             File testFile = createNewFileInWorkingFolder();
             hgMaterial.latestModification(workingFolder, new TestSubprocessExecutionContext());
 
-            assertThat(testFile.exists()).isFalse();
+            assertThat(testFile).doesNotExist();
         }
 
         @Test
@@ -252,11 +252,12 @@ public class HgMaterialTest {
         // #3103
         @Test
         void shouldParseComplexCommitMessage() throws Exception {
-            String comment = "changeset:   8139:b1a0b0bbb4d1\n"
-                    + "branch:      trunk\n"
-                    + "user:        QYD\n"
-                    + "date:        Tue Jun 30 14:56:37 2009 +0800\n"
-                    + "summary:     add story #3001 - 'Pipelines should use the latest version of ...";
+            String comment = """
+                    changeset:   8139:b1a0b0bbb4d1
+                    branch:      trunk
+                    user:        QYD
+                    date:        Tue Jun 30 14:56:37 2009 +0800
+                    summary:     add story #3001 - 'Pipelines should use the latest version of ...""";
             hgTestRepo.commitAndPushFile("SomeDocumentation.txt", comment);
 
             List<Modification> modification = hgMaterial.latestModification(workingFolder, new TestSubprocessExecutionContext());

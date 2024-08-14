@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import java.util.List;
  * Understands a custom data structure for templates to editable pipelines.
  */
 public class TemplateToPipelines {
-    private  List<PipelineEditabilityInfo> pipelines = new ArrayList<>();
+    private List<PipelineEditabilityInfo> pipelines = new ArrayList<>();
     private CaseInsensitiveString templateName;
     private boolean canEdit;
     private boolean isAdmin;

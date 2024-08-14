@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -94,7 +94,7 @@ public class GoServerTest {
         GoServer goServer = new GoServer();
 
         goServer.startServer();
-        AppServer appServer = (AppServer) com.thoughtworks.go.util.ReflectionUtil.getField(goServer, "server");
+        AppServer appServer = com.thoughtworks.go.util.ReflectionUtil.getField(goServer, "server");
         assertThat(appServer instanceof AppServerStub, is(true));
         AppServerStub appServerStub = (AppServerStub) appServer;
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,10 +18,6 @@ package com.thoughtworks.go.validation;
 import com.thoughtworks.go.domain.materials.ValidationBean;
 
 public abstract class Validator<T> {
-    public static final Validator<String> PIPELINEGROUP = new PipelineGroupValidator();
-    public static final Validator<String> EMAIL = new EmailValidator();
-    public static final Validator<String> PORT = new PortValidator();
-
     protected final String errorMessage;
 
     public Validator(String errorMessageKey) {
@@ -37,11 +33,15 @@ public abstract class Validator<T> {
         }
     }
 
+    public static EmailValidator emailValidator() {
+        return new EmailValidator();
+    }
+
     public static LengthValidator lengthValidator(int length) {
         return new LengthValidator(length);
     }
 
-    public static Validator presenceValidator(String errorMessage) {
+    public static Validator<String> presenceValidator(String errorMessage) {
         return new PresenceValidator(errorMessage);
     }
 

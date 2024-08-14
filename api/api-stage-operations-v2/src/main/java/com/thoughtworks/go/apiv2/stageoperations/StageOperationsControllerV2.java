@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -78,7 +78,7 @@ public class StageOperationsControllerV2 extends ApiController implements SparkS
         HttpOperationResult result = new HttpOperationResult();
 
         Optional<Integer> pipelineCounterValue = pipelineService.resolvePipelineCounter(pipelineName, pipelineCounter);
-        if (!pipelineCounterValue.isPresent()) {
+        if (pipelineCounterValue.isEmpty()) {
             String errorMessage = String.format("Error while running [%s/%s/%s]. Received non-numeric pipeline counter '%s'.", pipelineName, pipelineCounter, stageName, pipelineCounter);
             LOGGER.error(errorMessage);
             throw haltBecauseOfReason(errorMessage);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,6 +60,7 @@ import static org.mockito.Mockito.mock;
         "classpath:/spring-all-servlet.xml",
 })
 public class ConfigMaterialUpdateListenerIntegrationTest {
+    private static final GoConfigFileHelper configHelper = new GoConfigFileHelper();
 
     @Autowired
     private GoConfigDao goConfigDao;
@@ -82,21 +83,15 @@ public class ConfigMaterialUpdateListenerIntegrationTest {
     @Autowired
     private CachedGoConfig cachedGoConfig;
 
-    private static final GoConfigFileHelper configHelper = new GoConfigFileHelper();
-
-    public DiskSpaceSimulator diskSpaceSimulator;
-
     private MaterialConfig materialConfig;
 
     private HgTestRepo hgRepo;
     private HgMaterial material;
-    private MagicalGoConfigXmlWriter xmlWriter;
 
     private ConfigTestRepo configTestRepo;
 
     @BeforeEach
     public void setup(@TempDir Path tempDir) throws Exception {
-        diskSpaceSimulator = new DiskSpaceSimulator();
         hgRepo = new HgTestRepo("testHgRepo", tempDir);
 
         dbHelper.onSetUp();
@@ -117,15 +112,13 @@ public class ConfigMaterialUpdateListenerIntegrationTest {
                 stageService, configDbStateRepository);
         goDiskSpaceMonitor.initialize();
 
-        xmlWriter = new MagicalGoConfigXmlWriter(configCache, ConfigElementImplementationRegistryMother.withNoPlugins());
-        configTestRepo = new ConfigTestRepo(hgRepo, xmlWriter);
+        configTestRepo = new ConfigTestRepo(hgRepo, new MagicalGoConfigXmlWriter(configCache, ConfigElementImplementationRegistryMother.withNoPlugins()));
         this.material = configTestRepo.getMaterial();
     }
 
 
     @AfterEach
     public void teardown() throws Exception {
-        diskSpaceSimulator.onTearDown();
         dbHelper.onTearDown();
         configHelper.onTearDown();
     }
@@ -143,9 +136,10 @@ public class ConfigMaterialUpdateListenerIntegrationTest {
     @Test
     public void shouldBeInProgressUntilParsedWhenInvalid() throws Exception {
         configTestRepo.addCodeToRepositoryAndPush("bogus.gocd.xml", "added bad config file",
-                "<?xml ve\"?>\n"
-                        + "<cru>\n"
-                        + "</cruise>");
+                """
+                        <?xml ve"?>
+                        <cru>
+                        </cruise>""");
 
         materialUpdateService.updateMaterial(material);
 
@@ -158,7 +152,7 @@ public class ConfigMaterialUpdateListenerIntegrationTest {
     private void assertInProgressState() throws InterruptedException {
         HealthStateScope healthStateScope = HealthStateScope.forPartialConfigRepo(material.config().getFingerprint());
         int i = 0;
-        while (serverHealthService.filterByScope(healthStateScope).isEmpty() && goConfigRepoConfigDataSource.getRevisionAtLastAttempt(material.config()) == null) {
+        while (serverHealthService.logsSortedForScope(healthStateScope).isEmpty() && goConfigRepoConfigDataSource.getRevisionAtLastAttempt(material.config()) == null) {
             if (!materialUpdateService.isInProgress(material))
                 fail("should be still in progress");
 
@@ -306,17 +300,17 @@ public class ConfigMaterialUpdateListenerIntegrationTest {
         assertThat(goConfigService.hasPipelineNamed(pipelineConfig.name()), is(true));
         assertThat(goConfigService.pipelineConfigNamed(pipelineConfig.name()), is(pipelineConfig));
 
-        configTestRepo.addCodeToRepositoryAndPush("badPipe.gocd.xml", "added bad config file", "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
-                + "<cruise xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation=\"cruise-config.xsd\" schemaVersion=\"38\">\n"
-                + "<pipelines group=\"changed\">\n"
-                + "  <pipeline name=\"badPipe\">\n"
-                + "    <materials>\n"
-                + "      <svn url=\"file:///tmp/foo\" />\n"
-                + "      <svn url=\"file:///tmp/foo\" />\n"
-                + "    </materials>\n"
-                + "  </pipeline>\n"
-                + "</pipelines>"
-                + "</cruise>");
+        configTestRepo.addCodeToRepositoryAndPush("badPipe.gocd.xml", "added bad config file", """
+                <?xml version="1.0" encoding="utf-8"?>
+                <cruise xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="cruise-config.xsd" schemaVersion="38">
+                <pipelines group="changed">
+                  <pipeline name="badPipe">
+                    <materials>
+                      <svn url="file:///tmp/foo" />
+                      <svn url="file:///tmp/foo" />
+                    </materials>
+                  </pipeline>
+                </pipelines></cruise>""");
         materialUpdateService.updateMaterial(material);
         // time for messages to pass through all services
         waitForMaterialNotInProgress();

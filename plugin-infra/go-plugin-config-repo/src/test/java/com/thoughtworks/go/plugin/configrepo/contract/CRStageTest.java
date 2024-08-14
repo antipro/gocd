@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.Map;
 
-import static com.thoughtworks.go.util.TestUtils.contains;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class CRStageTest extends AbstractCRTest<CRStage> {
 
@@ -111,7 +110,7 @@ public class CRStageTest extends AbstractCRTest<CRStage> {
 
         String fullError = errors.getErrorsAsText();
 
-        assertThat(fullError, contains("TEST; Stage (build)"));
-        assertThat(fullError, contains("Missing field 'name'."));
+        assertThat(fullError).contains("TEST; Stage (build)");
+        assertThat(fullError).contains("Missing field 'name'.");
     }
 }

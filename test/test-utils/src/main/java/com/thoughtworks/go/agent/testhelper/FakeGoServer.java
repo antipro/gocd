@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -169,12 +169,10 @@ public class FakeGoServer implements ExtensionContext.Store.CloseableResource {
     }
 
     private static final class AgentStatusApi extends HttpServlet {
-        public static String status = "disabled";
         static Properties pluginProps = new Properties();
 
         @Override
         protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-            resp.setHeader("Plugins-Status", status);
             pluginProps.setProperty("Active Mock Bundle 1", "1.1.1");
             pluginProps.setProperty("Active Mock Bundle 2", "2.2.2");
             ByteArrayOutputStream baos = new ByteArrayOutputStream();

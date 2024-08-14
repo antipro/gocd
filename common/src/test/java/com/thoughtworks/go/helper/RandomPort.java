@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import java.net.Socket;
 
 public class RandomPort {
 
-    public static Logger LOG = LoggerFactory.getLogger(RandomPort.class);
+    public static final Logger LOG = LoggerFactory.getLogger(RandomPort.class);
 
     public int currentPort = 10000;
 
@@ -73,6 +73,7 @@ public class RandomPort {
                 throw new RuntimeException("Timed out waiting for port " + port);
             }
             try {
+                //noinspection BusyWait
                 Thread.sleep(100L);
             } catch (InterruptedException ignore) {
                 Thread.currentThread().interrupt();

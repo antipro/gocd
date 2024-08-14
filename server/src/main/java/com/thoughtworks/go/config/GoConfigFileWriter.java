@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,7 +47,7 @@ public class GoConfigFileWriter {
             final byte[] bytes = content.getBytes(StandardCharsets.UTF_8);
             channel.transferFrom(Channels.newChannel(new ByteArrayInputStream(bytes)), 0, bytes.length);
         } catch (IOException e) {
-            LOGGER.error("Error occured when writing config XML to file", e);
+            LOGGER.error("Error occurred when writing config XML to file", e);
             throw new UncheckedIOException(e);
         }
     }

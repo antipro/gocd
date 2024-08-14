@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  */
 package com.thoughtworks.go.agent.testhelper;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,7 +26,7 @@ import static com.thoughtworks.go.util.SystemEnvironment.AGENT_EXTRA_PROPERTIES_
 
 public class AgentBinariesServlet extends HttpServlet {
 
-    private FakeGoServer.TestResource resource;
+    private final FakeGoServer.TestResource resource;
     private final FakeGoServer fakeGoServer;
 
     public AgentBinariesServlet(final FakeGoServer.TestResource resource, FakeGoServer fakeGoServer) {
@@ -50,8 +49,7 @@ public class AgentBinariesServlet extends HttpServlet {
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         doHead(request, response);
         resource.copyTo(response.getOutputStream());
     }

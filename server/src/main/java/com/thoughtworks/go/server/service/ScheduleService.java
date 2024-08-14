@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -572,7 +572,7 @@ public class ScheduleService {
                 // (e.g. CannotScheduleException thrown when there are no agents for run-on-all-agent jobs)
                 transactionTemplate.executeWithExceptionHandling(new com.thoughtworks.go.server.transaction.TransactionCallbackWithoutResult() {
                     @Override
-                    public void doInTransactionWithoutResult(TransactionStatus status) throws Exception {
+                    public void doInTransactionWithoutResult(TransactionStatus status) {
                         if (job.isCompleted()) {
                             Stage stage = stageService.stageById(job.getStageId());
                             automaticallyTriggerRelevantStagesFollowingCompletionOf(stage);
@@ -611,7 +611,7 @@ public class ScheduleService {
                 }
             }
         } catch (Exception e) {
-            LOGGER.error("Error occured during reschedule hung builds: ", e);
+            LOGGER.error("Error occurred during reschedule hung builds: ", e);
         }
     }
 

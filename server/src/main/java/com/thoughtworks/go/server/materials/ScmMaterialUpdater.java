@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,8 +35,8 @@ import java.util.List;
 class ScmMaterialUpdater implements MaterialUpdater {
     private static final Logger LOGGER = LoggerFactory.getLogger(ScmMaterialUpdater.class);
 
-    private MaterialRepository materialRepository;
-    private LegacyMaterialChecker materialChecker;
+    private final MaterialRepository materialRepository;
+    private final LegacyMaterialChecker materialChecker;
     private final SubprocessExecutionContext subprocessExecutionContext;
     private final MaterialService materialService;
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,13 +22,14 @@ import java.time.LocalDateTime;
 
 @Getter
 public class BackOffResult {
-    boolean backOff;
-    private LocalDateTime lastFailureTime;
-    private LocalDateTime failureStartTime;
-    private LocalDateTime nextRetryAttempt;
-
     public static BackOffResult PERMIT = new BackOffResult(false, null, null, null);
     public static BackOffResult DENY = new BackOffResult(true, null, null, null);
+
+    private final LocalDateTime lastFailureTime;
+    private final LocalDateTime failureStartTime;
+    private final LocalDateTime nextRetryAttempt;
+    private final boolean backOff;
+
 
     public BackOffResult(boolean backOff, LocalDateTime failureStartTime, LocalDateTime lastFailureTime,
                          LocalDateTime nextRetryAttempt) {

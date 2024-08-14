@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -254,7 +254,7 @@ public class GoConfigRepoConfigDataSourceTest {
 
         assertTrue(repoConfigDataSource.latestParseHasFailedForMaterial(material));
 
-        assertFalse(serverHealthService.filterByScope(HealthStateScope.forPartialConfigRepo(configRepoConfig)).isEmpty());
+        assertFalse(serverHealthService.logsSortedForScope(HealthStateScope.forPartialConfigRepo(configRepoConfig)).isEmpty());
     }
 
     @Test
@@ -268,12 +268,12 @@ public class GoConfigRepoConfigDataSourceTest {
         HealthStateScope scope = HealthStateScope.forPartialConfigRepo(configRepoConfig);
         serverHealthService.update(ServerHealthState.error("Parse failed", "Bad config format", HealthStateType.general(scope)));
         // verify error health
-        assertFalse(serverHealthService.filterByScope(HealthStateScope.forPartialConfigRepo(configRepoConfig)).isEmpty());
+        assertFalse(serverHealthService.logsSortedForScope(HealthStateScope.forPartialConfigRepo(configRepoConfig)).isEmpty());
 
         // now this should fix health
         repoConfigDataSource.onCheckoutComplete(material, folder, getModificationFor("7a8f"));
 
-        assertTrue(serverHealthService.filterByScope(HealthStateScope.forPartialConfigRepo(configRepoConfig)).isEmpty());
+        assertTrue(serverHealthService.logsSortedForScope(HealthStateScope.forPartialConfigRepo(configRepoConfig)).isEmpty());
     }
 
     private class BrokenConfigPlugin implements PartialConfigProvider {

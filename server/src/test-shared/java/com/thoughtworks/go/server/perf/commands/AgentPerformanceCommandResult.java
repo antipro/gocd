@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import com.google.common.base.Strings;
 import java.util.List;
 import java.util.stream.Stream;
 
+@SuppressWarnings("UnusedReturnValue")
 public class AgentPerformanceCommandResult {
     private String name;
     private String status;

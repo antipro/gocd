@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import static com.thoughtworks.go.util.command.EnvironmentVariableContext.GO_ENVIRONMENT_NAME;
@@ -474,8 +475,8 @@ class MergeEnvironmentConfigTest extends EnvironmentConfigTestBase {
         uatRemotePart.addAgent(remoteAgent);
         MergeEnvironmentConfig environmentConfig = new MergeEnvironmentConfig(uatLocalPart, uatRemotePart);
 
-        assertThat(environmentConfig.getOriginForAgent(localAgent)).isEqualTo(new FileConfigOrigin());
-        assertThat(environmentConfig.getOriginForAgent(remoteAgent)).isEqualTo(new RepoConfigOrigin());
+        assertThat(environmentConfig.originForAgent(localAgent)).isEqualTo(Optional.of(new FileConfigOrigin()));
+        assertThat(environmentConfig.originForAgent(remoteAgent)).isEqualTo(Optional.of(new RepoConfigOrigin()));
     }
 
     @Test

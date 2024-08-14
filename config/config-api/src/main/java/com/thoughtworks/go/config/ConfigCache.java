@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,16 +15,16 @@
  */
 package com.thoughtworks.go.config;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.AnnotatedElement;
-
 import com.thoughtworks.go.config.preprocessor.ClassAttributeCache;
 import org.springframework.stereotype.Component;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.AnnotatedElement;
 
 @Component
 public class ConfigCache {
 
-    private ClassAttributeCache.FieldCache fieldCache = new ClassAttributeCache.FieldCache();
+    private final ClassAttributeCache.FieldCache fieldCache = new ClassAttributeCache.FieldCache();
 
     public static boolean isAnnotationPresent(AnnotatedElement element, Class<? extends Annotation> annotationClass) {
         return element.isAnnotationPresent(annotationClass);

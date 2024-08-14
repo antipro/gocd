@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,7 +47,7 @@ import static org.apache.commons.lang3.StringUtils.upperCase;
 public class PluggableSCMMaterial extends AbstractMaterial implements SecretParamAware {
     public static final String TYPE = "PluggableSCMMaterial";
 
-    @SuppressWarnings("PMD.UnusedPrivateField")
+    @SuppressWarnings("unused")
     private String scmId;
 
     @Expose

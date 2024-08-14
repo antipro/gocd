@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,22 +42,24 @@ import java.nio.charset.Charset;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static org.hamcrest.Matchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class BuilderFactoryTest {
+
+    private static final AntTaskBuilder antTaskBuilder = mock(AntTaskBuilder.class);
+    private static final ExecTaskBuilder execTaskBuilder = mock(ExecTaskBuilder.class);
+    private static final NantTaskBuilder nantTaskBuilder = mock(NantTaskBuilder.class);
+    private static final RakeTaskBuilder rakeTaskBuilder = mock(RakeTaskBuilder.class);
+    private static final KillAllChildProcessTaskBuilder killAllChildProcessTaskBuilder = mock(KillAllChildProcessTaskBuilder.class);
+    private static final FetchTaskBuilder fetchTaskBuilder = mock(FetchTaskBuilder.class);
+    private static final NullTaskBuilder nullTaskBuilder = mock(NullTaskBuilder.class);
+    private static final PluggableTaskBuilderCreator pluggableTaskBuilderCreator = mock(PluggableTaskBuilderCreator.class);
+
     private UpstreamPipelineResolver pipelineResolver;
     private BuilderFactory builderFactory;
-    private static AntTaskBuilder antTaskBuilder = mock(AntTaskBuilder.class);
-    private static ExecTaskBuilder execTaskBuilder = mock(ExecTaskBuilder.class);
-    private static NantTaskBuilder nantTaskBuilder = mock(NantTaskBuilder.class);
-    private static RakeTaskBuilder rakeTaskBuilder = mock(RakeTaskBuilder.class);
-    private static KillAllChildProcessTaskBuilder killAllChildProcessTaskBuilder = mock(KillAllChildProcessTaskBuilder.class);
-    private static FetchTaskBuilder fetchTaskBuilder = mock(FetchTaskBuilder.class);
-    private static NullTaskBuilder nullTaskBuilder = mock(NullTaskBuilder.class);
-    private static PluggableTaskBuilderCreator pluggableTaskBuilderCreator = mock(PluggableTaskBuilderCreator.class);
 
     private static class TaskArguments implements ArgumentsProvider {
         @Override
@@ -125,7 +127,7 @@ public class BuilderFactoryTest {
         assertThat(builders.get(3), is(expectedBuilderForPluggableTask));
     }
 
-    private void assertBuilderForTask(Task task, TaskBuilder expectedBuilderToBeUsed) {
+    private void assertBuilderForTask(Task task, TaskBuilder<Task> expectedBuilderToBeUsed) {
         Pipeline pipeline = PipelineMother.pipeline("pipeline1", StageMother.custom("stage1"));
 
         Builder expectedBuilder = myFakeBuilder();

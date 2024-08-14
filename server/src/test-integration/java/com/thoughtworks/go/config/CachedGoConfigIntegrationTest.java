@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -180,7 +180,7 @@ public class CachedGoConfigIntegrationTest {
         // And unluckily downstream gets parsed first
         repoConfigDataSource.onCheckoutComplete(downstreamConfigRepo.getRepo(), downstreamExternalConfigRepo, downstreamLatestModification);
         // So parsing fails and proper message is shown:
-        List<ServerHealthState> messageForInvalidMerge = serverHealthService.filterByScope(HealthStateScope.forPartialConfigRepo(downstreamConfigRepo));
+        List<ServerHealthState> messageForInvalidMerge = serverHealthService.logsSortedForScope(HealthStateScope.forPartialConfigRepo(downstreamConfigRepo));
         assertThat(messageForInvalidMerge.isEmpty()).isFalse();
         assertThat(messageForInvalidMerge.get(0).getDescription()).contains("tries to fetch artifact from pipeline &quot;pipe1&quot;");
         // and current config is still old
@@ -194,8 +194,8 @@ public class CachedGoConfigIntegrationTest {
         repoConfigDataSource.onCheckoutComplete(configRepo.getRepo(), externalConfigRepo, latestModification);
 
         // now server should be healthy and contain all pipelines
-        assertThat(serverHealthService.filterByScope(HealthStateScope.forPartialConfigRepo(configRepo)).isEmpty()).isTrue();
-        assertThat(serverHealthService.filterByScope(HealthStateScope.forPartialConfigRepo(downstreamConfigRepo)).isEmpty()).isTrue();
+        assertThat(serverHealthService.logsSortedForScope(HealthStateScope.forPartialConfigRepo(configRepo)).isEmpty()).isTrue();
+        assertThat(serverHealthService.logsSortedForScope(HealthStateScope.forPartialConfigRepo(downstreamConfigRepo)).isEmpty()).isTrue();
         assertThat(cachedGoConfig.currentConfig().hasPipelineNamed(new CaseInsensitiveString("pipe1"))).isTrue();
         assertThat(cachedGoConfig.currentConfig().hasPipelineNamed(new CaseInsensitiveString("downstream"))).isTrue();
     }
@@ -220,7 +220,7 @@ public class CachedGoConfigIntegrationTest {
         repoConfigDataSource.onCheckoutComplete(secondDownstreamConfigRepo.getRepo(), secondDownstreamExternalConfigRepo, secondDownstreamLatestModification);
 
         // So parsing fails and proper message is shown:
-        List<ServerHealthState> messageForInvalidMerge = serverHealthService.filterByScope(HealthStateScope.forPartialConfigRepo(secondDownstreamConfigRepo));
+        List<ServerHealthState> messageForInvalidMerge = serverHealthService.logsSortedForScope(HealthStateScope.forPartialConfigRepo(secondDownstreamConfigRepo));
 
         assertThat(messageForInvalidMerge.isEmpty()).isFalse();
         assertThat(messageForInvalidMerge.get(0).getDescription()).contains("tries to fetch artifact from pipeline &quot;downstream&quot;");
@@ -235,7 +235,7 @@ public class CachedGoConfigIntegrationTest {
         repoConfigDataSource.onCheckoutComplete(firstDownstreamConfigRepo.getRepo(), firstDownstreamExternalConfigRepo, firstDownstreamLatestModification);
 
         // and errors are still shown
-        messageForInvalidMerge = serverHealthService.filterByScope(HealthStateScope.forPartialConfigRepo(firstDownstreamConfigRepo));
+        messageForInvalidMerge = serverHealthService.logsSortedForScope(HealthStateScope.forPartialConfigRepo(firstDownstreamConfigRepo));
         assertThat(messageForInvalidMerge.isEmpty()).isFalse();
         assertThat(messageForInvalidMerge.get(0).getDescription()).contains("Pipeline 'pipe1' does not exist. It is used from pipeline 'downstream'");
         // and current config is still old
@@ -249,15 +249,15 @@ public class CachedGoConfigIntegrationTest {
 
         // now server should be healthy and contain all pipelines
 
-        assertThat(serverHealthService.filterByScope(HealthStateScope.forPartialConfigRepo(firstDownstreamConfigRepo)).isEmpty()).isTrue();
-        assertThat(serverHealthService.filterByScope(HealthStateScope.forPartialConfigRepo(secondDownstreamConfigRepo)).isEmpty()).isTrue();
+        assertThat(serverHealthService.logsSortedForScope(HealthStateScope.forPartialConfigRepo(firstDownstreamConfigRepo)).isEmpty()).isTrue();
+        assertThat(serverHealthService.logsSortedForScope(HealthStateScope.forPartialConfigRepo(secondDownstreamConfigRepo)).isEmpty()).isTrue();
         assertThat(cachedGoConfig.currentConfig().hasPipelineNamed(new CaseInsensitiveString("pipe1"))).isTrue();
         assertThat(cachedGoConfig.currentConfig().hasPipelineNamed(new CaseInsensitiveString("downstream"))).isTrue();
         assertThat(cachedGoConfig.currentConfig().hasPipelineNamed(new CaseInsensitiveString("downstream2"))).isTrue();
     }
 
     @Test
-    public void shouldFailWhenTryingToAddPipelineDefinedRemotely() throws Exception {
+    public void shouldFailWhenTryingToAddPipelineDefinedRemotely() {
         assertThat(configWatchList.getCurrentConfigRepos().size()).isEqualTo(1);
         repoConfigDataSource.onCheckoutComplete(configRepo.getRepo(), externalConfigRepo, latestModification);
         assertThat(cachedGoConfig.loadMergedForEditing().hasPipelineNamed(new CaseInsensitiveString("pipe1"))).isTrue();
@@ -288,13 +288,13 @@ public class CachedGoConfigIntegrationTest {
         assertThat(configWatchList.getCurrentConfigRepos().size()).isEqualTo(1);
 
         repoConfigDataSource.onCheckoutComplete(configRepo.getRepo(), externalConfigRepo, latestModification);
-        assertThat(serverHealthService.filterByScope(HealthStateScope.forPartialConfigRepo(configRepo)).isEmpty()).isTrue();
+        assertThat(serverHealthService.logsSortedForScope(HealthStateScope.forPartialConfigRepo(configRepo)).isEmpty()).isTrue();
         assertThat(repoConfigDataSource.latestPartialConfigForMaterial(configRepo.getRepo()).getGroups().findGroup("first").findBy(new CaseInsensitiveString("pipe1"))).isNotNull();
         assertThat(cachedGoConfig.currentConfig().hasPipelineNamed(new CaseInsensitiveString("pipe1"))).isTrue();
     }
 
     @Test
-    public void shouldFailWhenTryingToAddPipelineWithTheSameNameAsAnotherPipelineDefinedRemotely_EntitySave() throws Exception {
+    public void shouldFailWhenTryingToAddPipelineWithTheSameNameAsAnotherPipelineDefinedRemotely_EntitySave() {
         assertThat(configWatchList.getCurrentConfigRepos().size()).isEqualTo(1);
         repoConfigDataSource.onCheckoutComplete(configRepo.getRepo(), externalConfigRepo, latestModification);
         assertThat(cachedGoConfig.currentConfig().hasPipelineNamed(new CaseInsensitiveString("pipe1"))).isTrue();
@@ -322,7 +322,7 @@ public class CachedGoConfigIntegrationTest {
     }
 
     @Test
-    public void shouldFailWhenTryingToAddPipelineWithTheSameNameAsAnotherPipelineDefinedRemotely_FullConfigSave() throws Exception {
+    public void shouldFailWhenTryingToAddPipelineWithTheSameNameAsAnotherPipelineDefinedRemotely_FullConfigSave() {
         assertThat(configWatchList.getCurrentConfigRepos().size()).isEqualTo(1);
         repoConfigDataSource.onCheckoutComplete(configRepo.getRepo(), externalConfigRepo, latestModification);
         assertThat(cachedGoConfig.currentConfig().hasPipelineNamed(new CaseInsensitiveString("pipe1"))).isTrue();
@@ -353,7 +353,7 @@ public class CachedGoConfigIntegrationTest {
     }
 
     @Test
-    public void shouldReturnRemotePipelinesAmongAllPipelinesInMergedConfigForEdit() throws Exception {
+    public void shouldReturnRemotePipelinesAmongAllPipelinesInMergedConfigForEdit() {
         assertThat(configWatchList.getCurrentConfigRepos().size()).isEqualTo(1);
 
         repoConfigDataSource.onCheckoutComplete(configRepo.getRepo(), externalConfigRepo, latestModification);
@@ -361,11 +361,11 @@ public class CachedGoConfigIntegrationTest {
     }
 
     private List<ServerHealthState> findMessageFor(final HealthStateType type) {
-        return serverHealthService.logs().stream().filter(element -> element.getType().equals(type)).collect(Collectors.toList());
+        return serverHealthService.logsSorted().stream().filter(element -> element.getType().equals(type)).collect(Collectors.toList());
     }
 
     @Test
-    public void shouldNotifyWithMergedConfig_WhenPartUpdated() throws Exception {
+    public void shouldNotifyWithMergedConfig_WhenPartUpdated() {
         ConfigChangeListenerStub listener = new ConfigChangeListenerStub();
         cachedGoConfig.registerListener(listener);
         // at registration
@@ -400,7 +400,7 @@ public class CachedGoConfigIntegrationTest {
 
         repoConfigDataSource.onCheckoutComplete(configRepo.getRepo(), externalConfigRepo, latestModification);
 
-        List<ServerHealthState> messageForInvalidMerge = serverHealthService.filterByScope(HealthStateScope.forPartialConfigRepo(configRepo));
+        List<ServerHealthState> messageForInvalidMerge = serverHealthService.logsSortedForScope(HealthStateScope.forPartialConfigRepo(configRepo));
 
         assertThat(messageForInvalidMerge.isEmpty()).isFalse();
         assertThat(messageForInvalidMerge.get(0).getDescription().contains("Pipeline 'pipeline_with_no_stage' does not have any stages configured")).isTrue();
@@ -411,23 +411,23 @@ public class CachedGoConfigIntegrationTest {
         ConfigRepoConfig configRepo = configWatchList.getCurrentConfigRepos().get(0);
         checkinPartial("config_repo_with_invalid_partial/bad_partial.gocd.xml");
         repoConfigDataSource.onCheckoutComplete(configRepo.getRepo(), externalConfigRepo, latestModification);
-        assertThat(serverHealthService.filterByScope(HealthStateScope.forPartialConfigRepo(configRepo)).isEmpty()).isFalse();
+        assertThat(serverHealthService.logsSortedForScope(HealthStateScope.forPartialConfigRepo(configRepo)).isEmpty()).isFalse();
 
         //fix partial
         deletePartial("bad_partial.gocd.xml");
         repoConfigDataSource.onCheckoutComplete(configRepo.getRepo(), externalConfigRepo, latestModification);
-        assertThat(serverHealthService.filterByScope(HealthStateScope.forPartialConfigRepo(configRepo)).isEmpty()).isTrue();
+        assertThat(serverHealthService.logsSortedForScope(HealthStateScope.forPartialConfigRepo(configRepo)).isEmpty()).isTrue();
     }
 
     @Test
-    public void shouldUpdateCachedConfigOnSave() throws Exception {
+    public void shouldUpdateCachedConfigOnSave() {
         assertThat(cachedGoConfig.currentConfig().getEnvironments().size()).isEqualTo(1);
         configHelper.addEnvironments("new_env");
         assertThat(cachedGoConfig.currentConfig().getEnvironments().size()).isEqualTo(2);
     }
 
     @Test
-    public void shouldReloadCachedConfigWhenWriting() throws Exception {
+    public void shouldReloadCachedConfigWhenWriting() {
         cachedGoConfig.writeWithLock(updateEnvironmentVariables("var1", "value1"));
         EnvironmentVariableConfig variable = cachedGoConfig.currentConfig().getEnvironments().get(0).getVariables().getVariable("var1");
 
@@ -445,7 +445,7 @@ public class CachedGoConfigIntegrationTest {
     }
 
     @Test
-    public void shouldReloadCachedConfigFromDisk() throws Exception {
+    public void shouldReloadCachedConfigFromDisk() {
         assertThat(cachedGoConfig.currentConfig().getEnvironments().size()).isEqualTo(1);
         configHelper.writeXmlToConfigFile(ConfigFileFixture.TASKS_WITH_CONDITION);
         cachedGoConfig.forceReload();
@@ -453,47 +453,48 @@ public class CachedGoConfigIntegrationTest {
     }
 
     @Test
-    public void shouldInterpolateParamsInTemplate() throws Exception {
-        String content = "<cruise schemaVersion='" + CONFIG_SCHEMA_VERSION + "'>\n"
-                + "<server>"
-                + "<artifacts>\n"
-                + "<artifactsDir>artifacts</artifactsDir>\n"
-                + "</artifacts>\n"
-                + "</server>"
-                + "<pipelines>\n"
-                + "<pipeline name='dev' template='abc'>\n"
-                + "    <params>"
-                + "        <param name='command'>ls</param>"
-                + "        <param name='dir'>/tmp</param>"
-                + "    </params>"
-                + "    <materials>\n"
-                + "      <svn url =\"svnurl\"/>"
-                + "    </materials>\n"
-                + "</pipeline>\n"
-                + "<pipeline name='acceptance' template='abc'>\n"
-                + "    <params>"
-                + "        <param name='command'>twist</param>"
-                + "        <param name='dir'>./acceptance</param>"
-                + "    </params>"
-                + "    <materials>\n"
-                + "      <svn url =\"svnurl\"/>"
-                + "    </materials>\n"
-                + "</pipeline>\n"
-                + "</pipelines>\n"
-                + "<templates>\n"
-                + "  <pipeline name='abc'>\n"
-                + "    <stage name='stage1'>"
-                + "      <jobs>"
-                + "        <job name='job1'>"
-                + "            <tasks>"
-                + "                <exec command='/bin/#{command}' args='#{dir}'/>"
-                + "            </tasks>"
-                + "        </job>"
-                + "      </jobs>"
-                + "    </stage>"
-                + "  </pipeline>\n"
-                + "</templates>\n"
-                + "</cruise>";
+    public void shouldInterpolateParamsInTemplate() {
+        String content = ("""
+                <cruise schemaVersion='%d'>
+                <server>
+                <artifacts>
+                <artifactsDir>artifacts</artifactsDir>
+                </artifacts>
+                </server>
+                <pipelines>
+                <pipeline name='dev' template='abc'>
+                    <params>
+                        <param name='command'>ls</param>
+                        <param name='dir'>/tmp</param>
+                    </params>
+                    <materials>
+                      <svn url ="svnurl"/>
+                    </materials>
+                </pipeline>
+                <pipeline name='acceptance' template='abc'>
+                    <params>
+                        <param name='command'>twist</param>
+                        <param name='dir'>./acceptance</param>
+                    </params>
+                    <materials>
+                      <svn url ="svnurl"/>
+                    </materials>
+                </pipeline>
+                </pipelines>
+                <templates>
+                  <pipeline name='abc'>
+                    <stage name='stage1'>
+                      <jobs>
+                        <job name='job1'>
+                            <tasks>
+                                <exec command='/bin/#{command}' args='#{dir}'/>
+                            </tasks>
+                        </job>
+                      </jobs>
+                    </stage>
+                  </pipeline>
+                </templates>
+                </cruise>""").formatted(CONFIG_SCHEMA_VERSION);
 
         configHelper.writeXmlToConfigFile(content);
 
@@ -515,34 +516,35 @@ public class CachedGoConfigIntegrationTest {
     }
 
     @Test
-    public void shouldHandleParamQuotingCorrectly() throws Exception {
-        String content = "<cruise schemaVersion='" + CONFIG_SCHEMA_VERSION + "'>\n"
-                + "<server>"
-                + "<artifacts>\n"
-                + "<artifactsDir>artifacts</artifactsDir>\n"
-                + "</artifacts>\n"
-                + "</server>\n"
-                + "<pipelines>\n"
-                + "<pipeline name='dev'>\n"
-                + "    <params>"
-                + "        <param name='command'>ls#{a}</param>"
-                + "        <param name='dir'>/tmp</param>"
-                + "    </params>"
-                + "    <materials>\n"
-                + "      <svn url =\"svnurl\"/>"
-                + "    </materials>\n"
-                + "    <stage name='stage1'>"
-                + "      <jobs>"
-                + "        <job name='job1'>"
-                + "            <tasks>"
-                + "                <exec command='/bin/#{command}##{b}' args='#{dir}'/>"
-                + "            </tasks>"
-                + "        </job>"
-                + "      </jobs>"
-                + "    </stage>"
-                + "</pipeline>\n"
-                + "</pipelines>\n"
-                + "</cruise>";
+    public void shouldHandleParamQuotingCorrectly() {
+        String content = ("""
+                <cruise schemaVersion='%d'>
+                <server>
+                <artifacts>
+                <artifactsDir>artifacts</artifactsDir>
+                </artifacts>
+                </server>
+                <pipelines>
+                <pipeline name='dev'>
+                    <params>
+                        <param name='command'>ls#{a}</param>
+                        <param name='dir'>/tmp</param>
+                    </params>
+                    <materials>
+                      <svn url ="svnurl"/>
+                    </materials>
+                    <stage name='stage1'>
+                      <jobs>
+                        <job name='job1'>
+                            <tasks>
+                                <exec command='/bin/#{command}##{b}' args='#{dir}'/>
+                            </tasks>
+                        </job>
+                      </jobs>
+                    </stage>
+                </pipeline>
+                </pipelines>
+                </cruise>""").formatted(CONFIG_SCHEMA_VERSION);
 
         configHelper.writeXmlToConfigFile(content);
 
@@ -554,30 +556,30 @@ public class CachedGoConfigIntegrationTest {
     }
 
     @Test
-    public void shouldAllowParamsInLabelTemplates() throws Exception {
+    public void shouldAllowParamsInLabelTemplates() {
         String content = "<cruise schemaVersion='" + CONFIG_SCHEMA_VERSION + "'>\n"
-                + "<server>"
+                + "<server>\n"
                 + "<artifacts>\n"
                 + "<artifactsDir>artifacts</artifactsDir>\n"
                 + "</artifacts>\n"
                 + "</server>\n"
                 + "<pipelines>\n"
                 + "<pipeline name='dev' labeltemplate='cruise-#{VERSION}-${COUNT}'>\n"
-                + "    <params>"
-                + "        <param name='VERSION'>1.2</param>"
-                + "    </params>"
+                + "    <params>\n"
+                + "        <param name='VERSION'>1.2</param>\n"
+                + "    </params>\n"
                 + "    <materials>\n"
-                + "      <svn url =\"svnurl\"/>"
+                + "      <svn url =\"svnurl\"/>\n"
                 + "    </materials>\n"
-                + "    <stage name='stage1'>"
-                + "      <jobs>"
-                + "        <job name='job1'>"
-                + "            <tasks>"
-                + "                <exec command='/bin/ls' args='some'/>"
-                + "            </tasks>"
-                + "        </job>"
-                + "      </jobs>"
-                + "    </stage>"
+                + "    <stage name='stage1'>\n"
+                + "      <jobs>\n"
+                + "        <job name='job1'>\n"
+                + "            <tasks>\n"
+                + "                <exec command='/bin/ls' args='some'/>\n"
+                + "            </tasks>\n"
+                + "        </job>\n"
+                + "      </jobs>\n"
+                + "    </stage>\n"
                 + "</pipeline>\n"
                 + "</pipelines>\n"
                 + "</cruise>";
@@ -591,34 +593,34 @@ public class CachedGoConfigIntegrationTest {
     }
 
     @Test
-    public void shouldThrowErrorWhenEnvironmentVariablesAreDuplicate() throws Exception {
+    public void shouldThrowErrorWhenEnvironmentVariablesAreDuplicate() {
         String content = "<cruise schemaVersion='" + CONFIG_SCHEMA_VERSION + "'>\n"
-                + "<server>"
+                + "<server>\n"
                 + "<artifacts>\n"
                 + "<artifactsDir>artifacts</artifactsDir>\n"
                 + "</artifacts>\n"
                 + "</server>\n"
                 + "<pipelines>\n"
                 + "<pipeline name='dev'>\n"
-                + "    <params>"
-                + "        <param name='product'>GO</param>"
-                + "    </params>"
-                + "    <environmentvariables>"
-                + "        <variable name='#{product}_WORKING_DIR'><value>go_dir</value></variable>"
-                + "        <variable name='GO_WORKING_DIR'><value>dir</value></variable>"
-                + "    </environmentvariables>"
+                + "    <params>\n"
+                + "        <param name='product'>GO</param>\n"
+                + "    </params>\n"
+                + "    <environmentvariables>\n"
+                + "        <variable name='#{product}_WORKING_DIR'><value>go_dir</value></variable>\n"
+                + "        <variable name='GO_WORKING_DIR'><value>dir</value></variable>\n"
+                + "    </environmentvariables>\n"
                 + "    <materials>\n"
-                + "      <svn url =\"svnurl\"/>"
+                + "      <svn url =\"svnurl\"/>\n"
                 + "    </materials>\n"
-                + "    <stage name='stage1'>"
-                + "      <jobs>"
-                + "        <job name='job1'>"
-                + "            <tasks>"
-                + "                <exec command='/bin/ls' args='some'/>"
-                + "            </tasks>"
-                + "        </job>"
-                + "      </jobs>"
-                + "    </stage>"
+                + "    <stage name='stage1'>\n"
+                + "      <jobs>\n"
+                + "        <job name='job1'>\n"
+                + "            <tasks>\n"
+                + "                <exec command='/bin/ls' args='some'/>\n"
+                + "            </tasks>\n"
+                + "        </job>\n"
+                + "      </jobs>\n"
+                + "    </stage>\n"
                 + "</pipeline>\n"
                 + "</pipelines>\n"
                 + "</cruise>";
@@ -632,7 +634,7 @@ public class CachedGoConfigIntegrationTest {
     }
 
     @Test
-    public void shouldReturnCachedConfigIfConfigFileIsInvalid() throws Exception {
+    public void shouldReturnCachedConfigIfConfigFileIsInvalid() {
         CruiseConfig before = cachedGoConfig.currentConfig();
         assertThat(before.getEnvironments().size()).isEqualTo(1);
 
@@ -644,7 +646,7 @@ public class CachedGoConfigIntegrationTest {
     }
 
     @Test
-    public void shouldClearInvalidExceptionWhenConfigErrorsAreFixed() throws Exception {
+    public void shouldClearInvalidExceptionWhenConfigErrorsAreFixed() {
         configHelper.writeXmlToConfigFile("invalid-xml");
         cachedGoConfig.forceReload();
         cachedGoConfig.currentConfig();
@@ -658,19 +660,19 @@ public class CachedGoConfigIntegrationTest {
     }
 
     @Test
-    public void shouldSetServerHealthMessageWhenConfigFileIsInvalid() throws IOException {
+    public void shouldSetServerHealthMessageWhenConfigFileIsInvalid() {
         configHelper.writeXmlToConfigFile("invalid-xml");
         cachedGoConfig.forceReload();
 
         assertThat(cachedGoConfig.checkConfigFileValid().isValid()).isEqualTo(false);
 
-        List<ServerHealthState> serverHealthStates = serverHealthService.logs();
+        List<ServerHealthState> serverHealthStates = serverHealthService.logsSorted();
         assertThat(serverHealthStates.isEmpty()).isFalse();
         assertThat(serverHealthStates.contains(ServerHealthState.error(GoConfigService.INVALID_CRUISE_CONFIG_XML, "Error on line 1: Content is not allowed in prolog.", HealthStateType.invalidConfig()))).isTrue();
     }
 
     @Test
-    public void shouldClearServerHealthMessageWhenConfigFileIsValid() throws IOException {
+    public void shouldClearServerHealthMessageWhenConfigFileIsValid() {
         serverHealthService.update(ServerHealthState.error(GoConfigService.INVALID_CRUISE_CONFIG_XML, "Error on line 1: Content is not allowed in prolog.", HealthStateType.invalidConfig()));
 
         assertThat(findMessageFor(HealthStateType.invalidConfig()).isEmpty()).isFalse();
@@ -683,14 +685,14 @@ public class CachedGoConfigIntegrationTest {
     }
 
     @Test
-    public void shouldReturnDefaultCruiseConfigIfLoadingTheConfigFailsForTheFirstTime() throws Exception {
+    public void shouldReturnDefaultCruiseConfigIfLoadingTheConfigFailsForTheFirstTime() {
         ReflectionUtil.setField(cachedGoConfig, "currentConfig", null);
         configHelper.writeXmlToConfigFile("invalid-xml");
         assertThat(cachedGoConfig.currentConfig()).isEqualTo(new BasicCruiseConfig());
     }
 
     @Test
-    public void shouldGetConfigForEditAndRead() throws Exception {
+    public void shouldGetConfigForEditAndRead() {
         CruiseConfig cruiseConfig = configHelper.load();
         addPipelineWithParams(cruiseConfig);
         configHelper.writeConfigFile(cruiseConfig);
@@ -729,7 +731,7 @@ public class CachedGoConfigIntegrationTest {
     }
 
     @Test
-    public void shouldLoadConfigForReadAndEditWhenConfigIsUpdatedThoughACommand() throws Exception {
+    public void shouldLoadConfigForReadAndEditWhenConfigIsUpdatedThoughACommand() {
         cachedGoConfig.writeWithLock(cruiseConfig -> {
             addPipelineWithParams(cruiseConfig);
             return cruiseConfig;
@@ -780,7 +782,7 @@ public class CachedGoConfigIntegrationTest {
         final String md5 = cachedGoConfig.currentConfig().getMd5();
         ConfigSaveState firstSaveState = cachedGoConfig.writeWithLock(new NoOverwriteUpdateConfigCommand() {
             @Override
-            public CruiseConfig update(CruiseConfig cruiseConfig) throws Exception {
+            public CruiseConfig update(CruiseConfig cruiseConfig) {
                 cruiseConfig.addPipeline("g1", PipelineConfigMother.createPipelineConfig("p1", "s1", "j1"));
                 return cruiseConfig;
             }
@@ -798,7 +800,7 @@ public class CachedGoConfigIntegrationTest {
         final String md5 = cachedGoConfig.currentConfig().getMd5();
         ConfigSaveState firstSaveState = cachedGoConfig.writeWithLock(new NoOverwriteUpdateConfigCommand() {
             @Override
-            public CruiseConfig update(CruiseConfig cruiseConfig) throws Exception {
+            public CruiseConfig update(CruiseConfig cruiseConfig) {
                 cruiseConfig.addPipeline("g1", PipelineConfigMother.createPipelineConfig("p1", "s1", "j1"));
                 return cruiseConfig;
             }
@@ -812,7 +814,7 @@ public class CachedGoConfigIntegrationTest {
 
         ConfigSaveState secondSaveState = cachedGoConfig.writeWithLock(new NoOverwriteUpdateConfigCommand() {
             @Override
-            public CruiseConfig update(CruiseConfig cruiseConfig) throws Exception {
+            public CruiseConfig update(CruiseConfig cruiseConfig) {
                 cruiseConfig.server().setArtifactsDir("something");
                 return cruiseConfig;
             }
@@ -835,7 +837,7 @@ public class CachedGoConfigIntegrationTest {
         // some random unrelated change to force a git merge workflow
         cachedGoConfig.writeWithLock(new NoOverwriteUpdateConfigCommand() {
             @Override
-            public CruiseConfig update(CruiseConfig cruiseConfig) throws Exception {
+            public CruiseConfig update(CruiseConfig cruiseConfig) {
                 cruiseConfig.server().setJobTimeout("10");
                 return cruiseConfig;
             }
@@ -848,7 +850,7 @@ public class CachedGoConfigIntegrationTest {
 
         assertThatThrownBy(() -> cachedGoConfig.writeWithLock(new NoOverwriteUpdateConfigCommand() {
             @Override
-            public CruiseConfig update(CruiseConfig cruiseConfig) throws Exception {
+            public CruiseConfig update(CruiseConfig cruiseConfig) {
                 cruiseConfig.getPipelineConfigByName(new CaseInsensitiveString(upstream)).getFirstStageConfig().setName(new CaseInsensitiveString("new_name"));
                 return cruiseConfig;
             }
@@ -877,7 +879,7 @@ public class CachedGoConfigIntegrationTest {
         // some random unrelated change to force a git merge workflow
         cachedGoConfig.writeWithLock(new NoOverwriteUpdateConfigCommand() {
             @Override
-            public CruiseConfig update(CruiseConfig cruiseConfig) throws Exception {
+            public CruiseConfig update(CruiseConfig cruiseConfig) {
                 cruiseConfig.server().setJobTimeout("10");
                 return cruiseConfig;
             }
@@ -890,7 +892,7 @@ public class CachedGoConfigIntegrationTest {
 
         ConfigSaveState saveState = cachedGoConfig.writeWithLock(new NoOverwriteUpdateConfigCommand() {
             @Override
-            public CruiseConfig update(CruiseConfig cruiseConfig) throws Exception {
+            public CruiseConfig update(CruiseConfig cruiseConfig) {
                 cruiseConfig.getPipelineConfigByName(new CaseInsensitiveString(upstream)).getFirstStageConfig().setName(new CaseInsensitiveString("new_name"));
                 return cruiseConfig;
             }
@@ -929,7 +931,7 @@ public class CachedGoConfigIntegrationTest {
     }
 
     @Test
-    public void shouldAllowFallbackMergeAndSaveWhenKnownPartialHasAnInvalidEnvironmentThatRefersToAnUnknownPipeline() throws Exception {
+    public void shouldAllowFallbackMergeAndSaveWhenKnownPartialHasAnInvalidEnvironmentThatRefersToAnUnknownPipeline() {
         cachedGoPartials.clear();
         PartialConfig partialConfigWithInvalidEnvironment = PartialConfigMother.withEnvironment("env", new RepoConfigOrigin(configRepo, "revision1"));
 
@@ -959,10 +961,10 @@ public class CachedGoConfigIntegrationTest {
         // introduce an invalid change in repo1 so that there is a server health message corresponding to it
         PartialConfig invalidPartialInRepo1Revision2 = PartialConfigMother.invalidPartial("pipeline_in_repo1", new RepoConfigOrigin(repoConfig1, "repo1_r2"));
         partialConfigService.onSuccessPartialConfig(repoConfig1, invalidPartialInRepo1Revision2);
-        assertThat(serverHealthService.filterByScope(HealthStateScope.forPartialConfigRepo(repoConfig1)).size()).isEqualTo(1);
-        assertThat(serverHealthService.filterByScope(HealthStateScope.forPartialConfigRepo(repoConfig1)).get(0).getMessage()).isEqualTo("Invalid Merged Configuration");
-        assertThat(serverHealthService.filterByScope(HealthStateScope.forPartialConfigRepo(repoConfig1)).get(0).getDescription()).isEqualTo("Number of errors: 1+\n1. Invalid stage name ''. This must be alphanumeric and can contain underscores, hyphens and periods (however, it cannot start with a period). The maximum allowed length is 255 characters.\n- For Config Repo: url1 at revision repo1_r2");
-        assertThat(serverHealthService.filterByScope(HealthStateScope.forPartialConfigRepo(repoConfig2)).isEmpty()).isTrue();
+        assertThat(serverHealthService.logsSortedForScope(HealthStateScope.forPartialConfigRepo(repoConfig1)).size()).isEqualTo(1);
+        assertThat(serverHealthService.logsSortedForScope(HealthStateScope.forPartialConfigRepo(repoConfig1)).get(0).getMessage()).isEqualTo("Invalid Merged Configuration");
+        assertThat(serverHealthService.logsSortedForScope(HealthStateScope.forPartialConfigRepo(repoConfig1)).get(0).getDescription()).isEqualTo("Number of errors: 1+\n1. Invalid stage name ''. This must be alphanumeric and can contain underscores, hyphens and periods (however, it cannot start with a period). The maximum allowed length is 255 characters.\n- For Config Repo: url1 at revision repo1_r2");
+        assertThat(serverHealthService.logsSortedForScope(HealthStateScope.forPartialConfigRepo(repoConfig2)).isEmpty()).isTrue();
 
         int countBeforeDeletion = cachedGoConfig.currentConfig().getConfigRepos().size();
         ConfigSaveState configSaveState = cachedGoConfig.writeWithLock(cruiseConfig -> {
@@ -981,8 +983,8 @@ public class CachedGoConfigIntegrationTest {
         assertThat(((RepoConfigOrigin) cachedGoPartials.lastValidPartials().get(0).getOrigin()).getMaterial().getFingerprint().equals(repoConfig2.getRepo().getFingerprint())).isTrue();
         assertThat(cachedGoPartials.lastValidPartials().stream().filter(item -> ((RepoConfigOrigin) item.getOrigin()).getMaterial().getFingerprint().equals(repoConfig1.getRepo().getFingerprint())).findFirst().orElse(null)).isNull();
 
-        assertThat(serverHealthService.filterByScope(HealthStateScope.forPartialConfigRepo(repoConfig1)).isEmpty()).isTrue();
-        assertThat(serverHealthService.filterByScope(HealthStateScope.forPartialConfigRepo(repoConfig2)).isEmpty()).isTrue();
+        assertThat(serverHealthService.logsSortedForScope(HealthStateScope.forPartialConfigRepo(repoConfig1)).isEmpty()).isTrue();
+        assertThat(serverHealthService.logsSortedForScope(HealthStateScope.forPartialConfigRepo(repoConfig2)).isEmpty()).isTrue();
     }
 
     @Test
@@ -1004,7 +1006,7 @@ public class CachedGoConfigIntegrationTest {
     }
 
     @Test
-    public void writeFullConfigWithLockShouldUpdateReloadStrategyToEnsureReloadIsSkippedInAbsenceOfConfigFileChanges() throws GitAPIException, IOException {
+    public void writeFullConfigWithLockShouldUpdateReloadStrategyToEnsureReloadIsSkippedInAbsenceOfConfigFileChanges() throws GitAPIException {
         BasicCruiseConfig config = GoConfigMother.configWithPipelines("pipeline1");
 
         ConfigSaveState state = cachedGoConfig.writeFullConfigWithLock(new FullConfigUpdateCommand(config, goConfigService.configFileMd5()));

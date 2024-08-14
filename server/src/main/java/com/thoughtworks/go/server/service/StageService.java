@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -508,16 +508,16 @@ public class StageService implements StageFinder {
     }
 
     /**
-     * @deprecated don't call this directly, go through ScheduleService.cancelJob so that stageLevel synchronization is done
+     * Go through ScheduleService.cancelJob so that stageLevel synchronization is done
      */
-    public void cancelJob(final JobInstance jobInstance) {
+    void cancelJob(final JobInstance jobInstance) {
         changeJob(() -> jobInstanceService.cancelJob(jobInstance), jobInstance.getIdentifier());
     }
 
     /**
-     * @deprecated don't call this directly, go through ScheduleService.failJob so that stageLevel synchronization is done
+     * Go through ScheduleService.failJob so that stageLevel synchronization is done
      */
-    public void failJob(final JobInstance jobInstance) {
+    void failJob(final JobInstance jobInstance) {
         changeJob(() -> jobInstanceService.failJob(jobInstance), jobInstance.getIdentifier());
     }
 

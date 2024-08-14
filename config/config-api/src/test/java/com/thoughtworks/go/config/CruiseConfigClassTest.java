@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,8 @@ package com.thoughtworks.go.config;
 
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.Matchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
 public class CruiseConfigClassTest {
 
@@ -39,11 +39,11 @@ public class CruiseConfigClassTest {
 }
 
 class FooBar {
-    @SuppressWarnings({"PMD.UnusedPrivateField", "unused"}) private String value;
-    @SuppressWarnings({"PMD.UnusedPrivateField", "unused"}) private String data;
-    @SuppressWarnings({"PMD.UnusedPrivateField", "unused"}) protected String moreData;
+    @SuppressWarnings("unused") private String value;
+    @SuppressWarnings("unused") private String data;
+    @SuppressWarnings("unused") protected String moreData;
 }
 
 class DerivedFooBar extends FooBar {
-    @SuppressWarnings({"PMD.UnusedPrivateField", "unused"}) protected String derivedClassData;
+    @SuppressWarnings("unused") protected String derivedClassData;
 }

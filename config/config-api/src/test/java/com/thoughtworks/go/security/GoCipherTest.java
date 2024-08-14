@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,17 +50,17 @@ public class GoCipherTest {
 
     @Test
     public void shouldCreateAnAESCipherFileWithTheCipherIfNotFound() throws CryptoException {
-        assertThat(desCipherFile.exists()).isFalse();
-        assertThat(aesCipherFile.exists()).isFalse();
+        assertThat(desCipherFile).doesNotExist();
+        assertThat(aesCipherFile).doesNotExist();
 
         GoCipher goCipher = new GoCipher(Encrypter.from(systemEnvironment));
-        assertThat(desCipherFile.exists()).isFalse();
-        assertThat(aesCipherFile.exists()).isTrue();
+        assertThat(desCipherFile).doesNotExist();
+        assertThat(aesCipherFile).exists();
 
         String plainText = goCipher.decrypt(goCipher.encrypt("user-password!"));
         assertThat(plainText).isEqualTo("user-password!");
-        assertThat(desCipherFile.exists()).isFalse();
-        assertThat(aesCipherFile.exists()).isTrue();
+        assertThat(desCipherFile).doesNotExist();
+        assertThat(aesCipherFile).exists();
     }
 
     @Test
@@ -73,13 +73,13 @@ public class GoCipherTest {
         FileUtils.deleteQuietly(desCipherFile);
         FileUtils.deleteQuietly(aesCipherFile);
 
-        assertThat(desCipherFile.exists()).isFalse();
-        assertThat(aesCipherFile.exists()).isFalse();
+        assertThat(desCipherFile).doesNotExist();
+        assertThat(aesCipherFile).doesNotExist();
 
         String plainText = goCipher.decrypt(goCipher.encrypt("user-password!"));
         assertThat(plainText).isEqualTo("user-password!");
 
-        assertThat(desCipherFile.exists()).isFalse();
-        assertThat(aesCipherFile.exists()).isFalse();
+        assertThat(desCipherFile).doesNotExist();
+        assertThat(aesCipherFile).doesNotExist();
     }
 }

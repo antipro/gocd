@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ public class PipelineScheduleQueueMatcher {
 
             @Override
             public void describeTo(Description description) {
-                description.appendText(String.format("Expect number of scheduled pipelines to be at least %s", expectedCount));
+                description.appendText(String.format("Expect number of scheduled pipelines to be at least %s but got %s", expectedCount, actualCount));
             }
         };
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,10 +26,10 @@ public class ParamSubstitutionHandler implements ParamHandler {
 
     private StringBuilder result = new StringBuilder();
 
-    private ParamsConfig paramsConfig;
-    private Object resolvable;
-    private String fieldName;
-    private String stringToResolve;
+    private final ParamsConfig paramsConfig;
+    private final Object resolvable;
+    private final String fieldName;
+    private final String stringToResolve;
 
     @Override
     public String getResult() {

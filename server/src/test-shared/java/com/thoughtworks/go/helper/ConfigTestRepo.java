@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,8 +31,8 @@ import java.util.List;
 public class ConfigTestRepo {
     private final File baseDir;
     private final HgMaterial material;
-    private PartialConfigHelper partialConfigHelper;
-    private HgTestRepo repo;
+    private final PartialConfigHelper partialConfigHelper;
+    private final HgTestRepo repo;
 
     public ConfigTestRepo(HgTestRepo repo, MagicalGoConfigXmlWriter xmlWriter) throws IOException {
         this.repo = repo;

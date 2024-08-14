@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,6 +48,8 @@ import static org.mockito.Mockito.*;
         "classpath:/spring-all-servlet.xml",
 })
 public class StageStatusCacheTest {
+    private static final GoConfigFileHelper configFileHelper = new GoConfigFileHelper();
+    
     @Autowired private GoConfigDao goConfigDao;
     @Autowired private StageStatusCache stageStatusCache;
 	@Autowired private DatabaseAccessHelper dbHelper;
@@ -55,7 +57,6 @@ public class StageStatusCacheTest {
     @Autowired private TransactionTemplate transactionTemplate;
 
     private PipelineWithTwoStages pipelineFixture;
-    private static GoConfigFileHelper configFileHelper = new GoConfigFileHelper();
 
     @BeforeEach
     public void setUp(@TempDir Path tempDir) throws Exception {

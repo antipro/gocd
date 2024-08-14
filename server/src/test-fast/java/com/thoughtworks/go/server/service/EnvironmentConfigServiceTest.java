@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -260,18 +260,18 @@ class EnvironmentConfigServiceTest {
         EnvironmentsConfig envConfigs = environments("uat", "prod");
         environmentConfigService.syncEnvironments(envConfigs);
 
-        Set<EnvironmentConfig> envConfigSet = environmentConfigService.getAgentEnvironments("uat-agent");
-        assertThat(envConfigSet.size(), is(1));
-        assertTrue(envConfigSet.contains(envConfigs.named(new CaseInsensitiveString("uat"))));
+        List<EnvironmentConfig> envsForAgent = environmentConfigService.getAgentEnvironments("uat-agent");
+        assertThat(envsForAgent.size(), is(1));
+        assertTrue(envsForAgent.contains(envConfigs.named(new CaseInsensitiveString("uat"))));
 
-        envConfigSet = environmentConfigService.getAgentEnvironments("prod-agent");
-        assertThat(envConfigSet.size(), is(1));
-        assertTrue(envConfigSet.contains(envConfigs.named(new CaseInsensitiveString("prod"))));
+        envsForAgent = environmentConfigService.getAgentEnvironments("prod-agent");
+        assertThat(envsForAgent.size(), is(1));
+        assertTrue(envsForAgent.contains(envConfigs.named(new CaseInsensitiveString("prod"))));
 
-        envConfigSet = environmentConfigService.getAgentEnvironments(OMNIPRESENT_AGENT);
-        assertThat(envConfigSet.size(), is(2));
-        assertTrue(envConfigSet.contains(envConfigs.named(new CaseInsensitiveString("uat"))));
-        assertTrue(envConfigSet.contains(envConfigs.named(new CaseInsensitiveString("prod"))));
+        envsForAgent = environmentConfigService.getAgentEnvironments(OMNIPRESENT_AGENT);
+        assertThat(envsForAgent.size(), is(2));
+        assertTrue(envsForAgent.contains(envConfigs.named(new CaseInsensitiveString("uat"))));
+        assertTrue(envsForAgent.contains(envConfigs.named(new CaseInsensitiveString("prod"))));
     }
 
     @Nested

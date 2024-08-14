@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -80,7 +80,6 @@ public class ChangeMaterialsTest {
     private HgTestRepo hgTestRepo;
 
     private Username username;
-    private StubScheduleCheckCompletedListener listener;
 
     @BeforeEach
     public void setUp(@TempDir Path tempDir) throws Exception {
@@ -96,8 +95,7 @@ public class ChangeMaterialsTest {
         cruiseConfig.addPipeline(PIPELINE_NAME, DEV_STAGE, svnRepo.materialConfig(), "foo");
         mingle = cruiseConfig.addStageToPipeline(PIPELINE_NAME, FT_STAGE, "bar");
         pipeline = dbHelper.newPipelineWithAllStagesPassed(mingle);
-        listener = new StubScheduleCheckCompletedListener();
-        topic.addListener(listener);
+        topic.addListener(new StubScheduleCheckCompletedListener());
     }
 
     @AfterEach

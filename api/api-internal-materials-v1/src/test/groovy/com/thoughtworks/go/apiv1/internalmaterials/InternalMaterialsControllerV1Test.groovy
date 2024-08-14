@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -113,7 +113,7 @@ class InternalMaterialsControllerV1Test implements SecurityServiceTrait, Control
     void setUp() {
       loginAsUser()
       when(materialConfigConverter.toMaterial(any(MaterialConfig.class))).thenReturn(material)
-      when(serverHealthService.logs()).thenReturn(new ServerHealthStates())
+      when(serverHealthService.logsSorted()).thenReturn(new ServerHealthStates())
     }
 
     @Nested

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -159,7 +159,6 @@ public class ServerConfig implements Validatable {
         this.artifactConfig = artifactConfig;
     }
 
-    @Deprecated
     public void updateMailHost(MailHost mailHost) {
         // remove mailhost if default value
         if (mailHost != null && mailHost.equals(new MailHost())) {
@@ -215,11 +214,7 @@ public class ServerConfig implements Validatable {
         if (mailHost != null ? !mailHost.equals(that.mailHost) : that.mailHost != null) {
             return false;
         }
-        if (tokenGenerationKey != null ? !tokenGenerationKey.equals(that.tokenGenerationKey) : that.tokenGenerationKey != null) {
-            return false;
-        }
-
-        return true;
+        return tokenGenerationKey != null ? tokenGenerationKey.equals(that.tokenGenerationKey) : that.tokenGenerationKey == null;
     }
 
     @Override

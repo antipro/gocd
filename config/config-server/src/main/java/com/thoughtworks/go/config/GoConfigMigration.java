@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  */
 package com.thoughtworks.go.config;
 
-import com.thoughtworks.go.config.registry.ConfigElementImplementationRegistry;
 import com.thoughtworks.go.domain.GoConfigRevision;
 import com.thoughtworks.go.util.TimeProvider;
 import org.apache.commons.io.FileUtils;
@@ -50,20 +49,19 @@ import static com.thoughtworks.go.util.XmlUtils.buildXmlDocument;
 public class GoConfigMigration {
     private static final Logger LOG = LoggerFactory.getLogger(GoConfigMigration.class.getName());
     private static final int XPATH_EXPRESSION_OPERATION_LIMIT = 200;
-    private final String schemaVersion = "schemaVersion";
     private final TimeProvider timeProvider;
-    private final ConfigElementImplementationRegistry registry;
 
     @Autowired
-    public GoConfigMigration(final TimeProvider timeProvider, ConfigElementImplementationRegistry registry) {
+    public GoConfigMigration(final TimeProvider timeProvider) {
         this.timeProvider = timeProvider;
-        this.registry = registry;
     }
 
     public File revertFileToVersion(File configFile, GoConfigRevision currentConfigRevision) {
         File backupFile = getBackupFile(configFile, "invalid.");
         try {
             backup(configFile, backupFile);
+            // FIXME the lack of charset here looks rather suspicious. But unclear how to fix without possible regressions.
+            // Related to similar issue in MagicalGoConfigXmlWriter?
             FileUtils.writeStringToFile(configFile, currentConfigRevision.getContent());
         } catch (IOException e1) {
             throw new RuntimeException(String.format("Could not write to config file '%s'.", configFile.getAbsolutePath()), e1);
@@ -107,7 +105,7 @@ public class GoConfigMigration {
     private void validate(String content) {
         int currentVersion = getCurrentSchemaVersion(content);
         try {
-            buildXmlDocument(new ByteArrayInputStream(content.getBytes()), GoConfigSchema.getResource(currentVersion), registry.xsds());
+            buildXmlDocument(new ByteArrayInputStream(content.getBytes()), GoConfigSchema.getResource(currentVersion));
         } catch (Exception e) {
             throw bomb("Cruise config file with version " + currentVersion + " is invalid. Unable to upgrade.", e);
         }
@@ -165,6 +163,7 @@ public class GoConfigMigration {
             Document document = builder.build(new ByteArrayInputStream(content.getBytes()));
             Element root = document.getRootElement();
 
+            String schemaVersion = "schemaVersion";
             String currentVersion = root.getAttributeValue(schemaVersion) == null ? "0" : root.getAttributeValue(schemaVersion);
             return Integer.parseInt(currentVersion);
         } catch (Exception e) {

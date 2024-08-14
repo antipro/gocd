@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,6 +42,8 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class AbstractExtensionTest {
 
+    private static final List<String> goSupportedVersions = List.of("1.0", "2.0");
+
     private AbstractExtension extension;
     @Mock(strictness = Mock.Strictness.LENIENT)
     private PluginManager pluginManager;
@@ -49,7 +51,6 @@ public class AbstractExtensionTest {
     ExtensionsRegistry extensionsRegistry;
 
     private String extensionName;
-    private static List<String> goSupportedVersions = List.of("1.0", "2.0");
     private String pluginId;
 
     private static class TestExtension extends AbstractExtension {
@@ -75,7 +76,7 @@ public class AbstractExtensionTest {
     }
 
     @Test
-    public void shouldNotifySettingsChangeForPluginWhichSupportsNotification() throws Exception {
+    public void shouldNotifySettingsChangeForPluginWhichSupportsNotification() {
         String supportedVersion = "2.0";
         Map<String, String> settings = Map.of("foo", "bar");
         ArgumentCaptor<GoPluginApiRequest> requestArgumentCaptor = ArgumentCaptor.forClass(GoPluginApiRequest.class);
@@ -91,7 +92,7 @@ public class AbstractExtensionTest {
     }
 
     @Test
-    public void shouldIgnoreSettingsChangeNotificationIfPluginDoesNotSupportsNotification() throws Exception {
+    public void shouldIgnoreSettingsChangeNotificationIfPluginDoesNotSupportsNotification() {
         String supportedVersion = "1.0";
         Map<String, String> settings = Map.of("foo", "bar");
 

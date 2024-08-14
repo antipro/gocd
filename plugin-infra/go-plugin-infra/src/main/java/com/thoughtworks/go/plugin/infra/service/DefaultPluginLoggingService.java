@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,8 +30,8 @@ import java.io.File;
 import static com.thoughtworks.go.logging.LogHelper.rootLogger;
 
 public class DefaultPluginLoggingService implements LoggingService {
-    private static Logger loggingServiceLogger = LoggerFactory.getLogger(DefaultPluginLoggingService.class);
-    private static int MAX_LENGTH_OF_PLUGIN_FILENAME = 200;
+    private static final Logger loggingServiceLogger = LoggerFactory.getLogger(DefaultPluginLoggingService.class);
+    private static final int MAX_LENGTH_OF_PLUGIN_FILENAME = 200;
     private static final String PLUGIN_LOGGER_PREFIX = "plugin";
 
     private final SystemEnvironment systemEnvironment;
@@ -144,7 +144,7 @@ public class DefaultPluginLoggingService implements LoggingService {
 
     private Logger getLogger(String pluginId, String loggerName) {
         initializeLoggerForPluginId(pluginId);
-        return LoggerFactory.getLogger(PLUGIN_LOGGER_PREFIX + "." + pluginId + "." + loggerName);
+        return LoggerFactory.getLogger(String.join(".", PLUGIN_LOGGER_PREFIX, pluginId, loggerName));
     }
 
     private boolean alreadyInitialized(String pluginId) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,17 +24,18 @@
   border-top: 1px solid $line-color;
 
   .summary {
+    line-height: 25px;
+    cursor: pointer;
+    outline: none;
+    font-weight: 600;
+
     @include icon-before(
       $type: $fa-var-chevron-right,
       $color: $text-color,
       $size: 16px,
       $line-height: 25px,
-      $margin: 0 5px);
-
-    line-height: 25px;
-    cursor: pointer;
-    outline: none;
-    font-weight: 600;
+      $margin: 0 5px
+    );
   }
 
   .details {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -176,7 +176,7 @@ export class PipelineActivityPage extends Page<null, State> implements ResultAwa
     return <div>
       The pipeline activity helps GoCD users to see the status of historical runs of a pipeline. The current page makes it easier to browse
       through the pipeline runs by filtering pipeline runs using label, user or material revision (e.g. git commit sha).
-      <Link href={docsUrl('advanced_usage/pipeline_activity.html')} externalLinkIcon={true}> Learn More</Link>
+      <Link href={docsUrl('advanced_usage/pipeline_activity.html')} target="_blank" externalLinkIcon={true}> Learn More</Link>
     </div>;
   }
 

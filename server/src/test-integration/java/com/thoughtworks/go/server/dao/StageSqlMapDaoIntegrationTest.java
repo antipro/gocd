@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,7 +53,6 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.util.ReflectionUtils;
 
-import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.util.*;
@@ -129,7 +128,7 @@ public class StageSqlMapDaoIntegrationTest {
         stage.setCompletedByTransitionId(10L);
         updateResultInTransaction(stage, StageResult.Passed);
         Stage reloaded = stageDao.stageById(stage.getId());
-        assertThat(reloaded.getCompletedByTransitionId()).isGreaterThan(0l);
+        assertThat(reloaded.getCompletedByTransitionId()).isGreaterThan(0L);
     }
 
     @Test
@@ -1588,15 +1587,15 @@ public class StageSqlMapDaoIntegrationTest {
         verify(listener, atLeastOnce()).notifyElementRemoved(any(), elementRemovedCaptor.capture());
         verify(listener, atLeastOnce()).notifyElementPut(any(), elementAddedCaptor.capture());
 
-        List<Serializable> keysThatWereRemoved = new ArrayList<>();
-        List<Serializable> keysThatWereAdded = new ArrayList<>();
+        List<Object> keysThatWereRemoved = new ArrayList<>();
+        List<Object> keysThatWereAdded = new ArrayList<>();
 
         for (Element element : elementRemovedCaptor.getAllValues()) {
-            keysThatWereRemoved.add(element.getKey());
+            keysThatWereRemoved.add(element.getObjectKey());
         }
 
         for (Element element : elementAddedCaptor.getAllValues()) {
-            keysThatWereAdded.add(element.getKey());
+            keysThatWereAdded.add(element.getObjectKey());
         }
 
         Assertions.assertThat(keysThatWereRemoved).contains(

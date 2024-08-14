@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import freemarker.template.Configuration
 import freemarker.template.Template
 import freemarker.template.TemplateExceptionHandler
 import org.gradle.api.DefaultTask
+import org.gradle.api.GradleException
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Internal
@@ -52,11 +53,11 @@ class BuildDockerImageTask extends DefaultTask {
 
   @TaskAction
   def perform() {
-    if (distroVersion.pastEolGracePeriod) {
+    if (!project.hasProperty("skipDockerBuild") && distroVersion.pastEolGracePeriod) {
       throw new RuntimeException("The image $distro:v$distroVersion.version is unsupported. EOL was ${distroVersion.eolDate}, and GoCD build grace period has passed.")
     }
 
-    if (distroVersion.eol && !distroVersion.continueToBuild) {
+    if (!project.hasProperty("skipDockerBuild") && distroVersion.eol && !distroVersion.continueToBuild) {
       throw new RuntimeException("The image $distro:v$distroVersion.version was EOL on ${distroVersion.eolDate}. Set :continueToBuild option to continue building through the grace period.")
     }
 
@@ -65,6 +66,7 @@ class BuildDockerImageTask extends DefaultTask {
     }
 
     project.delete(gitRepoDirectory)
+    project.mkdir(gitRepoDirectory)
     def credentials = "${System.getenv("GIT_USER")}:${System.getenv("GIT_PASSWORD")}"
     project.exec {
       workingDir = project.rootProject.projectDir
@@ -108,7 +110,7 @@ class BuildDockerImageTask extends DefaultTask {
         )
 
         logger.lifecycle("\nVerifying ${imageNameWithTag} image for ${distro.dockerVerifyArchitecture}. (Current build architecture is ${Architecture.current()}).\n")
-        verifyHelper.call(isNativeVerify)
+        verifyHelper.call()
         logger.lifecycle("\nVerification of ${imageNameWithTag} image on ${distro.dockerVerifyArchitecture} successful.")
       }
 
@@ -140,6 +142,38 @@ class BuildDockerImageTask extends DefaultTask {
     }
   }
 
+  def verifyProcessInContainerStarted(String expectedProcess, String expectedOutput = "") {
+    // run a `ps aux`
+    ByteArrayOutputStream psOutput = new ByteArrayOutputStream()
+    project.exec {
+      workingDir = project.rootProject.projectDir
+      commandLine = ["docker", "exec", dockerImageName, "ps", "aux"]
+      standardOutput = psOutput
+      errorOutput = psOutput
+      ignoreExitValue = true
+    }
+
+    ByteArrayOutputStream containerOutput = new ByteArrayOutputStream()
+    project.exec {
+      workingDir = project.rootProject.projectDir
+      commandLine = ["docker", "logs", dockerImageName]
+      standardOutput = containerOutput
+      errorOutput = containerOutput
+      ignoreExitValue = true
+    }
+
+    // assert if process was running
+    def processList = psOutput.toString()
+    def containerLog = containerOutput.toString()
+
+    if (!processList.contains(expectedProcess)) {
+      throw new GradleException("Expected process output to contain [${expectedProcess}], but was: [${processList}]\n\nContainer output:\n${containerOutput.toString()}")
+    }
+    if (expectedOutput != "" && !(containerLog =~ expectedOutput)) {
+      throw new GradleException("Process was up, but expected container output to match /${expectedOutput}/. Was: \n${containerOutput.toString()}")
+    }
+  }
+
   def executeInGitRepo(Object... args) {
     project.exec {
       workingDir = gitRepoDirectory
@@ -168,7 +202,7 @@ class BuildDockerImageTask extends DefaultTask {
   }
 
   void writeTemplateToFile(String templateFile, File outputFile) {
-    Configuration configuration = new Configuration(Configuration.VERSION_2_3_32)
+    Configuration configuration = new Configuration(Configuration.VERSION_2_3_33)
     configuration.setDefaultEncoding("utf-8")
     configuration.setLogTemplateExceptions(true)
     configuration.setNumberFormat("computer")
@@ -210,33 +244,15 @@ class BuildDockerImageTask extends DefaultTask {
 
   @Internal
   String getGitHubRepoName() {
-    if (imageType == ImageType.agent) {
-      if (distro == Distro.docker) {
-        return "docker-gocd-agent-dind"
-      } else {
-        return "docker-gocd-agent-${distro.name()}-${distroVersion.version}"
-      }
-    }
-    if (distro == Distro.alpine) {
-      return "docker-gocd-server"
-    } else {
-      return "docker-gocd-server-${distro.name()}-${distroVersion.version}"
-    }
+    return "docker-${dockerImageName}"
   }
 
   @Internal
   String getDockerImageName() {
     if (imageType == ImageType.agent) {
-      if (distro == Distro.docker) {
-        return "gocd-agent-${distro.name()}-dind"
-      } else {
-        return "gocd-agent-${distro.name()}-${distroVersion.version}"
-      }
-    }
-    if (distro == Distro.alpine) {
-      return "gocd-server"
-    } else {
-      return "gocd-server-${distro.name()}-${distroVersion.version}"
+      return distro.isContinuousRelease() ? "gocd-agent-${distro.name()}" : "gocd-agent-${distro.name()}-${distroVersion.version}"
+    } else if (imageType == ImageType.server) {
+      return distro == Distro.wolfi ? "gocd-server" : "gocd-server-${distro.name()}-${distroVersion.version}"
     }
   }
 

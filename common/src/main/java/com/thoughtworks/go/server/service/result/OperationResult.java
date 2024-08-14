@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,16 +23,12 @@ import com.thoughtworks.go.serverhealth.ServerHealthState;
  */
 public interface OperationResult {
 
-    @Deprecated
     ServerHealthState success(HealthStateType healthStateType);
 
-    @Deprecated
     ServerHealthState error(String message, String description, HealthStateType type);
 
-    @Deprecated
     ServerHealthState warning(String message, String description, HealthStateType type);
 
-    @Deprecated
     ServerHealthState getServerHealthState();
 
     boolean canContinue();

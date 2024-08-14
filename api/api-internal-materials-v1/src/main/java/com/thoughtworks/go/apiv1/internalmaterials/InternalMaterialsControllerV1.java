@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -102,7 +102,7 @@ public class InternalMaterialsControllerV1 extends ApiController implements Spar
         Map<MaterialConfig, Boolean> materialConfigs = materialConfigService.getMaterialConfigsWithPermissions(currentUsernameString());
         Map<String, Modification> modifications = materialService.getLatestModificationForEachMaterial();
         Collection<MaintenanceModeService.MaterialPerformingMDU> runningMDUs = maintenanceModeService.getRunningMDUs();
-        ServerHealthStates logs = serverHealthService.logs();
+        ServerHealthStates logs = serverHealthService.logsSorted();
         Map<MaterialConfig, MaterialInfo> mergedMap = createMergedMap(materialConfigs, modifications, runningMDUs, logs);
 
         final String etag = etagFor(mergedMap);

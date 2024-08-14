@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,8 +28,9 @@ import static com.thoughtworks.go.util.TriState.UNSET;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.StreamSupport.stream;
 
+@SuppressWarnings("unused") // Optional for use by AgentPerformanceVerifier
 public class BulkUpdateAgentCommand extends AgentPerformanceCommand {
-    private EnvironmentConfigService envConfigService;
+    private final EnvironmentConfigService envConfigService;
 
     public BulkUpdateAgentCommand(AgentService agentService, EnvironmentConfigService envConfigService) {
         this.envConfigService = envConfigService;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,6 +60,7 @@ public class GoServer {
             LOG.error("ERROR: Failed to start GoCD server.", exceptionAtServerStart);
             throw new RuntimeException("Failed to start GoCD server.", exceptionAtServerStart);
         }
+        LOG.info("GoCD server started successfully.");
     }
 
     AppServer configureServer() throws Exception {

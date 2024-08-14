@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -206,7 +206,7 @@ export class CreatePolicyWidget extends MithrilViewComponent<AutoCompleteAttrs> 
       }
     };
     const message                  = <span>Configure the policy below to manage access to GoCD entities for users in this role. <Link
-      externalLinkIcon={true} target="_blank"
+      target="_blank" externalLinkIcon={true}
       href={docsUrl("configuration/dev_authorization.html#role-based-access-control")}>Learn More</Link></span>;
     const policyBody               = vnode.attrs.policy && _.isEmpty(vnode.attrs.policy())
                                      ? <FlashMessage type={MessageType.info}

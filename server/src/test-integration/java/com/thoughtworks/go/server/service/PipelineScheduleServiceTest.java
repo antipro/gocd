@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -441,6 +441,6 @@ public class PipelineScheduleServiceTest {
         dbHelper.passStage(completedMingleStage);
         assertThat(completedMingleStage.getJobInstances().first().getState(), is(JobState.Completed));
         Pipeline pipeline = pipelineDao.mostRecentPipeline(CaseInsensitiveString.str(pipelineConfig.name()));
-        return dbHelper.passPipeline(pipeline);
+        return dbHelper.passPipelineFirstStageOnly(pipeline);
     }
 }

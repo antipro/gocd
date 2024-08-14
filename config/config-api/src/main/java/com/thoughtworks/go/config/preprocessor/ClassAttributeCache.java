@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,10 +22,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.stream.Collectors;
 
 public abstract class ClassAttributeCache<K, T> {
-    private ConcurrentMap<K, T> valueCache = new ConcurrentHashMap<>();
+    private final ConcurrentMap<K, T> valueCache = new ConcurrentHashMap<>();
 
     public T valuesFor(K key) {
         T value = valueCache.get(key);
@@ -47,7 +46,7 @@ public abstract class ClassAttributeCache<K, T> {
         }
 
         void populateValueInto(Class klass, List<Field> fields) {
-            fields.addAll(Arrays.stream(klass.getDeclaredFields()).filter(field -> !field.isSynthetic()).collect(Collectors.toList()));
+            fields.addAll(Arrays.stream(klass.getDeclaredFields()).filter(field -> !field.isSynthetic()).toList());
             Class superClass = klass.getSuperclass();
             if (superClass != Object.class) {
                 populateValueInto(superClass, fields);

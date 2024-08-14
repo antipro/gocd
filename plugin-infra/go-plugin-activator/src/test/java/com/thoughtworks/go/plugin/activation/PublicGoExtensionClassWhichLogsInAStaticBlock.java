@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ import java.util.List;
 
 @Extension
 public class PublicGoExtensionClassWhichLogsInAStaticBlock implements GoPlugin {
-    private static Logger logger;
+    private static final Logger logger;
 
     static {
         logger = Logger.getLoggerFor(PublicGoExtensionClassWhichLogsInAStaticBlock.class);

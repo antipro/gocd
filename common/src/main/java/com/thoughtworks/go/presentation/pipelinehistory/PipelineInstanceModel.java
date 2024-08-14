@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import com.thoughtworks.go.domain.buildcause.BuildCause;
 import com.thoughtworks.go.domain.materials.MaterialConfig;
 import com.thoughtworks.go.domain.materials.Revision;
 import com.thoughtworks.go.util.TimeConverter;
+import org.jetbrains.annotations.TestOnly;
 
 import java.util.Date;
 
@@ -341,9 +342,7 @@ public class PipelineInstanceModel implements PipelineInfo {
         return String.format("%s: %s", latestStage.getState(), latestStage.getName());
     }
 
-    /**
-     * @deprecated use the other construction methods
-     */
+    @TestOnly
     public static PipelineInstanceModel createEmptyModel() {
         return new PipelineInstanceModel();
     }

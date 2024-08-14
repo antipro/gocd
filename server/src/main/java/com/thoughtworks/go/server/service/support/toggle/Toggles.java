@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,10 +15,12 @@
  */
 package com.thoughtworks.go.server.service.support.toggle;
 
+import org.jetbrains.annotations.TestOnly;
+
 public class Toggles {
-    public static String BROWSER_CONSOLE_LOG_WS = "browser_console_log_ws_key";
-    public static String ALLOW_EMPTY_PIPELINE_GROUPS_DASHBOARD = "allow_empty_pipeline_groups_dashboard";
-    public static String TEST_DRIVE = "test_drive";
+    public static final String BROWSER_CONSOLE_LOG_WS = "browser_console_log_ws_key";
+    public static final String ALLOW_EMPTY_PIPELINE_GROUPS_DASHBOARD = "allow_empty_pipeline_groups_dashboard";
+    public static final String TEST_DRIVE = "test_drive";
 
     private static FeatureToggleService service;
 
@@ -26,9 +28,7 @@ public class Toggles {
         service = featureToggleService;
     }
 
-    /**
-     * Used by tests for teardown
-     */
+    @TestOnly
     public static void deinitialize() {
         service = null;
     }

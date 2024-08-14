@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -182,7 +182,7 @@ public class RolesConfig extends BaseCollection<Role> implements Validatable {
         return rolesConfig;
     }
 
-    private static Map<String, Class<? extends Role>> ROLE_FILTER_MAP = new LinkedHashMap<>();
+    private static final Map<String, Class<? extends Role>> ROLE_FILTER_MAP = new LinkedHashMap<>();
 
     static {
         ROLE_FILTER_MAP.put("gocd", RoleConfig.class);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -152,7 +152,7 @@ export class NewPreferencesPage extends Page<null, PreferencesState> {
     let smtpErrorMessage;
     if (!vnode.state.isSMTPConfigured) {
       const message    = <span>SMTP settings are currently not configured. If you are the administrator, you can configure email support at <Link
-        href={"/go/admin/config/server#!email-server"} externalLinkIcon={true}>Mail Server Configuration</Link>.</span>;
+        href={"/go/admin/config/server#!email-server"}>Mail Server Configuration</Link>.</span>;
       smtpErrorMessage = <FlashMessage type={MessageType.info} message={message}/>;
     }
     return [

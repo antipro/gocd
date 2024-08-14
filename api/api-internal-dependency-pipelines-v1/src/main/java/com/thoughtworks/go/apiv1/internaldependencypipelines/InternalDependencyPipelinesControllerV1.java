@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,9 +40,9 @@ import static spark.Spark.*;
 public class InternalDependencyPipelinesControllerV1 extends ApiController implements SparkSpringController {
 
     private final ApiAuthenticationHelper apiAuthenticationHelper;
-    private SystemEnvironment systemEnvironment;
-    private GoConfigService goConfigService;
-    private Gson gson = new GsonBuilder().setPrettyPrinting().serializeNulls().create();
+    private final SystemEnvironment systemEnvironment;
+    private final GoConfigService goConfigService;
+    private final Gson gson = new GsonBuilder().setPrettyPrinting().serializeNulls().create();
 
     @Autowired
     public InternalDependencyPipelinesControllerV1(ApiAuthenticationHelper apiAuthenticationHelper,

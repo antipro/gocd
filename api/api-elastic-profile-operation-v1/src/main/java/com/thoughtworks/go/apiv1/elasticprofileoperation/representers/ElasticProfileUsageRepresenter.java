@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import com.thoughtworks.go.domain.ElasticProfileUsage;
 import java.util.Collection;
 
 public class ElasticProfileUsageRepresenter {
-    private static Gson GSON = new GsonBuilder().
+    private static final Gson GSON = new GsonBuilder().
             setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
             .create();
 

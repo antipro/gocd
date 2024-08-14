@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ public class URLServiceTest {
 
     @AfterEach
     public void teardown() {
-        new SystemEnvironment().clearProperty("serviceUrl");
+        new SystemEnvironment().clearProperty(SystemEnvironment.SERVICE_URL);
     }
 
     @Test
@@ -68,7 +68,7 @@ public class URLServiceTest {
 
     @Test
     public void shouldReturnServerUrlWithSubpath() {
-        new SystemEnvironment().setProperty("serviceUrl", BASE_URL + "/");
+        new SystemEnvironment().setProperty(SystemEnvironment.SERVICE_URL, BASE_URL + "/");
         assertThat(new URLService().serverUrlFor("someSubPath/xyz"), is(BASE_URL + "/someSubPath/xyz"));
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,10 +21,7 @@ import com.thoughtworks.go.plugin.configrepo.codec.GsonCodec;
 import com.thoughtworks.go.plugin.configrepo.contract.CRParseResult;
 import org.junit.jupiter.api.Test;
 
-import static com.thoughtworks.go.util.TestUtils.contains;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 public class JsonMessageHandler1_0Test {
@@ -39,39 +36,42 @@ public class JsonMessageHandler1_0Test {
 
     @Test
     public void shouldErrorWhenMissingTargetVersionInResponse() {
-        String json = "{\n" +
-                "  \"environments\" : [],\n" +
-                "  \"pipelines\" : [],\n" +
-                "  \"errors\" : []\n" +
-                "}";
+        String json = """
+                {
+                  "environments" : [],
+                  "pipelines" : [],
+                  "errors" : []
+                }""";
 
         CRParseResult result = handler.responseMessageForParseDirectory(json);
-        assertThat(result.getErrors().getErrorsAsText(), contains("missing 'target_version' field"));
+        assertThat(result.getErrors().getErrorsAsText()).contains("missing 'target_version' field");
     }
 
     @Test
     public void shouldNotErrorWhenTargetVersionInResponse() {
-        String json = "{\n" +
-                "  \"target_version\" : 1,\n" +
-                "  \"pipelines\" : [],\n" +
-                "  \"errors\" : []\n" +
-                "}";
+        String json = """
+                {
+                  "target_version" : 1,
+                  "pipelines" : [],
+                  "errors" : []
+                }""";
 
         makeMigratorReturnSameJSON();
         CRParseResult result = handler.responseMessageForParseDirectory(json);
 
-        assertFalse(result.hasErrors());
+        assertThat(result.hasErrors()).isFalse();
     }
 
     @Test
     public void shouldAppendPluginErrorsToAllErrors() {
-        String json = "{\n" +
-                "  \"target_version\" : 1,\n" +
-                "  \"pipelines\" : [],\n" +
-                "  \"errors\" : [{\"location\" : \"somewhere\", \"message\" : \"failed to parse pipeline.json\"}]\n" +
-                "}";
+        String json = """
+                {
+                  "target_version" : 1,
+                  "pipelines" : [],
+                  "errors" : [{"location" : "somewhere", "message" : "failed to parse pipeline.json"}]
+                }""";
         CRParseResult result = handler.responseMessageForParseDirectory(json);
-        assertTrue(result.hasErrors());
+        assertThat(result.hasErrors()).isTrue();
     }
 
     @Test
@@ -94,7 +94,7 @@ public class JsonMessageHandler1_0Test {
 
         CRParseResult result = handler.responseMessageForParseDirectory(json);
         String errorMessage = String.format("'target_version' is %s but the GoCD Server supports %s", targetVersion, JsonMessageHandler1_0.CURRENT_CONTRACT_VERSION);
-        assertThat(result.getErrors().getErrorsAsText(), contains(errorMessage));
+        assertThat(result.getErrors().getErrorsAsText()).contains(errorMessage);
     }
 
     private void makeMigratorReturnSameJSON() {

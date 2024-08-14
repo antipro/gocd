@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -78,17 +78,19 @@ public class SvnRemoteRepository {
 
     private void enableAuthentication() throws IOException {
         File confFile = new File(repo.projectRepositoryRoot(), "conf/svnserve.conf");
-        String passwd = "[general]\n"
-            + "anon-access = none\n"
-            + "auth-access = read\n"
-            + "auth-access = write\n"
-            + "password-db = passwd\n";
+        String passwd = """
+                [general]
+                anon-access = none
+                auth-access = read
+                auth-access = write
+                password-db = passwd
+                """;
         FileUtils.writeStringToFile(confFile, passwd, UTF_8);
     }
 
     public void stop() throws Exception {
         if (processWrapper != null) {
-            Process process = (Process) ReflectionUtil.getField(processWrapper, "process");
+            Process process = ReflectionUtil.getField(processWrapper, "process");
             process.descendants().forEach(ProcessHandle::destroy);
             process.destroy();
             processWrapper.waitForExit();

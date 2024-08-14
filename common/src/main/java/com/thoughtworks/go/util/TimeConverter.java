@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,24 +15,20 @@
  */
 package com.thoughtworks.go.util;
 
-import java.text.SimpleDateFormat;
-
+import org.apache.commons.lang3.StringUtils;
+import org.joda.time.*;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.springframework.context.MessageSourceResolvable;
+import org.springframework.stereotype.Component;
+import org.springframework.util.ObjectUtils;
+
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Set;
 
-import org.apache.commons.lang3.StringUtils;
-import org.joda.time.DateTime;
-import org.joda.time.Days;
-import org.joda.time.Hours;
-import org.joda.time.Minutes;
-import org.joda.time.Seconds;
-import org.springframework.context.MessageSourceResolvable;
-import org.springframework.stereotype.Component;
-import org.springframework.util.ObjectUtils;
 import static com.thoughtworks.go.util.DateUtils.formatISO8601;
 
 @Component
@@ -212,12 +208,11 @@ public class TimeConverter {
             if (this == obj) {
                 return true;
             }
-            if (!(obj instanceof ConvertedTime)) {
+            if (!(obj instanceof ConvertedTime other)) {
                 return false;
             }
 
             boolean eq = true;
-            ConvertedTime other = (ConvertedTime) obj;
             eq &= ObjectUtils.nullSafeEquals(code, other.code);
             eq &= ObjectUtils.nullSafeEquals(arguments, other.arguments);
             eq &= ObjectUtils.nullSafeEquals(message, other.message);
@@ -240,7 +235,7 @@ public class TimeConverter {
         return TimeConverter.convert(date);
     }
 
-    static interface ConvertableTime {
+    interface ConvertableTime {
         ConvertedTime getConvertedTime(long duration);
     }
 

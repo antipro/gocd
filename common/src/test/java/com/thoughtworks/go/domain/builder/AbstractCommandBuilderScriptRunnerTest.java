@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,7 +52,7 @@ public abstract class AbstractCommandBuilderScriptRunnerTest {
             "dir1", // Regular dir without spaces
             "dir 2", // Regular dir with space
             "\"dir3\""); // Regular dir without spaces pre-quoted
-        for (Path dir : paths.stream().map(p -> tempWorkDir.resolve(StringUtil.unQuote(p))).collect(Collectors.toList())) {
+        for (Path dir : paths.stream().map(p -> tempWorkDir.resolve(StringUtil.unQuote(p))).toList()) {
             Files.createDirectory(dir);
         }
         return paths;

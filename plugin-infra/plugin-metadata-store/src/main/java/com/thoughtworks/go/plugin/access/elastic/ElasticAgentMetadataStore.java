@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ import com.thoughtworks.go.plugin.access.common.MetadataStore;
 import com.thoughtworks.go.plugin.domain.elastic.ElasticAgentPluginInfo;
 
 public class ElasticAgentMetadataStore extends MetadataStore<ElasticAgentPluginInfo> {
-    private static ElasticAgentMetadataStore store = new ElasticAgentMetadataStore();
+    private static final ElasticAgentMetadataStore store = new ElasticAgentMetadataStore();
 
     private ElasticAgentMetadataStore() {
     }

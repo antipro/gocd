@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,7 +66,7 @@ public class AssetsContextHandlerTest {
         assertThat(handler.getContextPath(), is("/go/assets"));
         assertThat(((HandlerWrapper) handler.getHandler()).getHandler() instanceof AssetsContextHandler.AssetsHandler, is(true));
         AssetsContextHandler.AssetsHandler assetsHandler = (AssetsContextHandler.AssetsHandler) ((HandlerWrapper) handler.getHandler()).getHandler();
-        ResourceHandler resourceHandler = (ResourceHandler) ReflectionUtil.getField(assetsHandler, "resourceHandler");
+        ResourceHandler resourceHandler = ReflectionUtil.getField(assetsHandler, "resourceHandler");
         assertThat(resourceHandler.getCacheControl(), is("max-age=31536000,public"));
         assertThat(resourceHandler.getResourceBase(), isSameFileAs(new File("WEB-INF/rails.root/public/assets").toPath().toAbsolutePath().toUri().toString()));
     }

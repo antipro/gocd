@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class SCMRevision {
-    private static Pattern DATA_KEY_PATTERN = Pattern.compile("[a-zA-Z0-9_]*");
+    private static final Pattern DATA_KEY_PATTERN = Pattern.compile("[a-zA-Z0-9_]*");
     private static final String DATA_KEY_EMPTY_MESSAGE = "Key names cannot be null or empty.";
 
     private String revision;

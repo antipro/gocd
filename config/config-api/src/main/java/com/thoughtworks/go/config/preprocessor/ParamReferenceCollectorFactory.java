@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import java.util.Set;
  */
 public class ParamReferenceCollectorFactory implements ParamHandlerFactory {
 
-    private HashSet<String> params = new HashSet<>();
+    private final Set<String> params = new HashSet<>();
 
     @Override
     public ParamHandler createHandler(Object resolvable, String fieldName, String stringToResolve) {

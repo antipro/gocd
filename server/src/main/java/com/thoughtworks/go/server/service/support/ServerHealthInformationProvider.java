@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,7 +46,7 @@ public class ServerHealthInformationProvider implements ServerInfoProvider {
     @Override
     public Map<String, Object> asJson() {
         LinkedHashMap<String, Object> json = new LinkedHashMap<>();
-        ServerHealthStates allLogs = service.logs();
+        ServerHealthStates allLogs = service.logsSorted();
         json.put("Messages Count", allLogs.size());
 
         ArrayList<Map<String, String>> messages = new ArrayList<>();

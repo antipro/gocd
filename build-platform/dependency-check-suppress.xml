@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright 2024 Thoughtworks, Inc.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
+
+  <suppress>
+    <notes><![CDATA[
+    GoCD does not use Spring's ServiceExporter in a vulnerable way, as described in https://nvd.nist.gov/vuln/detail/CVE-2016-1000027
+    https://github.com/spring-projects/spring-framework/issues/24434 and https://blog.gypsyengineer.com/en/security/detecting-dangerous-spring-exporters-with-codeql.html
+    ]]></notes>
+    <packageUrl regex="true">^pkg:maven/org\.springframework/spring-.*@.*$</packageUrl>
+    <cve>CVE-2016-1000027</cve>
+  </suppress>
+
+  <suppress>
+    <notes><![CDATA[
+    This appears to be a false positive. Vulnerability is only reported against Spring `5.2.0` to `5.2.3` (not 4.3)
+    ]]></notes>
+    <packageUrl regex="true">^pkg:maven/org\.springframework/spring-webmvc@4\.3.*$</packageUrl>
+    <vulnerabilityName>CVE-2020-5397</vulnerabilityName>
+  </suppress>
+  <suppress>
+    <notes><![CDATA[
+    Spring WebMVC 4.3.x does not appear to be affected by https://tanzu.vmware.com/security/cve-2021-22060 based on review
+    of the patches made to `LogFormatUtils` in the fixed 5.2.19.RELEASE version: https://github.com/spring-projects/spring-framework/compare/v5.2.18.RELEASE...v5.2.19.RELEASE
+    This is because in Spring 4.3 all of these log statements are at TRACE level, which are very unlikely to be enabled
+    for a GoCD instance in production, and not in the default configuration
+    ]]></notes>
+    <packageUrl regex="true">^pkg:maven/org\.springframework/spring-webmvc@4\.3.*$</packageUrl>
+    <vulnerabilityName>CVE-2021-22060</vulnerabilityName>
+  </suppress>
+
+  <suppress>
+    <notes><![CDATA[
+    It is not believed that GoCD is directly vulnerable to the "SpringShell" attack since although we use WAR
+    deployment, GoCD uses Jetty rather than Tomcat, and does not have the vulnerable classloader from Tomcat
+    required to exploit the vulnerability.
+    ]]></notes>
+    <packageUrl regex="true">^pkg:maven/org\.springframework/spring-.*@.*$</packageUrl>
+    <cve>CVE-2022-22965</cve>
+  </suppress>
+  <suppress>
+    <notes><![CDATA[
+    GoCD does not allow SpEL expressions to be supplied by users anywhere that can be found, so we do not seem to be
+    vulnerable to these issues.
+    ]]></notes>
+    <packageUrl regex="true">^pkg:maven/org\.springframework/spring-.*@.*$</packageUrl>
+    <cve>CVE-2022-22950</cve>
+    <cve>CVE-2023-20861</cve>
+    <vulnerabilityName>CVE-2023-20863</vulnerabilityName>
+  </suppress>
+  <suppress>
+    <notes><![CDATA[
+    GoCD is not affected by this as we do not use disallowedFieldPatterns on DataBinders as required to trigger the issue
+    as documented in https://spring.io/blog/2022/04/13/spring-framework-data-binding-rules-vulnerability-cve-2022-22968
+    ]]></notes>
+    <packageUrl regex="true">^pkg:maven/org\.springframework/spring-.*@.*$</packageUrl>
+    <cve>CVE-2022-22968</cve>
+  </suppress>
+  <suppress>
+    <notes><![CDATA[
+    GoCD is not vulnerable to the default as described at https://nvd.nist.gov/vuln/detail/CVE-2022-22970 as we do not
+    rely on data binding for dealing with MultipartFile or javax.servlet.Part objects into models.
+    ]]></notes>
+    <packageUrl regex="true">^pkg:maven/org\.springframework/spring-.*@.*$</packageUrl>
+    <cve>CVE-2022-22970</cve>
+  </suppress>
+  <suppress>
+    <notes><![CDATA[
+    According to https://spring.io/security/cve-2024-22243 / https://spring.io/security/cve-2024-22262
+    these only affect applications that use UriComponentsBuilder along with validation checks on the host. GoCD and its dependencies
+    don't use UriComponentsBuilder at all.
+    ]]></notes>
+    <packageUrl regex="true">^pkg:maven/org\.springframework/spring-web@.*$</packageUrl>
+    <cve>CVE-2024-22243</cve>
+    <cve>CVE-2024-22259</cve>
+    <cve>CVE-2024-22262</cve>
+  </suppress>
+
+  <suppress>
+    <notes><![CDATA[
+    From review of https://tanzu.vmware.com/security/cve-2021-22112 and the code of GoCD, GoCD does not appear to be
+    subject to this defect, since it does not alter the security context in the manner required to elevate privileges
+    in a small portion of the application and potentially be subject to this defect.
+    ]]></notes>
+    <packageUrl regex="true">^pkg:maven/org\.springframework\.security/spring-security-(core|web|config)@.*$</packageUrl>
+    <cve>CVE-2021-22112</cve>
+  </suppress>
+  <suppress>
+    <notes><![CDATA[
+    GoCD does not use RegexRequestMatchers from Spring Security with a value of '.' as required by https://nvd.nist.gov/vuln/detail/CVE-2022-22978
+    to be vulnerable to this issue.
+    ]]></notes>
+    <packageUrl regex="true">^pkg:maven/org\.springframework\.security/spring-security-(core|web|config)@.*$</packageUrl>
+    <cve>CVE-2022-22978</cve>
+  </suppress>
+  <suppress>
+    <notes><![CDATA[
+    According to https://spring.io/security/cve-2023-20862 this affects 5.7 but not "earlier unsupported versions" so there is no
+    reason to believe it affects Spring Security 4.x and thus seems an OSSIndex false positive.
+    ]]></notes>
+    <packageUrl regex="true">^pkg:maven/org\.springframework\.security/spring-security-(web|config)@4.*$</packageUrl>
+    <vulnerabilityName>CVE-2023-20862</vulnerabilityName>
+  </suppress>
+  <suppress>
+    <notes><![CDATA[
+    According to https://spring.io/security/cve-2024-22257 this only affects applications that use AuthenticatedVoter which
+    GoCD does not use.
+    ]]></notes>
+    <packageUrl regex="true">^pkg:maven/org\.springframework\.security/spring-security-core@4.*$</packageUrl>
+    <cve>CVE-2024-22257</cve>
+  </suppress>
+
+  <suppress>
+    <notes><![CDATA[
+    From review of https://nvd.nist.gov/vuln/detail/CVE-2019-14900 and the fix on Hibernate 5.3 at https://github.com/hibernate/hibernate-orm/pull/3440/files
+    GoCD is not subject to this defect, since at time of writing we do not use literals on the Criteria API (it's also
+    unclear whether older Hibernate versions are subject to the same defect)
+    ]]></notes>
+    <packageUrl regex="true">^pkg:maven/org\.hibernate/hibernate-(core|ehcache)@.*$</packageUrl>
+    <cve>CVE-2019-14900</cve>
+  </suppress>
+  <suppress>
+    <notes><![CDATA[
+    From review of https://nvd.nist.gov/vuln/detail/CVE-2020-25638 and https://bugzilla.redhat.com/show_bug.cgi?id=1881353
+    GoCD is not subject to this defect, because `hibernate.use_sql_comments` is left as the default (false) value.
+    ]]></notes>
+    <packageUrl regex="true">^pkg:maven/org\.hibernate/hibernate-(core|ehcache)@.*$</packageUrl>
+    <cve>CVE-2020-25638</cve>
+  </suppress>
+
+  <suppress>
+    <notes><![CDATA[
+    From review of https://nvd.nist.gov/vuln/detail/CVE-2021-23463 GoCD is not subject to this XXE vulnerability, because
+    neither GoCD, Hibernate or MyBatis use JdbcResultSet.getSQLXML(). It seems this is unlikely to get a backport to
+    H2 1.4.x which is a breaking change. See https://github.com/h2database/h2database/issues/3195 and
+    https://github.com/h2database/h2database/issues/3271
+    ]]></notes>
+    <packageUrl regex="true">^pkg:maven/com\.h2database/h2@.*$</packageUrl>
+    <cve>CVE-2021-23463</cve>
+  </suppress>
+  <suppress>
+    <notes><![CDATA[
+    The CVEs as documented at https://github.com/h2database/h2database/security/advisories/GHSA-h376-j262-vhq6 and
+    https://github.com/advisories/GHSA-45hx-wfhj-473x only affect the H2 console (not enabled on GoCD),
+    or context-dependent use of JdbcUtils.getConnection (not possible from remote properties in GoCD)
+    so GoCD does not appear to be vulnerable to these problems even when running with H2 DB.
+    ]]></notes>
+    <packageUrl regex="true">^pkg:maven/com\.h2database/h2@1\.4\.200$</packageUrl>
+    <cve>CVE-2021-42392</cve>
+    <cve>CVE-2022-23221</cve>
+    <cve>CVE-2022-45868</cve>
+    <vulnerabilityName>CVE-2018-14335</vulnerabilityName>
+  </suppress>
+
+  <suppress>
+    <notes><![CDATA[
+    GoCD is not affected by the issue claimed at https://github.com/quartz-scheduler/quartz/issues/943 and https://nvd.nist.gov/vuln/detail/CVE-2023-39017
+    because there is no way to affect contents of JobDataMaps, and GoCD does not use JMS in this way either.
+    ]]></notes>
+    <packageUrl regex="true">^pkg:maven/org\.quartz-scheduler/quartz@.*$</packageUrl>
+    <cve>CVE-2023-39017</cve>
+  </suppress>
+
+  <suppress>
+   <notes><![CDATA[
+    GoCD is not affected by https://nvd.nist.gov/vuln/detail/CVE-2023-36479 since it does not use CgiServlet or CGI at all.
+    ]]></notes>
+    <packageUrl regex="true">^pkg:maven/org\.eclipse\.jetty/jetty-servlets@.*$</packageUrl>
+    <cve>CVE-2023-36479</cve>
+  </suppress>
+
+  <suppress>
+    <notes><![CDATA[
+    GoCD does not seem to be vulnerable to these issues as it does not use Angular in a vulnerable way.
+    (no use of, or ability to use `.merge()`, `.sanitize()`, `.copy()`, `$resource` service, set `xlink:href`,
+    no use of `<select>` elements, no use of `usemap` attribute, not a Firefox add-on, and don't care about Internet Explorer)
+    ]]></notes>
+    <packageUrl regex="true">^pkg:javascript/angularjs@.*$</packageUrl>
+    <cve>CVE-2019-10768</cve>
+    <cve>CVE-2019-14863</cve>
+    <cve>CVE-2020-7676</cve>
+    <cve>CVE-2022-25869</cve>
+    <cve>CVE-2023-26116</cve>
+    <cve>CVE-2023-26117</cve>
+    <cve>CVE-2023-26118</cve>
+    <vulnerabilityName>Cross-Site Scripting via JSONP</vulnerabilityName>
+    <vulnerabilityName>DOS in $sanitize</vulnerabilityName>
+    <vulnerabilityName>The attribute usemap can be used as a security exploit</vulnerabilityName>
+    <vulnerabilityName>Universal CSP bypass via add-on in Firefox</vulnerabilityName>
+    <vulnerabilityName>XSS via JQLite DOM manipulation functions in AngularJS</vulnerabilityName>
+    <vulnerabilityName>End-of-Life: Long term support for AngularJS has been discontinued as of December 31, 2021</vulnerabilityName>
+    <vulnerabilityName>XSS in $sanitize in Safari/Firefox</vulnerabilityName>
+  </suppress>
+
+  <!-- Suppression rules for dependencies only visible after a ./gradlew prepare (yarn install / bundle install / tw-go-plugins bundled download -->
+  <suppress>
+    <notes><![CDATA[
+    Suppress false positive vulnerabilities from test code that sits inside Javascript node_modules
+    ]]></notes>
+    <filePath regex="true">^.*/node_modules/.*/(test|tests)/.*\.js$</filePath>
+    <vulnerabilityName regex="true">.*</vulnerabilityName>
+  </suppress>
+
+  <suppress>
+    <notes><![CDATA[
+    Suppress false positive vulnerabilities from test JS code that sits inside Ruby gems
+    ]]></notes>
+    <filePath regex="true">^.*/gems/.*/capybara/.*\.js$</filePath>
+    <vulnerabilityName regex="true">.*</vulnerabilityName>
+  </suppress>
+
+  <suppress>
+    <notes><![CDATA[
+    Suppress false positive from nokogiri-java via embedded xalan-2.7.3.jar which is correctly identifying that BCEL is embedded, but
+    incorrectly identifying the version as 2.7.3 (Xalan version). BCEL version embedded is 6.7.0 https://xalan.apache.org/xalan-j/readme.html
+    which is not affected by this issue.
+    ]]></notes>
+    <sha1>5095bedf29e73756fb5729f2241fd5ffa33d87e0</sha1>
+    <cve>CVE-2022-42920</cve>
+  </suppress>
+
+  <suppress>
+    <notes><![CDATA[
+    Suppress false positives from nokogiri-java via embedded neko-htmlunit-2.63.0.jar pending https://github.com/sparklemotion/nokogiri/issues/2565
+    and corresponding release of nokogiri. The issues highlighted here appear to affect only htmlunit, not neko-htmlunit however
+    due to them sharing a CPE are grouped here. https://github.com/jeremylong/DependencyCheck/issues/5656#issuecomment-1846504862 has
+    an assessment so GoCD is not believed to be affected by the suppressed CVEs.
+    ]]></notes>
+    <sha1>d4d159a789c5446eea7edc184cab9adab12baa1c</sha1>
+    <cve>CVE-2023-2798</cve>
+    <cve>CVE-2023-26119</cve>
+    <cve>CVE-2023-49093</cve>
+  </suppress>
+
+  <suppress>
+    <notes><![CDATA[
+    Suppress false positive from the JSON Config repo plugin at plugins-{version}.zip/gocd-json-config-plugin.jar. This plugin is being mis-identified as the json-c project which is completely different.
+    Not sure if/how this can be fixed upstream in OWASP Dependency Check as in our case it's being reported against a SHA for the plugin jar itself which
+    does not have a Maven identifier.
+    ]]></notes>
+    <cpe>cpe:/a:json-c:json-c</cpe>
+  </suppress>
+
+</suppressions>

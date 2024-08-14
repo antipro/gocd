@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -384,19 +384,14 @@ public class MergeEnvironmentConfig extends BaseCollection<EnvironmentConfig> im
         return null;
     }
 
-    @Deprecated //To be merged with originForAgent. Use that instead
-    public ConfigOrigin getOriginForAgent(String agentUUID) {
-        for (EnvironmentConfig part : this) {
-            if (part.hasAgent(agentUUID)) {
-                return part.getOrigin();
-            }
-        }
-        return null;
-    }
-
     @Override
     public Optional<ConfigOrigin> originForAgent(String agentUuid) {
-        return Optional.ofNullable(getOriginForAgent(agentUuid));
+        for (EnvironmentConfig part : this) {
+            if (part.hasAgent(agentUuid)) {
+                return Optional.of(part.getOrigin());
+            }
+        }
+        return Optional.empty();
     }
 
     public ConfigOrigin getOriginForEnvironmentVariable(String variableName) {
@@ -418,6 +413,7 @@ public class MergeEnvironmentConfig extends BaseCollection<EnvironmentConfig> im
         return isValid;
     }
 
+    @SuppressWarnings("com.haulmont.jpb.EqualsDoesntCheckParameterClass")
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -437,11 +433,7 @@ public class MergeEnvironmentConfig extends BaseCollection<EnvironmentConfig> im
         if (this.getPipelines() != null ? !this.getPipelines().equals(that.getPipelines()) : that.getPipelines() != null) {
             return false;
         }
-        if (this.getVariables() != null ? !this.getVariables().equals(that.getVariables()) : that.getVariables() != null) {
-            return false;
-        }
-
-        return true;
+        return this.getVariables() != null ? this.getVariables().equals(that.getVariables()) : that.getVariables() == null;
     }
 
     @Override

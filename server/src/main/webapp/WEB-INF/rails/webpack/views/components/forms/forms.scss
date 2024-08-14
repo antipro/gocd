@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -233,13 +233,13 @@ input[type="checkbox"].form-control {
 }
 
 .search-box-wrapper {
+  display: inline-block;
+  position: relative;
+
   @include icon-before($type: $fa-var-search, $size: 14px, $top: 5px, $color: $icon-color) {
     position: absolute;
     left: 10px;
   }
-
-  display: inline-block;
-  position: relative;
 
   .search-box-input {
     padding: 0 10px 0 40px;
@@ -264,13 +264,21 @@ input[type="checkbox"].form-control {
   .quick-add-button {
     @include button($background-color: $btn-secondary);
 
-    border-radius: 0 $global-border-radius $global-border-radius 0;
+    // stylelint-disable no-duplicate-selectors
+    & {
+      border-radius: 0 $global-border-radius $global-border-radius 0;
+    }
+    // stylelint-enable
   }
 
   .search-button {
     @include button($background-color: $btn-secondary);
 
-    border-radius: 0 $global-border-radius $global-border-radius 0;
+    // stylelint-disable no-duplicate-selectors
+    & {
+      border-radius: 0 $global-border-radius $global-border-radius 0;
+    }
+    // stylelint-enable
   }
 }
 
@@ -305,9 +313,7 @@ input[type="checkbox"].form-control {
 }
 
 .hide-password {
-  @include icon-after($type: $fa-var-eye-slash, $size: 14px, $top: 1px, $color: $icon-color) {
-    right: 30px;
-  }
+  @include icon-after($type: $fa-var-eye-slash, $size: 14px, $top: 1px, $margin: 3px, $color: $icon-color);
 
   input {
     padding-right: 25px;
@@ -315,9 +321,7 @@ input[type="checkbox"].form-control {
 }
 
 .show-password {
-  @include icon-after($type: $fa-var-eye, $size: 14px, $top: 1px, $color: $icon-color) {
-    right: 30px;
-  }
+  @include icon-after($type: $fa-var-eye, $size: 14px, $top: 1px, $margin: 4px, $color: $icon-color);
 
   input {
     padding-right: 25px;

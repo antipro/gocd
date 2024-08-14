@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@ public class JettyResponseTest {
 
     @Test
     public void shouldGetResponseContentCount() {
-        when(response.getContentCount()).thenReturn(2000l);
-        assertThat(jettyResponse.getContentCount(), is(2000l));
+        when(response.getContentCount()).thenReturn(2000L);
+        assertThat(jettyResponse.getContentCount(), is(2000L));
     }
 }

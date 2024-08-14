@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -117,7 +117,7 @@ public class SvnMaterialTest {
 
         updateMaterial(svnMaterial, revision, workingCopy);
 
-        assertThat(workingCopy.exists()).isFalse();
+        assertThat(workingCopy).doesNotExist();
         verify(subversion).checkoutTo(outputStreamConsumer, workingCopy, revision);
     }
 
@@ -132,7 +132,7 @@ public class SvnMaterialTest {
         when(subversion.workingRepositoryUrl(workingCopy)).thenReturn("new url");
 
         updateMaterial(svnMaterial, revision, workingCopy);
-        assertThat(workingCopy.exists()).isFalse();
+        assertThat(workingCopy).doesNotExist();
         verify(subversion).checkoutTo(outputStreamConsumer, workingCopy, revision);
     }
 

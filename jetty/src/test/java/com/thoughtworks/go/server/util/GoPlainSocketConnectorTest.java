@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,7 +52,7 @@ public class GoPlainSocketConnectorTest {
     public void shouldCreateAServerConnectorWithConfiguredPortAndBuffersize() throws Exception {
         assertThat(connector.getPort(), is(1234));
         assertThat(connector.getHost(), is("foo"));
-        assertThat(connector.getIdleTimeout(), is(200l));
+        assertThat(connector.getIdleTimeout(), is(200L));
 
         assertThat(configuration.getOutputBufferSize(), is(100));
     }

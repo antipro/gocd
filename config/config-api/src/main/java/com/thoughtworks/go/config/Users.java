@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,7 @@ package com.thoughtworks.go.config;
 import com.thoughtworks.go.domain.BaseCollection;
 import com.thoughtworks.go.domain.ConfigErrors;
 
-import java.util.Collection;
+import java.util.Collections;
 
 @ConfigTag("users")
 @ConfigCollection(RoleUser.class)
@@ -27,18 +27,7 @@ public class Users extends BaseCollection<RoleUser> implements Validatable {
 
     static Users users(RoleUser... users) {
         Users usersList = new Users();
-        for (RoleUser user : users) {
-            usersList.add(user);
-        }
-        return usersList;
-    }
-
-
-    static Users users(Collection<RoleUser> users) {
-        Users usersList = new Users();
-        for (RoleUser user : users) {
-            usersList.add(user);
-        }
+        Collections.addAll(usersList, users);
         return usersList;
     }
 

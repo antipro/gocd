@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,7 +54,7 @@ public class LoginLogoutHelper {
                 })
                 .filter(Objects::nonNull)
                 .distinct()
-                .collect(Collectors.toList());
+                .toList();
 
 
         List<AuthorizationPluginInfo> passwordBasedAuthenticationPlugins = securityAuthConfigs
@@ -68,7 +68,7 @@ public class LoginLogoutHelper {
                 })
                 .filter(Objects::nonNull)
                 .distinct()
-                .collect(Collectors.toList());
+                .toList();
 
         ImmutableMap.Builder<String, Object> metaBuilder = ImmutableMap.<String, Object>builder()
                 .put("hasWebBasedPlugins", !webBasedAuthenticationPlugins.isEmpty())

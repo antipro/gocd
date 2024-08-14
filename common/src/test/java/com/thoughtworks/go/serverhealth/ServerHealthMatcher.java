@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +38,7 @@ public class ServerHealthMatcher {
 
             @Override
             public boolean matchesSafely(ServerHealthService item) {
-                allLogs = item.logs();
+                allLogs = item.logsSorted();
                 for (ServerHealthState serverHealthState : allLogs) {
                     if (serverHealthState.getType().equals(healthStateType)) {
                         entry = serverHealthState;
@@ -75,7 +75,7 @@ public class ServerHealthMatcher {
 
             @Override
             public boolean matchesSafely(ServerHealthService item) {
-                for (ServerHealthState serverHealthState : item.logs()) {
+                for (ServerHealthState serverHealthState : item.logsSorted()) {
                     if (serverHealthState.getType().equals(healthStateType)) {
                         entry = serverHealthState;
                         return false;

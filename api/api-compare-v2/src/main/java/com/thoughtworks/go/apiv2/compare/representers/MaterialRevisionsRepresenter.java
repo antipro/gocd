@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ public class MaterialRevisionsRepresenter {
 
     public static void toJSONArray(OutputListWriter outputWriter, List<MaterialRevision> revisions) {
         List<MaterialRevision> materialRevisions = revisions.stream().filter(revision -> !revision.isDependencyMaterialRevision()).collect(Collectors.toList());
-        List<MaterialRevision> dependencyMaterialRevisions = revisions.stream().filter(MaterialRevision::isDependencyMaterialRevision).collect(Collectors.toList());
+        List<MaterialRevision> dependencyMaterialRevisions = revisions.stream().filter(MaterialRevision::isDependencyMaterialRevision).toList();
 
         materialRevisions.addAll(dependencyMaterialRevisions);
         materialRevisions.forEach(revision -> outputWriter.addChild(revisionWriter -> toJSON(revisionWriter, revision)));

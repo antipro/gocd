@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,7 +59,6 @@ dependencies {
   }
   implementation project.deps.jakartaAnnotation
   implementation project.deps.commonsConfiguration
-  implementation project.deps.nanohttpd
   implementation project.deps.oshi
   compileOnly project.deps.jetBrainsAnnotations
 
@@ -119,7 +118,7 @@ task verifyJar(type: VerifyJarTask) {
     "lib": [
       "agent-${project.version}-classes.jar",
       "agent-common-${project.version}.jar",
-      "angus-activation-${project.versions.angusActivation}.jar",
+      "angus-activation-2.0.2.jar",
       "animal-sniffer-annotations-1.9.jar",
       "ant-${project.versions.apacheAnt}.jar",
       "base-${project.version}.jar",
@@ -138,7 +137,7 @@ task verifyJar(type: VerifyJarTask) {
       "config-api-${project.version}.jar",
       "db-${project.version}.jar",
       "domain-${project.version}.jar",
-      "failureaccess-1.0.1.jar",
+      "failureaccess-1.0.2.jar",
       "go-plugin-access-${project.version}.jar",
       "go-plugin-activator.jar",
       "go-plugin-api-${project.version}.jar",
@@ -152,20 +151,19 @@ task verifyJar(type: VerifyJarTask) {
       "httpcore-4.4.16.jar",
       "httpmime-${project.versions.apacheHttpComponents}.jar",
       "istack-commons-runtime-4.1.2.jar",
-      "jakarta.activation-api-2.1.2.jar",
+      "jakarta.activation-api-2.1.3.jar",
       "jakarta.annotation-api-${project.versions.jakartaAnnotation}.jar",
-      "jakarta.xml.bind-api-4.0.1.jar",
+      "jakarta.xml.bind-api-4.0.2.jar",
       "jaxb-core-${project.versions.jaxb}.jar",
       "jaxb-runtime-${project.versions.jaxb}.jar",
       "jcl-over-slf4j-${project.versions.slf4jBom}.jar",
       "jcommander-${project.versions.jcommander}.jar",
       "jdom2-${project.versions.jdom}.jar",
-      "jna-jpms-5.13.0.jar",
-      "jna-platform-jpms-5.13.0.jar",
+      "jna-jpms-5.14.0.jar",
+      "jna-platform-jpms-5.14.0.jar",
       "joda-time-${project.versions.jodaTime}.jar",
       "logback-classic-${project.versions.logback}.jar",
       "logback-core-${project.versions.logback}.jar",
-      "nanohttpd-${project.versions.nanohttpd}.jar",
       "objenesis-${project.versions.objenesis}.jar",
       "org.apache.felix.framework-${project.versions.felix}.jar",
       "oshi-core-java11-${project.versions.oshi}.jar",

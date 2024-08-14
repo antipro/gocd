@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,7 +66,7 @@ public class EnvironmentVariableRepresenter {
         Optional<String> optValue = jsonReader.optString("value");
         Optional<String> optEncValue = jsonReader.optString("encrypted_value");
 
-        if (!optValue.isPresent() && !optEncValue.isPresent()) {
+        if (optValue.isEmpty() && optEncValue.isEmpty()) {
             HaltApiResponses.haltBecauseOfReason("Environment variable must contain either 'value' or 'encrypted_value'");
         }
 

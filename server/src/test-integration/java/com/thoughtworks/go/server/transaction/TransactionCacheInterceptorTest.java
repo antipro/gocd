@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -82,7 +82,7 @@ public class TransactionCacheInterceptorTest {
     public void shouldOptOutOfCacheServing_forInsert() {
         final MaterialInstance materialInstance = hgInstance();
         assertionUtil.assertCacheBehaviourInTxn(() -> hibernateDaoSupport.getHibernateTemplate().save(materialInstance));
-        assertThat(materialInstance.getId(), greaterThan(0l));
+        assertThat(materialInstance.getId(), greaterThan(0L));
     }
 
     @Test
@@ -124,9 +124,9 @@ public class TransactionCacheInterceptorTest {
 
         assertionUtil.assertCacheBehaviourInTxn(() -> hibernateDaoSupport.getHibernateTemplate().update(mod));
 
-        assertThat(mod.getId(), greaterThan(0l));
-        assertThat(foo_c.getId(), greaterThan(0l));
-        assertThat(baz_c.getId(), greaterThan(0l));
+        assertThat(mod.getId(), greaterThan(0L));
+        assertThat(foo_c.getId(), greaterThan(0L));
+        assertThat(baz_c.getId(), greaterThan(0L));
     }
 
     @Test

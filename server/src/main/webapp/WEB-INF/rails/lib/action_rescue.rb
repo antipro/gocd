@@ -1,5 +1,5 @@
 #
-# Copyright 2023 Thoughtworks, Inc.
+# Copyright 2024 Thoughtworks, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ module ActionRescue
       redirect_to :root
       return
     end
-    render_error_template 'Server error occured. Check log for details.', 500
+    render_error_template 'Server error occurred. Check log for details.', 500
   end
 
   def format_exception(exception)

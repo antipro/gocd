@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -111,6 +111,7 @@ public class HttpService {
     }
 
     public CloseableHttpResponse execute(HttpRequestBase httpMethod) throws IOException {
+        @SuppressWarnings("resource") // Believe this is intentional to re-use the client
         GoAgentServerHttpClient client = httpClientFactory.httpClient();
 
         httpMethod.setHeader("X-Agent-GUID", agentRegistry.uuid());

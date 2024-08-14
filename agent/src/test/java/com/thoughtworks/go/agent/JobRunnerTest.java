@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@ public class JobRunnerTest {
         work = mock(Work.class);
         agentIdentifier = new AgentIdentifier("localhost", "127.0.0.1", "uuid");
 
-        new SystemEnvironment().setProperty("serviceUrl", SERVER_URL);
+        new SystemEnvironment().setProperty(SystemEnvironment.SERVICE_URL, SERVER_URL);
         resolver = mock(UpstreamPipelineResolver.class);
     }
 

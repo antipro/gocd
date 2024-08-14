@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ public interface Script {
      * exitCode is what is returned from running the script
      * @param result
      */
-    public void setExitCode(int result);
-    public int getExitCode();
+    void setExitCode(int result);
+    int getExitCode();
 
 }

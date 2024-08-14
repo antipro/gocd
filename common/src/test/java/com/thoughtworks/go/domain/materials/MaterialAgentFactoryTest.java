@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,9 +36,9 @@ import java.io.File;
 import java.io.IOException;
 
 import static com.thoughtworks.go.domain.materials.MaterialAgent.NO_OP;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
 
 @ExtendWith(MockitoExtension.class)
 public class MaterialAgentFactoryTest {
@@ -59,7 +59,7 @@ public class MaterialAgentFactoryTest {
 
         assertThat(agent, is(instanceOf(AbstractMaterialAgent.class)));
 
-        SubprocessExecutionContext execCtx = (SubprocessExecutionContext) ReflectionUtil.getField(agent, "execCtx");
+        SubprocessExecutionContext execCtx = ReflectionUtil.getField(agent, "execCtx");
         assertThat(execCtx.getProcessNamespace("fingerprint"), is(CachedDigestUtils.sha256Hex(String.format("%s%s%s", "fingerprint", agentUuid, gitMaterial.workingdir(tempWorkingDirectory)))));
     }
 

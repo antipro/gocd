@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ public abstract class MetadataLoader<T extends PluginInfo> implements PluginChan
 
     @Override
     public void pluginLoaded(GoPluginDescriptor pluginDescriptor) {
-        if(extension.canHandlePlugin(pluginDescriptor.id())) {
+        if (extension.canHandlePlugin(pluginDescriptor.id())) {
             metadataStore.setPluginInfo(builder.pluginInfoFor(pluginDescriptor));
         }
     }

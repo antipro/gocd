@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ public enum AgentStatus implements Comparable<AgentStatus>, Serializable {
     private final AgentConfigStatus configStatus;
     private final AgentRuntimeStatus runtimeStatus;
 
-    private AgentStatus(String name, AgentConfigStatus configStatus, AgentRuntimeStatus runtimeStatus) {
+    AgentStatus(String name, AgentConfigStatus configStatus, AgentRuntimeStatus runtimeStatus) {
         this.name = name;
         this.configStatus = configStatus;
         this.runtimeStatus = runtimeStatus;

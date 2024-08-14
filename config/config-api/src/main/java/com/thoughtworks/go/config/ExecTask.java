@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,8 +52,7 @@ public class ExecTask extends AbstractTask implements CommandTask {
     public static final String ARGS = "args";
     public static final String ARG_LIST_STRING = "argListString";
     public static final String WORKING_DIR = "workingDirectory";
-    public static final String TIMEOUT = "timeout";
-    private final String CUSTOM_COMMAND = "Custom Command";
+    private static final String CUSTOM_COMMAND = "Custom Command";
 
     public ExecTask() {
     }

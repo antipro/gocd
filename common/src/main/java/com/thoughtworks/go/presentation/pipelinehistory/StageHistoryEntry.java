@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -90,11 +90,7 @@ public class StageHistoryEntry extends PersistentObject {
         if (state != that.state) {
             return false;
         }
-        if (rerunOfCounter != null ? !rerunOfCounter.equals(that.rerunOfCounter) : that.rerunOfCounter != null) {
-            return false;
-        }
-
-        return true;
+        return rerunOfCounter != null ? rerunOfCounter.equals(that.rerunOfCounter) : that.rerunOfCounter == null;
     }
 
     @Override
@@ -125,7 +121,7 @@ public class StageHistoryEntry extends PersistentObject {
         return rerunOfCounter != null;
     }
 
-    @Deprecated
+    @Deprecated(since = "Only for DB fw usage")
     public void setRerunOfCounter(Integer rerunOfCounter) {
         this.rerunOfCounter = rerunOfCounter;
     }

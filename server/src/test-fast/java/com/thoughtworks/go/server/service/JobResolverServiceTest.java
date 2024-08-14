@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,8 @@ import com.thoughtworks.go.server.dao.JobInstanceDao;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.Matchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -37,8 +37,8 @@ public class JobResolverServiceTest {
 
     @Test
     public void shouldLoadActualIdentifierForGivenJobIdentifier() {
-        JobIdentifier oldId = new JobIdentifier("pipeline-name", 10, "label-10", "stage-name", "2", "build-name", 17l);
-        JobIdentifier idFoundByDao = new JobIdentifier("pipeline-name", 5, "label-5", "stage-name", "1", "build-name", 12l);
+        JobIdentifier oldId = new JobIdentifier("pipeline-name", 10, "label-10", "stage-name", "2", "build-name", 17L);
+        JobIdentifier idFoundByDao = new JobIdentifier("pipeline-name", 5, "label-5", "stage-name", "1", "build-name", 12L);
         when(jobDao.findOriginalJobIdentifier(oldId.getStageIdentifier(), "build-name")).thenReturn(idFoundByDao);
         JobIdentifier actualId = jobResolverService.actualJobIdentifier(oldId);
         assertThat(actualId, is(idFoundByDao));

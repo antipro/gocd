@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -85,6 +85,7 @@ class InstallerTypeServer implements InstallerType {
       '/var/log/go-server'                 : [mode: 0750, owner: 'go', group: 'go', ownedByPackage: true],
       '/var/run/go-server'                 : [mode: 0750, owner: 'go', group: 'go', ownedByPackage: true],
       '/etc/go'                            : [mode: 0750, owner: 'go', group: 'go', ownedByPackage: true],
+      '/var/go'                            : [mode: 0750, owner: 'go', group: 'go', ownedByPackage: true],
     ]
   }
 

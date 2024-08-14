@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import com.thoughtworks.go.domain.*;
 import com.thoughtworks.go.domain.exception.IllegalArtifactLocationException;
 import com.thoughtworks.go.helper.JobInstanceMother;
 import com.thoughtworks.go.junit5.FileSource;
-import com.thoughtworks.go.util.SystemEnvironment;
 import org.dom4j.Document;
 import org.junit.jupiter.params.ParameterizedTest;
 
@@ -48,7 +47,7 @@ public class JobXmlRepresenterTest {
             new ArtifactPlan(ArtifactPlanType.unit, "source", "destination")
         ));
 
-        XmlWriterContext context = new XmlWriterContext("https://go-server/go", urlReader, jobPlanLoader, null, new SystemEnvironment());
+        XmlWriterContext context = new XmlWriterContext("https://go-server/go", urlReader, jobPlanLoader);
 
         Document document = new JobXmlRepresenter(jobInstance).toXml(context);
 

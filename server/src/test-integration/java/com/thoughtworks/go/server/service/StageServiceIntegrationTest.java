@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -818,7 +818,7 @@ public class StageServiceIntegrationTest {
 
         materialRevisionsFor1.add(new MaterialRevision(svn, svnCommit2, svnCommit1));
         //save downstream pipeline 1
-        dbHelper.passPipeline(dbHelper.checkinRevisionsToBuild(build, downstream, materialRevisionsFor1));
+        dbHelper.passPipelineFirstStageOnly(dbHelper.checkinRevisionsToBuild(build, downstream, materialRevisionsFor1));
 
         Modification p4Commit2 = checkin(p4, "007", "#202 - p4 commit 2", "p4 2 guy", "p4.2@gmail.com", checkinTime);
 
@@ -832,7 +832,7 @@ public class StageServiceIntegrationTest {
         materialRevisionsFor2.add(new MaterialRevision(svn, svnCommit3));
 
         //save downstream pipeline 2
-        dbHelper.passPipeline(dbHelper.checkinRevisionsToBuild(build, downstream, materialRevisionsFor2));
+        dbHelper.passPipelineFirstStageOnly(dbHelper.checkinRevisionsToBuild(build, downstream, materialRevisionsFor2));
         return downstream;
     }
 

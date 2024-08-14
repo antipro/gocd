@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,22 +15,31 @@
  */
 var StageHistory = function() {
   function _bindHistoryLink(id, url, page_num) {
-    var elem = jQuery(id).get(0);
+    var elem = $(id).get(0);
     if (!elem) return;        
-    var element = $j(elem);
+    var element = $(elem);
     element.unbind();
     element.click(function() {
       changePage(url, page_num);
     });
   }
 
-  function changePage(url, pageNum) {    
-    new Ajax.Updater($('stage_history'), url, {method: 'get', evalScripts: true});
+  function changePage(url, pageNum) {
+    AjaxRefreshers.disableAjax();
+    $.ajax({
+      url: url,
+      method: "GET",
+      dataType: "html",
+      complete: function(response) {
+        $('.stage_history').html(response);
+        AjaxRefreshers.enableAjax();
+      }
+    });
     setCurrentPage(pageNum);
   }
 
   function setCurrentPage(pageNum) {
-    $("stage-history-page").value = pageNum;
+    $("#stage-history-page").val(pageNum);
   }
 
   function init() {
@@ -40,13 +49,38 @@ var StageHistory = function() {
   init.prototype._changePage = changePage;
 
   init.prototype.bindHistoryLink = function(id, url, page_num) {
-    return new Promise((resolve) => jQuery(function() {
+    return new Promise((resolve) => $(function() {
       _bindHistoryLink(id, url, page_num);
       AjaxRefreshers.main().afterRefreshOf('stage_history', function() {
         _bindHistoryLink(id, url, page_num);
       });
       resolve();
     }));
+  };
+
+  init.prototype.bindConfigChangeModal = function(modalId, contentSelector) {
+    $(".stage_history .config_change a").click(function(event) {
+      event.preventDefault();
+      AjaxRefreshers.disableAjax();
+      const url = $(this).attr("href");
+      $.ajax({
+        url: url,
+        success: function(data) {
+          $(contentSelector).html($(data).find("#body_content").html());
+          document.getElementById(modalId).showModal();
+        },
+        error: function(response, textStatus) {
+          $(contentSelector).html(`<div class="callout">There was an error loading changes (${response.status} ${textStatus})</div>`);
+          document.getElementById(modalId).showModal();
+        }
+      });
+    });
+
+    $("#modal-close").click(function(event) {
+      event.preventDefault();
+      document.getElementById(modalId).close();
+      AjaxRefreshers.enableAjax();
+    });
   };
 
   return new init();

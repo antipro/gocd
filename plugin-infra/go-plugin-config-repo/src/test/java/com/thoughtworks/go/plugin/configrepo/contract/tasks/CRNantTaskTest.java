@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,22 +32,21 @@ public class CRNantTaskTest extends AbstractCRTest<CRNantTask> {
     private final CRNantTask nantWithDirTask;
     private final CRNantTask nantWithPath;
 
-    public CRNantTaskTest()
-    {
+    public CRNantTaskTest() {
         nantTask = CRBuildTask.nant();
         nantCompileFileTask = CRBuildTask.nant("mybuild.xml", "compile");
         nantCompileTask = CRBuildTask.nant(null, "compile");
         nantWithDirTask = CRBuildTask.nant(null, "build", "src/tasks");
-        nantWithPath = CRBuildTask.nant("mybuild.xml", "build", "src/tasks","/path/to/nant");
+        nantWithPath = CRBuildTask.nant("mybuild.xml", "build", "src/tasks", "/path/to/nant");
     }
 
     @Override
     public void addGoodExamples(Map<String, CRNantTask> examples) {
-        examples.put("nantTask",nantTask);
-        examples.put("nantCompileFileTask",nantCompileFileTask);
-        examples.put("nantCompileTask",nantCompileTask);
-        examples.put("nantWithPath",nantWithPath);
-        examples.put("nantWithDirTask",nantWithDirTask);
+        examples.put("nantTask", nantTask);
+        examples.put("nantCompileFileTask", nantCompileFileTask);
+        examples.put("nantCompileTask", nantCompileTask);
+        examples.put("nantWithPath", nantWithPath);
+        examples.put("nantWithDirTask", nantWithDirTask);
     }
 
     @Override
@@ -56,21 +55,18 @@ public class CRNantTaskTest extends AbstractCRTest<CRNantTask> {
     }
 
     @Test
-    public void shouldAppendTypeFieldWhenSerializingNantTask()
-    {
-        CRTask value = nantWithPath;
-        JsonObject jsonObject = (JsonObject)gson.toJsonTree(value);
+    public void shouldAppendTypeFieldWhenSerializingNantTask() {
+        JsonObject jsonObject = (JsonObject) gson.toJsonTree(nantWithPath);
         assertThat(jsonObject.get("type").getAsString(), is("nant"));
     }
 
     @Test
-    public void shouldHandlePolymorphismWhenDeserializingNantTask()
-    {
+    public void shouldHandlePolymorphismWhenDeserializingNantTask() {
         CRTask value = nantTask;
         String json = gson.toJson(value);
 
-        CRBuildTask deserializedValue = (CRBuildTask)gson.fromJson(json,CRTask.class);
+        CRBuildTask deserializedValue = (CRBuildTask) gson.fromJson(json, CRTask.class);
         assertThat("Deserialized value should equal to value before serialization",
-                deserializedValue,is(value));
+            deserializedValue, is(value));
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -87,7 +87,7 @@ public class FeatureToggleRepository {
 
     private FeatureToggles readTogglesFromStream(InputStream streamForToggles, String kindOfToggle) {
         try {
-            String existingToggleJSONContent = IOUtils.toString(streamForToggles);
+            String existingToggleJSONContent = IOUtils.toString(streamForToggles, UTF_8);
 
             FeatureToggleFileContentRepresentation toggleContent = gson.fromJson(existingToggleJSONContent, FeatureToggleFileContentRepresentation.class);
             return new FeatureToggles(toggleContent.toggles);

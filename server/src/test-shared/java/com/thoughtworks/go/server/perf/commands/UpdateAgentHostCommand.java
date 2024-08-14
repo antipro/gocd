@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import java.util.UUID;
 
 import static com.thoughtworks.go.util.TriState.UNSET;
 
+@SuppressWarnings("unused") // Optional for use by AgentPerformanceVerifier
 public class UpdateAgentHostCommand extends AgentPerformanceCommand {
     public UpdateAgentHostCommand(AgentService agentService){
         this.agentService = agentService;
@@ -36,6 +37,6 @@ public class UpdateAgentHostCommand extends AgentPerformanceCommand {
     }
 
     private void updateHostname(String id) {
-        agentService.updateAgentAttributes(id, "host-name-" + UUID.randomUUID().toString(), null, null, UNSET);
+        agentService.updateAgentAttributes(id, "host-name-" + UUID.randomUUID(), null, null, UNSET);
     }
 }

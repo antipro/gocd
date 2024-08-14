@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -405,10 +405,7 @@ public class Stage extends PersistentObject {
         return jobInstances.filterByResult(results);
     }
 
-    @Deprecated
-    /**
-     * for ibatis only
-     */
+    @TestOnly // for ibatis and tests only
     public void setCompletedByTransitionId(Long completedByTransitionId) {
         this.completedByTransitionId = completedByTransitionId;
     }

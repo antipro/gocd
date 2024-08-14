@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ import com.thoughtworks.go.config.remote.ConfigRepoConfig;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.apache.commons.lang3.StringUtils.equalsIgnoreCase;
 
@@ -58,6 +57,6 @@ public enum SupportedEntity {
     public static List<String> unmodifiableListOf(SupportedEntity... supportedEntities) {
         return Arrays.stream(supportedEntities)
             .map(SupportedEntity::getType)
-            .collect(Collectors.toUnmodifiableList());
+            .toList();
     }
 }

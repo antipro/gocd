@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 Thoughtworks, Inc.
+ * Copyright 2024 Thoughtworks, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -248,7 +248,7 @@ public class AuthorizationMessageConverterV2 implements AuthorizationMessageConv
     }
 
     private String getTemplateFromResponse(String responseBody, String message) {
-        String template = (String) new Gson().fromJson(responseBody, Map.class).get("template");
+        String template = (String) GSON.fromJson(responseBody, Map.class).get("template");
         if (StringUtils.isBlank(template)) {
             throw new RuntimeException(message);
         }
